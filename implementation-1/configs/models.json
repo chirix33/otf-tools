@@ -1,0 +1,53 @@
+{
+  "_comment": "Frozen per-model serving + sampling settings (see SPEC.md sec. 2). Keyed by the --model alias. A model without base_url goes to the OpenAI API.",
+  "gpt-5.5": {
+    "served_name": "gpt-5.5"
+  },
+  "gpt-oss-20b": {
+    "served_name": "openai/gpt-oss-20b",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": "medium",
+    "max_tokens": 16384,
+    "context_len": 131072
+  },
+  "qwen3.6-27b": {
+    "served_name": "nvidia/Qwen3.6-27B-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0
+    },
+    "max_tokens": 16384,
+    "context_len": 131072
+  },
+  "gemma-4-31b-think": {
+    "served_name": "RedHatAI/gemma-4-31B-it-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "extra_body": {
+      "top_k": 64,
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      }
+    },
+    "max_tokens": 16384,
+    "context_len": 131072
+  },
+  "gemma-4-31b-nothink": {
+    "served_name": "RedHatAI/gemma-4-31B-it-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "extra_body": {
+      "top_k": 64,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "max_tokens": 16384,
+    "context_len": 131072
+  }
+}

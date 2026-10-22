@@ -1,0 +1,38 @@
+# --- Secrets (most important) ---
+**/.env                      
+**/.env.*
+
+# --- Python clutter ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# --- Large downloaded data (re-downloadable) ---
+implementation-1/data/raw/   
+
+# --- Caches (rebuilt automatically) ---
+implementation-1/.cache/
+
+# --- Third-party paper (copyrighted, don't redistribute) ---
+implementation-1/clevrer_paper.pdf
+
+# --- Experiment intermediates (regenerable, large or noisy) ---
+implementation-1/runs/**/systems/*/work/pageindex_store/
+implementation-1/runs/**/systems/*/work/rag_vectors.npy
+implementation-1/runs/**/systems/*/work/navmap.json
+implementation-1/runs/**/systems/*/work/blind_*.json
+implementation-1/runs/logs/*__server.log   
+implementation-1/runs/
+implementation-1/data/
+implementation-1/handoff/
+implementation-1/docs/
+implementation-1/examples/
+
+claude-work/
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
