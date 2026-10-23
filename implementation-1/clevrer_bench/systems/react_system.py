@@ -30,6 +30,13 @@ RAG_CACHE = ROOT / ".cache" / "tierb_rag_index"
 OBS_CHARS = 16000            # longest observation passed back to the model (the trace keeps the same text)
 
 
+def _json_object_or_empty(s: str | None) -> str:
+    try:
+        return s if isinstance(json.loads(s or ""), dict) else "{}"
+    except ValueError:
+        return "{}"
+
+
 def _fn(name: str, desc: str, props: dict, required: list[str]) -> dict:
     return {"type": "function", "function": {"name": name, "description": desc,
                                              "parameters": {"type": "object", "properties": props,
@@ -124,10 +131,11 @@ class ReActSystem(TierBSystem):
                 if not calls:                       # a plain reply is the model's final answer
                     final, outcome = msg.content or "", "answered_without_finish"
                     break
+                # vLLM parses the arguments we send back; malformed ones are replaced by {} (raw text is in the trace)
                 messages.append({"role": "assistant", "content": msg.content or "",
                                  "tool_calls": [{"id": c.id, "type": "function",
                                                  "function": {"name": c.function.name,
-                                                              "arguments": c.function.arguments or "{}"}}
+                                                              "arguments": _json_object_or_empty(c.function.arguments)}}
                                                 for c in calls]})
                 for c in calls:
                     try:

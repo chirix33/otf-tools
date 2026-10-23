@@ -180,6 +180,12 @@ class H(BaseHTTPRequestHandler):
             return self._send(404, {"error": "not found"})
         if body.get("model") != STATE["served"]:
             return self._send(404, {"error": {"message": f"model {body.get('model')} not served"}})
+        for m in body["messages"]:          # like vLLM: tool-call arguments sent back must be valid JSON
+            for tc in m.get("tool_calls") or []:
+                try:
+                    json.loads(tc["function"]["arguments"])
+                except ValueError:
+                    return self._send(400, {"error": {"message": "invalid tool call arguments"}})
         prompt = "\n".join(_content(m) for m in body["messages"])
         msg = {"role": "assistant", "content": None, "reasoning_content": "thinking..."}
         finish = "stop"
