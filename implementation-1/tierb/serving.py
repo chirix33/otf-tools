@@ -26,6 +26,9 @@ MIN_VLLM = (0, 19)
 CHECKPOINTS = {"qwen3.6-27b": ("nvidia/Qwen3.6-27B-NVFP4", "0893e1606ff3d5f97a441f405d5fc541a6bdf404"),
                "gemma-4-31b-think": ("RedHatAI/gemma-4-31B-it-NVFP4", "5df75ccad9b74546f5be758a2a68acc2e16bbc9b")}
 READY_TIMEOUT_S = 3600
+# Scripts go to bash on stdin, never on the command line: `wsl -- bash -c "..."` runs the line through a shell first,
+# which expands $PATH (Windows PATH entries like "Program Files (x86)") before bash sees the script.
+WSL_BASH = ["wsl", "-d", DISTRO, "--exec", "bash", "-s"]
 
 
 class ServingError(RuntimeError):
@@ -74,7 +77,7 @@ class WSLServer:
                                "PowerShell: `wsl --install -d Ubuntu-24.04`, reboot, open Ubuntu once to create "
                                "your user, then run `python run_tier_b.py` again.")
         try:
-            p = subprocess.run(["wsl", "-d", DISTRO, "--", "bash", "-c", cmd], capture_output=True, timeout=timeout)
+            p = subprocess.run(WSL_BASH, input=cmd.encode(), capture_output=True, timeout=timeout)
         except subprocess.TimeoutExpired:
             raise ServingError(f"WSL did not answer within {timeout:.0f}s ({cmd[:80]}). If {DISTRO} was never "
                                "opened, open it once from the Start menu to finish its first-run setup, then re-run.")
@@ -129,8 +132,7 @@ class WSLServer:
                   f"uv pip install --python {VLLM_VENV}/bin/python vllm=={VLLM_VERSION} --torch-backend=auto")
         log = self.logs / "vllm_install.log"
         with log.open("ab") as f:
-            p = subprocess.run(["wsl", "-d", DISTRO, "--", "bash", "-c", script], stdout=f, stderr=subprocess.STDOUT,
-                               timeout=7200)
+            p = subprocess.run(WSL_BASH, input=script.encode(), stdout=f, stderr=subprocess.STDOUT, timeout=7200)
         if p.returncode != 0:
             raise ServingError(f"vLLM installation in WSL failed; see {log}:\n{_tail(log)}")
 
@@ -145,9 +147,8 @@ class WSLServer:
                 f"p = snapshot_download({repo!r}); print(json.dumps({{'path': p, 'revision': Path(p).name}}))")
         log = self.logs / f"download__{model}.log"
         with log.open("ab") as f:
-            p = subprocess.run(["wsl", "-d", DISTRO, "--", "bash", "-c",
-                                f"{VLLM_VENV}/bin/python -c {_q(code)} 2>>/tmp/tierb_download.err"],
-                               stdout=subprocess.PIPE, stderr=f, timeout=4 * 3600)
+            p = subprocess.run(WSL_BASH, input=f"{VLLM_VENV}/bin/python -c {_q(code)} 2>>/tmp/tierb_download.err"
+                               .encode(), stdout=subprocess.PIPE, stderr=f, timeout=4 * 3600)
         out = p.stdout.decode("utf-8", "replace").strip().splitlines()
         if p.returncode != 0 or not out:
             err = self.wsl("tail -20 /tmp/tierb_download.err", check=False)
@@ -192,8 +193,9 @@ class WSLServer:
         cmd = f"echo $$ > {pidf}; exec bash -c \"$(sed 's/\\r$//' {sh})\" serve.sh {model}"
         self.log(f"[serving] starting vLLM for {model} (log: {log})")
         f = log.open("ab")
-        self.proc = subprocess.Popen(["wsl", "-d", DISTRO, "--", "bash", "-c", cmd], stdout=f,
-                                     stderr=subprocess.STDOUT)
+        self.proc = subprocess.Popen(WSL_BASH, stdin=subprocess.PIPE, stdout=f, stderr=subprocess.STDOUT)
+        self.proc.stdin.write((cmd + "\n").encode())
+        self.proc.stdin.close()
         self.model, self.external = model, False
         t0 = time.time()
         while time.time() - t0 < READY_TIMEOUT_S:
