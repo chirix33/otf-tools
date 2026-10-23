@@ -15,6 +15,11 @@ BUILTIN = {
     # upper bound: the same engine with the hand-written process model instead of a generated one
     "otf_oracle": ("clevrer_bench.systems.otf_system:OTFSystem",
                    {"model_code": str(Path(__file__).resolve().parents[2] / "oracle" / "oracle_model.py")}),
+    # Tier B baselines (SPEC sec. 11); `slot=1..3` selects the candidate configuration
+    "graphrag": ("clevrer_bench.systems.graphrag_system:GraphRAGSystem", {}),
+    "react_r": ("clevrer_bench.systems.react_system:ReActSystem", {"variant": "retrieve"}),
+    "react_c": ("clevrer_bench.systems.react_system:ReActSystem", {"variant": "code"}),
+    "recode": ("clevrer_bench.systems.recode_system:ReCodeSystem", {}),
 }
 
 

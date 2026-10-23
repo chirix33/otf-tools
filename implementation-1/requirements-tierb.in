@@ -1,0 +1,13 @@
+# Tier B experiment environment (Python 3.11). Compile: uv pip compile requirements-tierb.in --universal -p 3.11 -o requirements-tierb.lock
+openai>=2.54
+reportlab>=5.0
+pypdfium2>=5.0
+python-dotenv>=1.0
+tiktoken>=0.14
+numpy
+fastembed==0.9.0
+pdfplumber
+graphrag==3.3.0
+pyyaml
+pydantic
+pytest

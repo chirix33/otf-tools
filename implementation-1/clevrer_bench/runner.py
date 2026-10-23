@@ -58,8 +58,44 @@ def build_split(raw_dir: Path, runs_root: Path, name: str, n_videos: int, per_do
               extra={"split": name, "doc": doc_no, "split_seed": seed, "excluded_runs": exclude_runs})
 
 
+class CorruptPredictions(RuntimeError):
+    pass
+
+
+def load_predictions(pred_path: Path) -> list[dict]:
+    """Rows of predictions.jsonl. A torn *final* line (a crash mid-write) is moved to torn_lines.jsonl and cut
+    from the file; an unparseable line anywhere else is corruption and stops the run instead of being dropped."""
+    if not pred_path.exists():
+        return []
+    raw = pred_path.read_bytes()
+    lines = raw.split(b"\n")
+    rows, good_end = [], 0
+    for i, line in enumerate(lines):
+        if not line.strip():
+            good_end += len(line) + 1
+            continue
+        try:
+            rows.append(json.loads(line))
+            good_end += len(line) + 1
+        except ValueError:
+            if any(l.strip() for l in lines[i + 1:]):
+                raise CorruptPredictions(f"{pred_path}: unparseable line {i + 1} is not the last line; "
+                                         "inspect the file (nothing was discarded)")
+            with (pred_path.parent / "torn_lines.jsonl").open("ab") as f:
+                f.write(json.dumps({"t": time.time(), "line": line.decode("utf-8", "replace")}).encode() + b"\n")
+            with pred_path.open("r+b") as f:
+                f.truncate(min(good_end, len(raw)))
+            break
+    return rows
+
+
 def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None = None,
-               types: list[str] | None = None, per_type: int | None = None) -> Path:
+               types: list[str] | None = None, per_type: int | None = None, max_attempts: int | None = None,
+               should_stop=None, max_consecutive_errors: int | None = None) -> Path:
+    """Answer every question of `run_dir` with `system`, resuming by uid.
+    max_attempts: give up (leave unanswered, listed by the caller) on a question after this many errored
+    attempts; errored attempts are kept in attempts.jsonl. should_stop(): checked before each question starts
+    (deadline / interrupt). max_consecutive_errors: end the pass early when the server looks down."""
     items = load_items(run_dir / "items.jsonl")
     if types:
         items = [it for it in items if it.question_type in types]
@@ -74,29 +110,50 @@ def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None 
     work.mkdir(parents=True, exist_ok=True)
 
     doc = Document(run_dir / "document.pdf", json.loads((run_dir / "manifest.json").read_text()), work)
+    pred_path = out_dir / "predictions.jsonl"
+    rows = load_predictions(pred_path)          # before setup: corruption stops the run before any cost
     setup = system.setup(doc)
-    (out_dir / "setup.json").write_text(json.dumps(
-        {"system": system.name, "model": system.model, "reasoning_effort": system.reasoning_effort,
-         "model_spec": system.spec.to_dict(),
-         "usage": setup.usage.to_dict(), "latency_s": setup.latency_s, "info": setup.info}, indent=2))
+    setup_rec = {"system": system.name, "model": system.model, "reasoning_effort": system.reasoning_effort,
+                 "model_spec": system.spec.to_dict(),
+                 "usage": setup.usage.to_dict(), "latency_s": setup.latency_s, "info": setup.info}
+    if hasattr(system, "provenance"):
+        setup_rec["provenance"] = system.provenance()
+    (out_dir / "setup.json").write_text(json.dumps(setup_rec, indent=2, default=str))
     print(f"[{system.name}] setup: {setup.usage.total_tokens} tokens, {setup.latency_s:.1f}s {setup.info}")
 
-    pred_path = out_dir / "predictions.jsonl"
-    done = set()
-    if pred_path.exists():
-        for line in pred_path.read_text().splitlines():
-            r = json.loads(line)
-            if "error" not in r:
-                done.add(r["uid"])
-        # drop stale error rows; they will be retried
-        kept = [l for l in pred_path.read_text().splitlines() if "error" not in json.loads(l)]
-        pred_path.write_text("".join(l + "\n" for l in kept))
-    todo = [it for it in items if it.uid not in done]
+    done, kept, moved = set(), [], []
+    for r in rows:
+        if "error" in r or r["uid"] in done:   # errored attempts (and any duplicate) go to the attempt history
+            moved.append(r)
+        else:
+            done.add(r["uid"])
+            kept.append(r)
+    attempts_path = out_dir / "attempts.jsonl"
+    if moved:   # history first, then the rewrite: a crash in between can only duplicate history, never lose it
+        with attempts_path.open("a") as f:
+            f.write("".join(json.dumps(r, default=str) + "\n" for r in moved))
+        tmp = pred_path.with_suffix(".jsonl.tmp")
+        tmp.write_text("".join(json.dumps(r, default=str) + "\n" for r in kept))
+        tmp.replace(pred_path)
+    tries: dict[str, int] = {}
+    if max_attempts and attempts_path.exists():
+        for line in attempts_path.read_text().splitlines():
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            if "error" in r:
+                tries[r["uid"]] = tries.get(r["uid"], 0) + 1
+    todo = [it for it in items if it.uid not in done and (not max_attempts or tries.get(it.uid, 0) < max_attempts)]
     print(f"[{system.name}] {len(done)} already answered, {len(todo)} to go")
 
     lock = threading.Lock()
+    stop = threading.Event()
 
     def one(item):
+        if stop.is_set() or (should_stop and should_stop()):
+            stop.set()
+            return {"uid": item.uid, "skipped": True}
         prompt = build_question_prompt(item)
         rec = {"uid": item.uid, "question_type": item.question_type, "question_subtype": item.question_subtype}
         try:
@@ -113,16 +170,32 @@ def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None 
             f.write(json.dumps(rec, default=str) + "\n")
         return rec
 
-    t0, n_ok, n_err = time.time(), 0, 0
-    with ThreadPoolExecutor(max_workers=workers) as ex:
+    t0, n_ok, n_err, streak = time.time(), 0, 0, 0
+    ex = ThreadPoolExecutor(max_workers=workers)
+    try:
         futs = [ex.submit(one, it) for it in todo]
         for i, fut in enumerate(as_completed(futs), 1):
             r = fut.result()
+            if r.get("skipped"):
+                continue
             n_err += "error" in r
+            streak = streak + 1 if "error" in r else 0
             n_ok += bool(r.get("score", {}).get("question_correct"))
             if i % 10 == 0 or i == len(todo):
                 print(f"[{system.name}] {i}/{len(todo)}  correct={n_ok}  errors={n_err}  {time.time()-t0:.0f}s",
                       flush=True)
             if "error" in r and n_err <= 3:
                 print(f"[{system.name}] error on {r['uid']}: {r['error']}", flush=True)
+            if max_consecutive_errors and streak >= max_consecutive_errors and not stop.is_set():
+                print(f"[{system.name}] {streak} errors in a row: ending this pass", flush=True)
+                stop.set()
+    except BaseException:          # Ctrl+C: stop admitting work; in-flight answers still land in the file
+        stop.set()
+        ex.shutdown(wait=False, cancel_futures=True)
+        raise
+    ex.shutdown(wait=True)
+    answered = {r["uid"] for r in load_predictions(pred_path) if "error" not in r}
+    setup_rec["completion"] = {"expected": len(items), "answered": len(answered & {it.uid for it in items}),
+                               "complete": {it.uid for it in items} <= answered}
+    (out_dir / "setup.json").write_text(json.dumps(setup_rec, indent=2, default=str))
     return out_dir

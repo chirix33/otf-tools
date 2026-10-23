@@ -107,12 +107,16 @@ class RAGSystem(QASystem):
         return SetupResult(Usage(), time.time() - t, {"chunks": len(self.chunks), "embed_model": EMBED_MODEL,
                                                       "top_k": self.top_k})
 
+    def retrieve(self, query: str, k: int | None = None) -> tuple[list[int], str]:
+        """Top-k chunk indices by cosine similarity, and the passages formatted as the answer prompt shows them."""
+        q = self._embed([query])[0]
+        top = [int(j) for j in np.argsort(-(self.vectors @ q))[:k or self.top_k]]
+        return top, "\n\n".join(f"PASSAGE {i + 1} (pages {self.chunks[j]['pages']}):\n{self.chunks[j]['text']}"
+                                for i, j in enumerate(top))
+
     def answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
         t = time.time()
-        q = self._embed([prompt])[0]
-        top = np.argsort(-(self.vectors @ q))[:self.top_k]
-        ctx = "\n\n".join(f"PASSAGE {i + 1} (pages {self.chunks[j]['pages']}):\n{self.chunks[j]['text']}"
-                          for i, j in enumerate(top))
+        top, ctx = self.retrieve(prompt)
         messages = [{"role": "system", "content": instructions},
                     {"role": "user", "content": f"RETRIEVED PASSAGES FROM THE DOCUMENT:\n{ctx}\n\n{prompt}"}]
         if self.spec.is_local:
