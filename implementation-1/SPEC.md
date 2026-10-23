@@ -197,6 +197,16 @@ LLM-call or tool-call count.
 Qwen ~20 h vanilla plus ~10 h PageIndex. Baselines total ~48 h. Still to add: RAG (~8 h est.), ours (~25 h est.),
 E2 (~6 h). Grand total ~88 GPU-hours against ~144 wall-clock hours to Oct 27 evening, so the baselines must start immediately.
 
+**Priority rule (2026-10-22, user decision):** Qwen3.6-27B runs **full E1** (all 2,166 questions, all five
+systems) regardless of time. If the GPU time before the Oct 27 evening freeze runs short, cut in this order:
+first Tier B of the new baselines (Gemma/Qwen on E1-core), then E2 (the large-document experiment). Full E1 for
+all three models is not cut.
+
+**Update 2026-10-22:** a collaborator is running the **Tier B** new baselines on their own workstation, so they
+don't compete for this GPU. Their results will be merged when they arrive. For comparability they must use the same
+checkpoints, quantization, sampling and caps as `configs/models.json` and `scripts/serve.sh`. Token counts and
+accuracy are comparable across machines; latency is not, and is reported separately.
+
 ## 11. Additional baselines: GraphRAG, ReAct, ReCode (PLANNED, added 2026-10-22)
 
 Full design and reasoning: `docs/new_baselines_design.md`. **The current runs are not changed by this section.**
@@ -213,6 +223,6 @@ E1/E2 question is answered.
 | Shared caps | Same model and sampling as sec. 2; 16,384 output tokens per call; at most 12 model calls per question (cap hit = parse error, reported); stripped items; shared answer contract and scorer; all tokens counted, indexing as setup cost | FROZEN |
 | Tuning budget | At most 3 prompt/config variants per system (OTF included), compared on pilot20 only; all variants listed in the appendix | FROZEN |
 | OTF ablations | Reading-only (forced fallback); no-check (first simulator without the forecast check); no-divergence-replay; gold router; library off (= OTF single pass); oracle model (`otf_oracle`) | OPEN (switches not implemented yet) |
-| Compute tiers | Tier A (must): gpt-oss-20b, all four baselines on full E1 and on E2 (~20-25 GPU-h). Tier B (if time): Gemma and Qwen on E1-core = `e1_d03, d06, d09, d12, d15` (~720 questions; ~10 GPU-h per model). Go/no-go on Oct 25 09:00: if fewer than 40 GPU-h remain before the Oct 27 evening freeze, Tier B runs for Qwen only | FROZEN |
+| Compute tiers | Tier A (must): gpt-oss-20b, all four baselines on full E1 and on E2 (~20-25 GPU-h). Tier B (if time): Gemma and Qwen on E1-core = `e1_d03, d06, d09, d12, d15` (~720 questions; ~10 GPU-h per model). Go/no-go on Oct 25 09:00: if fewer than 40 GPU-h remain before the Oct 27 evening freeze, Tier B runs for Qwen only (superseded by the 2026-10-22 priority rule: Qwen's full E1 comes first; Tier B, then E2, are cut first if time is short) | FROZEN |
 | Reporting | Same reports as the other systems (accuracy with bootstrap CIs, paired differences vs OTF, McNemar), plus: cost-accuracy frontier, break-even curve (setup amortization), E1 to E2 degradation, counterfactual error overlap (UpSet), code-reliability table | FROZEN |
 
