@@ -203,6 +203,10 @@ class WSLServer:
     def owns_running(self) -> bool:
         return self.pid is not None and self.proc is not None and self.proc.poll() is None
 
+    def gpu_memory(self) -> str:
+        out = self.wsl("nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader", check=False)
+        return out.strip() or "unknown"
+
     def start(self, model: str) -> None:
         spec = get_model(model)
         log = self.logs / f"server__{model}.log"
@@ -210,7 +214,8 @@ class WSLServer:
         # CRLF-safe (a Windows checkout may convert line endings); exec keeps the PID through serve.sh's own exec
         sh = _q(wsl_path(ROOT / "scripts" / "serve.sh"))
         cmd = f"echo $$ > {pidf}; exec bash -c \"$(sed 's/\\r$//' {sh})\" serve.sh {model}"
-        self.log(f"[serving] starting vLLM for {model} (log: {log})")
+        used = self.gpu_memory()
+        self.log(f"[serving] starting vLLM for {model} (GPU memory already in use: {used}; log: {log})")
         f = log.open("ab")
         self.proc = subprocess.Popen(WSL_BASH, stdin=subprocess.PIPE, stdout=f, stderr=subprocess.STDOUT)
         self.proc.stdin.write((cmd + "\n").encode())
@@ -228,6 +233,15 @@ class WSLServer:
                 self.log(f"[serving] {model} ready after {time.time() - t0:.0f}s")
                 return
             if self.proc.poll() is not None:
+                tail = _tail(log, 400)
+                if "larger than the available KV cache memory" in tail:
+                    need = next((l.split("ValueError: ", 1)[1][:300] for l in tail.splitlines()
+                                 if "ValueError: To serve" in l), "")
+                    raise ServingError(
+                        f"vLLM for {model} loaded but has too little GPU memory left for its KV cache at the frozen "
+                        f"131,072-token context ({need}). Other programs were already using {used} of GPU memory "
+                        "before the start. Close GPU users (Ollama / LM Studio models, Docker Desktop, browsers and "
+                        "other GPU-accelerated apps; `nvidia-smi` in cmd lists them), then run the same command again.")
                 raise ServingError(f"vLLM for {model} exited with code {self.proc.returncode}. Last log lines "
                                    f"({log}):\n{_tail(log)}")
             time.sleep(10)
