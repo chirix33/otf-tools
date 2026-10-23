@@ -29,6 +29,10 @@ READY_TIMEOUT_S = 3600
 # Scripts go to bash on stdin, never on the command line: `wsl -- bash -c "..."` runs the line through a shell first,
 # which expands $PATH (Windows PATH entries like "Program Files (x86)") before bash sees the script.
 WSL_BASH = ["wsl", "-d", DISTRO, "--exec", "bash", "-s"]
+# Kernel choice only (like serve.sh's TRITON_ATTN): vLLM >= 0.30 samples with FlashInfer's top-k/top-p kernel, which
+# JIT-compiles with nvcc on first use; WSL has no CUDA toolkit (SPEC sec. 1-2). vLLM's own PyTorch sampler applies
+# the same top-k/top-p/temperature.
+SERVE_ENV = {"VLLM_USE_FLASHINFER_SAMPLER": "0"}
 
 
 class ServingError(RuntimeError):
@@ -121,7 +125,8 @@ class WSLServer:
             raise ServingError("torch inside the WSL vLLM venv cannot see the GPU (torch.cuda.is_available() is "
                                "False). Update the NVIDIA driver and run `wsl --update`.")
         free_gb = int(self.wsl("df -BG --output=avail ~ | tail -1").strip().rstrip("G") or 0)
-        return {"gpu": gpu, **info, "wsl_free_gb": free_gb, "distro": DISTRO, "serve_sh": "scripts/serve.sh"}
+        return {"gpu": gpu, **info, "wsl_free_gb": free_gb, "distro": DISTRO, "serve_sh": "scripts/serve.sh",
+                "serve_env": SERVE_ENV}
 
     def ensure_vllm(self) -> None:
         if self.wsl(f"test -x {VLLM_VENV}/bin/vllm && echo yes || echo no", timeout=60).strip() == "yes":
@@ -213,7 +218,8 @@ class WSLServer:
         pidf = f"/tmp/tierb_vllm_{os.getpid()}.pid"
         # CRLF-safe (a Windows checkout may convert line endings); exec keeps the PID through serve.sh's own exec
         sh = _q(wsl_path(ROOT / "scripts" / "serve.sh"))
-        cmd = f"echo $$ > {pidf}; exec bash -c \"$(sed 's/\\r$//' {sh})\" serve.sh {model}"
+        env = " ".join(f"export {k}={v};" for k, v in SERVE_ENV.items())
+        cmd = f"{env} echo $$ > {pidf}; exec bash -c \"$(sed 's/\\r$//' {sh})\" serve.sh {model}"
         used = self.gpu_memory()
         self.log(f"[serving] starting vLLM for {model} (GPU memory already in use: {used}; log: {log})")
         f = log.open("ab")
