@@ -109,6 +109,7 @@ class WSLServer:
             raise ServingError("No NVIDIA GPU visible inside WSL (`nvidia-smi` failed). Update the Windows NVIDIA "
                                "driver (WSL support is built in), run `wsl --update`, then re-run.")
         self.ensure_vllm()
+        self.ensure_build_tools()
         info = json.loads(self.wsl(f"{VLLM_VENV}/bin/python -c \"import json, vllm, torch; print(json.dumps("
                                    "{'vllm': vllm.__version__, 'torch': torch.__version__, "
                                    "'cuda': torch.version.cuda, 'gpu_ok': torch.cuda.is_available()}))\"",
@@ -135,6 +136,24 @@ class WSLServer:
             p = subprocess.run(WSL_BASH, input=script.encode(), stdout=f, stderr=subprocess.STDOUT, timeout=7200)
         if p.returncode != 0:
             raise ServingError(f"vLLM installation in WSL failed; see {log}:\n{_tail(log)}")
+
+    def ensure_build_tools(self) -> None:
+        """Triton JIT-compiles a C helper when vLLM starts: it needs gcc and the venv Python's headers. A fresh
+        Ubuntu has neither; install them as root (`wsl -u root` needs no password)."""
+        check = (f"command -v gcc >/dev/null && test -f \"$({VLLM_VENV}/bin/python -c "
+                 "'import sysconfig; print(sysconfig.get_paths()[\"include\"])')/Python.h\" && echo yes || echo no")
+        if self.wsl(check, timeout=120).strip().endswith("yes"):
+            return
+        self.log("[serving] installing the C compiler and Python headers in WSL (build-essential, python3-dev)")
+        log = self.logs / "build_tools_install.log"
+        script = ("set -e; export DEBIAN_FRONTEND=noninteractive; apt-get update; "
+                  "apt-get install -y build-essential python3-dev")
+        with log.open("ab") as f:
+            p = subprocess.run(["wsl", "-d", DISTRO, "-u", "root", "--exec", "bash", "-s"], input=script.encode(),
+                               stdout=f, stderr=subprocess.STDOUT, timeout=3600)
+        if p.returncode != 0 or not self.wsl(check, timeout=120).strip().endswith("yes"):
+            raise ServingError(f"could not install build-essential/python3-dev in WSL; see {log}. Manually: "
+                               f"wsl -d {DISTRO} -u root -- apt-get install -y build-essential python3-dev\n{_tail(log)}")
 
     def ensure_checkpoint(self, model: str) -> dict:
         """Download the model (if not cached) and check the default branch resolves to the SPEC revision."""
