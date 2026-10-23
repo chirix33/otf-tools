@@ -10,6 +10,7 @@ source ~/venvs/vllm/bin/activate
 COMMON=(--port 8000 --max-model-len 131072 --enable-prompt-tokens-details --enable-auto-tool-choice
         --seed 0 --attention-backend TRITON_ATTN
         --no-enable-flashinfer-autotune)   # autotuning made Gemma's startup exceed 30 min (2026-10-22)
+COMMON+=("${@:2}")   # optional extra flags after the alias (later flags win); none by default
 
 case "${1:?model alias}" in
   gpt-oss-20b)

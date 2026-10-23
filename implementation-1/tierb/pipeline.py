@@ -485,6 +485,7 @@ class Pipeline:
                     "actual_predictions": sum(j["answered"] for j in jobs),
                     "graphrag": graphrag_version(), "recode": {"repo": "FoundationAgents/ReCode", "commit": RECODE_COMMIT},
                     "freeze_manifests": sorted(str(p.relative_to(self.runs)) for p in (self.tb / "freeze").glob("*.json")),
+                    "serving": self._load("provenance.json", {}).get("serving", {}),
                     "failures": failures, "jobs": jobs}
         self._save("delivery_manifest.json", manifest)
         names = [f"{s}__{m}" for m in self.a.models for s in self.a.systems]
@@ -581,8 +582,9 @@ class Pipeline:
             if i > 0 and not self.gemma_admitted(self.a.models[i - 1], model):
                 partial_reason = f"{model} not admitted (previous model incomplete or not enough time)"
                 break
-            self.provenance(summary, {model: self.server.ensure_checkpoint(model)})
+            ckpt = self.server.ensure_checkpoint(model)
             self.server.ensure(model)
+            self.provenance(summary, {model: {**ckpt, "max_model_len": getattr(self.server, "max_model_len", None)}})
             for j, system in enumerate(self.a.systems):
                 if self.past_deadline():
                     partial_reason = "deadline reached"

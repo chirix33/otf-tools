@@ -33,6 +33,10 @@ WSL_BASH = ["wsl", "-d", DISTRO, "--exec", "bash", "-s"]
 # JIT-compiles with nvcc on first use; WSL has no CUDA toolkit (SPEC sec. 1-2). vLLM's own PyTorch sampler applies
 # the same top-k/top-p/temperature.
 SERVE_ENV = {"VLLM_USE_FLASHINFER_SAMPLER": "0"}
+# If the KV cache for one full 131,072-token request does not fit next to the weights, serve with this context
+# instead. Tier B requests stay far below it (longest: 12-call ReAct, ~70k tokens incl. the 16,384 output cap), so
+# answers are unaffected; a longer request would be scored as context overflow. Recorded in provenance.
+REDUCED_MAX_MODEL_LEN = 98304
 
 
 class ServingError(RuntimeError):
@@ -71,6 +75,7 @@ class WSLServer:
         self.logs, self.log = logs, log
         self.proc: subprocess.Popen | None = None
         self.pid: int | None = None        # PID (inside WSL) of the vLLM server this run started
+        self.max_model_len: int | None = None
         self.model: str | None = None
         self.external = False
 
@@ -212,21 +217,24 @@ class WSLServer:
         out = self.wsl("nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader", check=False)
         return out.strip() or "unknown"
 
-    def start(self, model: str) -> None:
+    def start(self, model: str, extra: tuple[str, ...] = ()) -> None:
         spec = get_model(model)
         log = self.logs / f"server__{model}.log"
         pidf = f"/tmp/tierb_vllm_{os.getpid()}.pid"
         # CRLF-safe (a Windows checkout may convert line endings); exec keeps the PID through serve.sh's own exec
         sh = _q(wsl_path(ROOT / "scripts" / "serve.sh"))
         env = " ".join(f"export {k}={v};" for k, v in SERVE_ENV.items())
-        cmd = f"{env} echo $$ > {pidf}; exec bash -c \"$(sed 's/\\r$//' {sh})\" serve.sh {model}"
+        args = " ".join(_q(a) for a in (model, *extra))
+        cmd = f"{env} echo $$ > {pidf}; exec bash -c \"$(sed 's/\\r$//' {sh})\" serve.sh {args}"
         used = self.gpu_memory()
         self.log(f"[serving] starting vLLM for {model} (GPU memory already in use: {used}; log: {log})")
         f = log.open("ab")
+        offset = log.stat().st_size               # read only this attempt's lines when diagnosing a failure
         self.proc = subprocess.Popen(WSL_BASH, stdin=subprocess.PIPE, stdout=f, stderr=subprocess.STDOUT)
         self.proc.stdin.write((cmd + "\n").encode())
         self.proc.stdin.close()
         self.model, self.external = model, False
+        self.max_model_len = REDUCED_MAX_MODEL_LEN if extra else 131072
         t0 = time.time()
         while time.time() - t0 < READY_TIMEOUT_S:
             if self.pid is None:
@@ -239,7 +247,14 @@ class WSLServer:
                 self.log(f"[serving] {model} ready after {time.time() - t0:.0f}s")
                 return
             if self.proc.poll() is not None:
-                tail = _tail(log, 400)
+                tail = log.read_bytes()[offset:].decode("utf-8", "replace")
+                if "larger than the available KV cache memory" in tail and not extra:
+                    self.log(f"[serving] the KV cache for a full 131,072-token request does not fit; restarting "
+                             f"{model} with --max-model-len {REDUCED_MAX_MODEL_LEN} (Tier B requests stay well "
+                             "below this; recorded in provenance)")
+                    self.proc, self.pid = None, None
+                    self.max_model_len = REDUCED_MAX_MODEL_LEN
+                    return self.start(model, ("--max-model-len", str(REDUCED_MAX_MODEL_LEN)))
                 if "larger than the available KV cache memory" in tail:
                     need = next((l.split("ValueError: ", 1)[1][:300] for l in tail.splitlines()
                                  if "ValueError: To serve" in l), "")
