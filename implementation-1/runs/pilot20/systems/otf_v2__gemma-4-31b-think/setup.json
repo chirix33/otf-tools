@@ -1,0 +1,39 @@
+{
+  "system": "otf_v2",
+  "model": "gemma-4-31b-think",
+  "reasoning_effort": null,
+  "model_spec": {
+    "alias": "gemma-4-31b-think",
+    "served_name": "RedHatAI/gemma-4-31B-it-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": null,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "top_k": 64,
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 234567,
+    "cached_input_tokens": 164992,
+    "output_tokens": 50402,
+    "reasoning_tokens": 19720,
+    "llm_calls": 17,
+    "total_tokens": 284969
+  },
+  "latency_s": 1628.8184978961945,
+  "info": {
+    "nodes": 81,
+    "scopes": 20,
+    "model_passed": true,
+    "model_f1": 0.722,
+    "model_tries": 14,
+    "model_reused_from": null
+  },
+  "system_as_run": "otf"
+}

@@ -1,0 +1,111 @@
+model gemma-4-31b-think, finished after 35 min
+
+SETUP:
+{
+  "system": "otf",
+  "model": "gemma-4-31b-think",
+  "reasoning_effort": null,
+  "model_spec": {
+    "alias": "gemma-4-31b-think",
+    "served_name": "RedHatAI/gemma-4-31B-it-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": null,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "top_k": 64,
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 234567,
+    "cached_input_tokens": 164992,
+    "output_tokens": 50402,
+    "reasoning_tokens": 19720,
+    "llm_calls": 17,
+    "total_tokens": 284969
+  },
+  "latency_s": 1628.8184978961945,
+  "info": {
+    "nodes": 81,
+    "scopes": 20,
+    "model_passed": true,
+    "model_f1": 0.722,
+    "model_tries": 14,
+    "model_reused_from": null
+  }
+}
+
+SMOKE:
+otf__gemma-4-31b-think: n=32 errors=0  coun 6/8  desc 8/8  expl 7/8  pred 7/8
+   tokens/q: in 1,428 (cached 1,002)  out 1,253 (reasoning 1,212, max 5,460)  latency/q 55.8s  truncated 0  parse_err 0
+
+
+GENERATION LOG:
+parsers attempt 1: passed
+explore 1: error, 70 chars
+explore 2: ok, 660 chars
+explore 3: ok, 119 chars
+simulate attempt 1 (after 3 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 24.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 50.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 96.82999999999645, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+- scope 'Video 10776' (start 15.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 17.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 65.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 42.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 35.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 85.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 88.57999999999689, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}, {'time': 89.12999999999685, 'kind': 'collides', 'participants': ['Object 1', 'Object 5']}]
+- scope 'Video 11789' (start 16.73): F1 0.0, recorded 1 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 18.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}]; extra (produced but not recorded): [{'time': 58.7299999999987, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+- scope 'Video 12052' (start 39.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 41.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): [{'time': 77.17999999999788, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+simulate attempt 2 (after 3 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 24.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 50.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 96.82999999999872, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+- scope 'Video 10776' (start 15.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 17.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 65.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 42.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 35.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 85.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 88.52999999999903, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}, {'time': 89.32999999999899, 'kind': 'collides', 'participants': ['Object 1', 'Object 5']}]
+- scope 'Video 11789' (start 16.73): F1 0.0, recorded 1 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 18.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}]; extra (produced but not recorded): [{'time': 58.730000000000594, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}, {'time': 60.130000000000614, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+- scope 'Video 12052' (start 39.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 41.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): [{'time': 77.1299999999996, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}, {'time': 78.42999999999952, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+simulate attempt 3 (after 3 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 24.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 50.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 96.78999999999829, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+- scope 'Video 10776' (start 15.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 17.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 65.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 42.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 35.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 85.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 88.54999999999984, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}, {'time': 88.92999999999977, 'kind': 'collides', 'participants': ['Object 1', 'Object 5']}]
+- scope 'Video 11789' (start 16.73): F1 0.0, recorded 1 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 18.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}]; extra (produced but not recorded): [{'time': 58.69000000000385, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+- scope 'Video 12052' (start 39.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 41.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): [{'time': 77.15000000000117, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+simulate attempt 4 (after 3 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 24.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 50.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 96.80000000001186, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+- scope 'Video 10776' (start 15.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 17.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 65.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 42.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 35.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 85.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 88.58000000000655, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}, {'time': 89.09000000000681, 'kind': 'collides', 'participants': ['Object 1', 'Object 5']}]
+- scope 'Video 11789' (start 16.73): F1 0.0, recorded 1 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 18.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}]; extra (produced but not recorded): [{'time': 58.71999999999707, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+- scope 'Video 12052' (start 39.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 41.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): [{'time': 77.1600000000019, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+simulate attempt 5 (after 3 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 24.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 50.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 96.78000000001185, 'kind': 'collides', 'participants': ['Object 2', 'Object 3']}]
+- scope 'Video 10776' (start 15.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 17.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 65.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 42.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 35.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 85.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 88.55000000000653, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}, {'time': 88.93000000000673, 'kind': 'collides', 'participants': ['Object 1', 'Object 5']}]
+- scope 'Video 11789' (start 16.73): F1 0.0, recorded 1 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 18.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}]; extra (produced but not recorded): [{'time': 58.699999999997075, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+- scope 'Video 12052' (start 39.73): F1 0.0, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 41.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 1']}, {'time': 64.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): [{'time': 77.14000000000189, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+simulator conversation 1: best F1 0.0
+explore 1: ok, 1054 chars
+explore 2: ok, 3000 chars
+explore 3: ok, 32 chars
+explore 4: ok, 57 chars
+simulate attempt 1 (after 4 explore runs): mean event-match F1 = 0.722 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.5, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 50.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 33.730000000000004, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]
+- scope 'Video 10776' (start 15.73): F1 0.667, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 65.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.5, recorded 3 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 64.0, 'kind': 'collides', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.667, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 85.0, 'kind': 'collides', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11789' (start 16.73): F1 1.0, recorded 1 interaction events after start, model produced 1; missed (recorded but not produced): []; extra (produced but not recorded): []
+- scope 'Video 12052' (start 39.73): F1 1.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): []; extra (produced but not recorded): []
+simulator conversation 2: best F1 0.722
+
+
+RUN OUTPUT (tail):
+[otf] setup: 284969 tokens, 1628.8s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.722, 'model_tries': 14, 'model_reused_from': None}
+[otf] 0 already answered, 32 to go
+[otf] 10/32  correct=8  errors=0  277s
+[otf] 20/32  correct=18  errors=0  373s
+[otf] 30/32  correct=27  errors=0  442s
+[otf] 32/32  correct=28  errors=0  458s
+
+

@@ -1,0 +1,1194 @@
+{
+ "key": {
+  "pdf_sha": "dba77973e3cf58f6",
+  "model": "gpt-oss-20b",
+  "max_tries": 3
+ },
+ "model": {
+  "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n\n\n# ---- step 2: forward model ----\nimport math, re\nfrom typing import List, Dict, Any\n\n# ----------------------------------------------------------------------\n# Parameters tuned from exploratory analysis\n# ----------------------------------------------------------------------\nFRAME_TIME = 5.0 / 127.0      # seconds per frame\nCOLLISION_DIST = 0.6          # approximate contact distance\n\n# ----------------------------------------------------------------------\n# Helper: parse motion log for a scope\n# ----------------------------------------------------------------------\ndef _parse_motion(doc: Dict[str, Any], scope: str) -> Dict[str, List[Dict[str, float]]]:\n    \"\"\"\n    Return `{obj_id: list of records}` for the requested scope.\n    Each record contains: frame, x, y, vx, vy, speed.\n    \"\"\"\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope), None)\n    if not scope_node:\n        return {}\n\n    motion = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, speed = map(float, row[2:7])\n                except Exception:\n                    continue\n                motion.setdefault(oid, []).append(\n                    {\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": speed}\n                )\n    for lst in motion.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return motion\n\n# ----------------------------------------------------------------------\n# Simulation routine\n# ----------------------------------------------------------------------\ndef simulate(doc: Dict[str, Any],\n             scope: str,\n             removed=(),\n             horizon=None,\n             start=0.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Simulate motion for the objects in *scope*.\n    Returns collision events (time as frame number) occurring after *start*.\n    \"\"\"\n    # 1. Set of objects to consider\n    obj_ids = {e[\"id\"] for e in entities(doc, scope)} - set(removed)\n\n    # 2. Load motion logs\n    motion = _parse_motion(doc, scope)\n\n    # 3. Initialise states at the start time\n    states = {}\n    for oid in obj_ids:\n        recs = motion.get(oid, [])\n        if not recs:\n            continue\n        first_f, last_f = recs[0][\"frame\"], recs[-1][\"frame\"]\n\n        # Find last record <= start\n        state = None\n        for r in recs:\n            if r[\"frame\"] <= start:\n                state = r\n\n        if state:\n            dt = (start - state[\"frame\"]) * FRAME_TIME\n            x = state[\"x\"] + state[\"vx\"] * dt\n            y = state[\"y\"] + state[\"vy\"] * dt\n            states[oid] = {\n                \"frame\": start,\n                \"x\": x,\n                \"y\": y,\n                \"vx\": state[\"vx\"],\n                \"vy\": state[\"vy\"],\n                \"speed\": state[\"speed\"],\n                \"first_frame\": first_f,\n                \"last_frame\": last_f,\n            }\n        else:\n            r0 = recs[0]\n            states[oid] = {\n                \"frame\": r0[\"frame\"],\n                \"x\": r0[\"x\"],\n                \"y\": r0[\"y\"],\n                \"vx\": r0[\"vx\"],\n                \"vy\": r0[\"vy\"],\n                \"speed\": r0[\"speed\"],\n                \"first_frame\": r0[\"frame\"],\n                \"last_frame\": last_f,\n            }\n\n    # 4. Simulation limits\n    if horizon is None:\n        horizon = recorded_end(doc, scope)\n\n    # 5. Collision state tracking\n    pair_active: Dict[tuple, bool] = {}\n\n    # 6. Simulation loop \u2013 step one frame at a time\n    cur_frame = int(math.floor(start))\n    events: List[Dict[str, Any]] = []\n\n    while cur_frame < int(math.floor(horizon)):\n        t_seconds = cur_frame * FRAME_TIME\n\n        # Move every visible object\n        for st in states.values():\n            if t_seconds < st[\"first_frame\"] * FRAME_TIME:\n                continue\n            st[\"x\"] += st[\"vx\"] * FRAME_TIME\n            st[\"y\"] += st[\"vy\"] * FRAME_TIME\n\n        # Check collisions between all pairs\n        oid_list = list(states.keys())\n        for i in range(len(oid_list)):\n            oi = oid_list[i]\n            sti = states[oi]\n            if t_seconds < sti[\"first_frame\"] * FRAME_TIME:\n                continue\n            for j in range(i + 1, len(oid_list)):\n                oj = oid_list[j]\n                stj = states[oj]\n                if t_seconds < stj[\"first_frame\"] * FRAME_TIME:\n                    continue\n\n                pair = tuple(sorted((oi, oj)))\n                dx = sti[\"x\"] - stj[\"x\"]\n                dy = sti[\"y\"] - stj[\"y\"]\n                d = math.hypot(dx, dy)\n\n                active = pair_active.get(pair, False)\n                if d <= COLLISION_DIST:\n                    if not active:\n                        event_time = cur_frame + 1.0  # event occurs after this frame step\n                        if event_time >= start:\n                            events.append({\n                                \"time\": event_time,\n                                \"kind\": \"collision\",\n                                \"participants\": [oi, oj],\n                            })\n                        # Simple elastic response (equal mass)\n                        # Normal vector\n                        if d == 0:\n                            nx, ny = 1.0, 0.0\n                        else:\n                            nx, ny = dx / d, dy / d\n                        rvx, rvy = sti[\"vx\"] - stj[\"vx\"], sti[\"vy\"] - stj[\"vy\"]\n                        rel = rvx * nx + rvy * ny\n                        sti[\"vx\"] -= rel * nx\n                        sti[\"vy\"] -= rel * ny\n                        stj[\"vx\"] += rel * nx\n                        stj[\"vy\"] += rel * ny\n                        sti[\"speed\"] = math.hypot(sti[\"vx\"], sti[\"vy\"])\n                        stj[\"speed\"] = math.hypot(stj[\"vx\"], stj[\"vy\"])\n                        pair_active[pair] = True\n                else:\n                    # became separated \u2013 allow a future collision\n                    pair_active[pair] = False\n\n        cur_frame += 1\n\n    # 7. Return events sorted by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n",
+  "passed": true,
+  "mean_f1": 0.561,
+  "tries": 12,
+  "attempts": [
+   {
+    "step": "parsers",
+    "try": 1,
+    "report": {
+     "passed": true,
+     "error": null
+    },
+    "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n"
+   },
+   {
+    "step": "explore",
+    "try": 1,
+    "code": "# 1.  Basic info about the document\nfrom typing import List, Dict, Any\nimport re\n\n# Count the number of videos\nvideos = [n for n in doc[\"nodes\"] if n[\"kind\"] == \"text\" and n[\"title\"].startswith(\"Video \")]\nprint(f\"Number of videos: {len(videos)}\")\nprint(\"First 5 video titles:\", [v[\"title\"] for v in videos[:5]])\n\n\n# 2.  Inspect the example scope to verify that the helper functions work as expected\nscope = \"Video 14337\"\nprint(\"Entities:\", entities(doc, scope))\nprint(\"Recorded end:\", recorded_end(doc, scope))\nprint(\"Observed events:\", observed_events(doc, scope))\n\n\n# 3.  Distribution of recorded velocities (magnitude) across all scopes\nfrom statistics import mean, stdev\nmags = []\n\nfor n in doc[\"nodes\"]:\n    if n[\"kind\"] == \"table\" and n[\"title\"].endswith(\": Motion log\"):\n        for row in n[\"table\"][\"rows\"]:\n            try:\n                vx, vy = float(row[4]), float(row[5])\n                mags.append((vx**2 + vy**2)**0.5)\n            except ValueError:\n                continue\n\nprint(f\"Total velocity records: {len(mags)}\")\nprint(f\"Mean speed: {mean(mags):.3f}  (std: {stdev(mags):.3f})\")\n\n\n# 4.  Estimate collision distances to understand how we can infer radii\n# Gather all collision events and the corresponding inter\u2011object distances\nfrom collections import defaultdict\ndistances = []  # list of (id1,id2,distance)\n\n# helper to interpolate a position within a scope\ndef pos_at_time(rows, obj_id, t):\n    recs = [(float(row[0]), np.array([float(row[2]), float(row[3])])) \n            for row in rows if re.match(rf'{obj_id}\\\\s+', row[1])]\n    recs.sort()\n    if not recs:\n        return None\n    for i in range(len(recs)-1):\n        f0, p0 = recs[i]\n        f1, p1 = recs[i+1]\n        if f0 <= t <= f1:\n            frac = (t - f0) / (f1 - f0)\n            return p0 + frac * (p1 - p0)\n    # if t is after last record return last position\n    return recs[-1][1]\n\nfor video in videos:\n    scope = video[\"title\"]\n    evs = observed_events(doc, scope)\n    # find the motion-log table for this scope\n    motion = next((n for n in doc[\"nodes\"] if n[\"kind\"] == \"table\" \n                   and n[\"title\"] == f\"{scope}: Motion log\"), None)\n    if motion is None:\n        continue\n    rows = motion[\"table\"][\"rows\"]\n    for e in evs:\n        time = e[\"time\"]\n        i, j = e[\"participants\"]\n        pi = pos_at_time(rows, i, time)\n        pj = pos_at_time(rows, j, time)\n        if pi is not None and pj is not None:\n            d = np.linalg.norm(pi - pj)\n            distances.append((i, j, d))\n\nprint(f\"Collected {len(distances)} collision distances.\")\n# Show min / mean / max\nif distances:\n    ds = [d for _,_,d in distances]\n    print(f\"distances in [min, mean, max]: {[min(ds), mean(ds), max(ds)]}\")\n",
+    "output": "Number of videos: 20\nFirst 5 video titles: ['Video 10119', 'Video 10136', 'Video 10570', 'Video 10898', 'Video 11311']\nEntities: [{'id': '0', 'description': 'blue rubber cube'}, {'id': '1', 'description': 'green rubber sphere'}, {'id': '2', 'description': 'gray rubber cylinder'}, {'id': '3', 'description': 'red metal sphere'}, {'id': '4', 'description': 'red metal cube'}, {'id': '5', 'description': 'gray metal sphere'}]\nRecorded end: 127.0\nObserved events: [{'time': 55.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 72.0, 'kind': 'collision', 'participants': ['1', '3']}, {'time': 89.0, 'kind': 'collision', 'participants': ['0', '2']}]\nTotal velocity records: 1774\nMean speed: 0.809  (std: 0.834)\nCollected 0 collision distances.\n"
+   },
+   {
+    "step": "explore",
+    "try": 2,
+    "code": "# Print the lines of the Events list for Video 14337\nscope = \"Video 14337\"\nev_node = next((n for n in doc[\"nodes\"] \n                if n[\"kind\"] == \"list\" and n[\"title\"] == f\"{scope}: Events\"), None)\nif ev_node:\n    for line in ev_node[\"lines\"]:\n        print(line)\nelse:\n    print(\"No Events node found\")\n",
+    "output": "Frame 0: Object 1 (green rubber sphere) is in view when the video begins.\nFrame 0: Object 4 (red metal cube) is in view when the video begins.\nFrame 0: Object 5 (gray metal sphere) is in view when the video begins.\nFrame 16: Object 0 (blue rubber cube) enters the scene.\nFrame 55: Object 0 (blue rubber cube) collides with Object 1 (green rubber sphere).\nFrame 67: Object 3 (red metal sphere) enters the scene.\nFrame 72: Object 1 (green rubber sphere) collides with Object 3 (red metal sphere).\nFrame 79: Object 2 (gray rubber cylinder) enters the scene.\nFrame 89: Object 0 (blue rubber cube) collides with Object 2 (gray rubber cylinder).\nFrame 127: The video ends.\n"
+   },
+   {
+    "step": "explore",
+    "try": 1,
+    "code": "import math, re, itertools\ndef compute_friction():\n    all_rec = []\n    for node in doc[\"nodes\"]:\n        if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n            scope = node[\"title\"]\n            for child_id in node.get(\"children\", []):\n                child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n                if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n                    rows = child[\"table\"][\"rows\"]\n                    obj_recs = {}\n                    for row in rows:\n                        try:\n                            f = int(row[0])\n                            oid = row[1].split()[0]\n                            x, y, vx, vy, sp = map(float, row[2:7])\n                        except:\n                            continue\n                        obj_recs.setdefault(oid, []).append({\"frame\": f, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": sp})\n                    for recs in obj_recs.values():\n                        recs.sort(key=lambda r: r[\"frame\"])\n                        for i in range(len(recs) - 1):\n                            r1, r2 = recs[i], recs[i + 1]\n                            dt = (r2[\"frame\"] - r1[\"frame\"]) * 5.0 / 127.0\n                            if dt <= 0:\n                                continue\n                            sp1, sp2 = r1[\"speed\"], r2[\"speed\"]\n                            if sp1 > sp2 > 0:\n                                all_rec.append((sp1 - sp2) / dt)\n\n    return all_rec\n\nfracs = compute_friction()\nprint(\"total decel samples:\", len(fracs))\nif fracs:\n    fracs.sort()\n    print(\"median friction decel:\", fracs[len(fracs) // 2])\n\n\nimport math\nall_dists = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        scope = node[\"title\"]\n        evs = observed_events(doc, scope)\n        logs = _motion_records_for_scope(doc, scope)\n        for ev in evs:\n            t = int(ev[\"time\"])\n            oid1, oid2 = ev[\"participants\"]\n            r1 = next((r for r in logs.get(oid1, []) if r[\"frame\"] == t), None)\n            r2 = next((r for r in logs.get(oid2, []) if r[\"frame\"] == t), None)\n            if r1 and r2:\n                d = math.hypot(r1[\"x\"] - r2[\"x\"], r1[\"y\"] - r2[\"y\"])\n                all_dists.append(d)\nprint(\"collision distance samples:\", len(all_dists))\nif all_dists:\n    all_dists.sort()\n    print(\"mean:\", sum(all_dists) / len(all_dists))\n    print(\"median:\", all_dists[len(all_dists) // 2])\n\n\nimport math\nbefore = []\nafter = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        scope = node[\"title\"]\n        evs = observed_events(doc, scope)\n        logs = _motion_records_for_scope(doc, scope)\n        for ev in evs:\n            t = int(ev[\"time\"])\n            for oid in ev[\"participants\"]:\n                r_t = next((r for r in logs.get(oid, []) if r[\"frame\"] == t), None)\n                r_t1 = next((r for r in logs.get(oid, []) if r[\"frame\"] == t + 1), None)\n                if r_t:\n                    before.append(r_t[\"speed\"])\n                if r_t1:\n                    after.append(r_t1[\"speed\"])\nprint(\"samples before:\", len(before), \"after:\", len(after))\nprint(\"mean before:\", sum(before) / len(before) if before else None)\nprint(\"mean after:\", sum(after) / len(after) if after else None)\n",
+    "output": "total decel samples: 0\n\nERROR:\nTraceback (most recent call last):\n  File \"C:\\Users\\aashraf\\AppData\\Local\\Temp\\tmpwqa89cgt\\runner.py\", line 12, in <module>\n    exec(spec[\"code\"], ns)\n    ~~~~^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 143, in <module>\nNameError: name '_motion_records_for_scope' is not defined\n"
+   },
+   {
+    "step": "explore",
+    "try": 2,
+    "code": "import re, math\nrecords = {}\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"table\" and node.get(\"title\", \"\").endswith(\": Motion log\"):\n        for row in node[\"table\"][\"rows\"]:\n            try:\n                frame = int(row[0])\n                oid = row[1].split()[0]\n                speed = float(row[6])\n            except:\n                continue\n            records.setdefault(oid, []).append((frame, speed))\n\ndecels = []\nfor oid, recs in records.items():\n    recs.sort()\n    for i in range(len(recs)-1):\n        f1, s1 = recs[i]\n        f2, s2 = recs[i+1]\n        dt = (f2-f1)*5.0/127.0\n        if dt<=0: continue\n        if s1 > s2 > 0:\n            decels.append((s1-s2)/dt)\n\nprint(\"decels samples:\", len(decels))\nif decels:\n    decels.sort()\n    print(\"median decel:\", decels[len(decels)//2])\n\n\nimport re, math\ndistances = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        # get events\n        evs = observed_events(doc, node[\"title\"])\n        if not evs: continue\n        # get motion log\n        logs = {}\n        for child_id in node.get(\"children\", []):\n            child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n            if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n                for row in child[\"table\"][\"rows\"]:\n                    try:\n                        frame = int(row[0])\n                        oid = row[1].split()[0]\n                        x, y = map(float, row[2:4])\n                    except:\n                        continue\n                    logs.setdefault(oid, []).append((frame, x, y))\n        for ev in evs:\n            t = int(ev[\"time\"])\n            o1, o2 = ev[\"participants\"]\n            r1 = next((r for r in logs.get(o1, []) if r[0]==t), None)\n            r2 = next((r for r in logs.get(o2, []) if r[0]==t), None)\n            if r1 and r2:\n                d = math.hypot(r1[1]-r2[1], r1[2]-r2[2])\n                distances.append(d)\nprint(\"collision distances samples:\", len(distances))\nif distances:\n    distances.sort()\n    print(\"mean:\", sum(distances)/len(distances))\n    print(\"median:\", distances[len(distances)//2])\n\n\nimport re, math\nbefore, after = [], []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        evs = observed_events(doc, node[\"title\"])\n        if not evs: continue\n        logs = {}\n        for child_id in node.get(\"children\", []):\n            child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n            if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n                for row in child[\"table\"][\"rows\"]:\n                    try:\n                        frame = int(row[0])\n                        oid = row[1].split()[0]\n                        sp = float(row[6])\n                    except:\n                        continue\n                    logs.setdefault(oid, []).append((frame, sp))\n        for ev in evs:\n            t = int(ev[\"time\"])\n            for oid in ev[\"participants\"]:\n                r_t = next((s for f,s in logs.get(oid, []) if f==t), None)\n                r_tp = next((s for f,s in logs.get(oid, []) if f==t+1), None)\n                if r_t: before.append(r_t)\n                if r_tp: after.append(r_tp)\nprint(\"before samples:\", len(before), \"after samples:\", len(after))\nif before and after:\n    print(\"mean before:\", sum(before)/len(before))\n    print(\"mean after:\", sum(after)/len(after))\n",
+    "output": "decels samples: 147\nmedian decel: 7.9756\ncollision distances samples: 0\nbefore samples: 0 after samples: 0\n"
+   },
+   {
+    "step": "explore",
+    "try": 3,
+    "code": "import math, re\nfrom collections import defaultdict\n\n# compute collision distances at recorded events\ndist_samples = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        scope = node[\"title\"]\n        evs = observed_events(doc, scope)\n        if not evs:\n            continue\n        motion = _parse_motion(doc, scope)\n        for ev in evs:\n            t = int(ev[\"time\"])\n            o1, o2 = ev[\"participants\"]\n            r1 = next((r for r in motion.get(o1, []) if r[\"frame\"] == t), None)\n            r2 = next((r for r in motion.get(o2, []) if r[\"frame\"] == t), None)\n            if r1 and r2:\n                d = math.hypot(r1[\"x\"] - r2[\"x\"], r1[\"y\"] - r2[\"y\"])\n                dist_samples.append(d)\n\nprint(\"collision distance samples:\", len(dist_samples))\nif dist_samples:\n    dist_samples.sort()\n    print(\"mean:\", sum(dist_samples)/len(dist_samples))\n    print(\"median:\", dist_samples[len(dist_samples)//2])\n    print(\"max:\", max(dist_samples), \"min:\", min(dist_samples))\n\n\n# compute speeds of participants at recorded collisions\nspeed_samples = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        scope = node[\"title\"]\n        evs = observed_events(doc, scope)\n        motion = _parse_motion(doc, scope)\n        for ev in evs:\n            t = int(ev[\"time\"])\n            for oid in ev[\"participants\"]:\n                r = next((r for r in motion.get(oid, []) if r[\"frame\"] == t), None)\n                if r:\n                    speed_samples.append(r[\"speed\"])\nprint(\"speed samples at collisions:\", len(speed_samples))\nif speed_samples:\n    speed_samples.sort()\n    print(\"mean speed:\", sum(speed_samples)/len(speed_samples))\n    print(\"median speed:\", speed_samples[len(speed_samples)//2])\n    print(\"max/min:\", max(speed_samples), min(speed_samples))\n\n\n# sanity check for friction by comparing speed decrease over many consecutive frames\ndecelerations = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"table\" and node.get(\"title\", \"\").endswith(\": Motion log\"):\n        for row in node[\"table\"][\"rows\"]:\n            try:\n                f = int(row[0])\n                oid = row[1].split()[0]\n                sp = float(row[6])\n            except:\n                continue\n            decelerations.append((f, oid, sp))\ndecelerations.sort()\ngrp = {}\nfor f, oid, sp in decelerations:\n    grp.setdefault(oid, []).append((f, sp))\ndecel_samples = []\nfor oid, lst in grp.items():\n    for i in range(len(lst)-1):\n        f1, s1 = lst[i]\n        f2, s2 = lst[i+1]\n        dt = (f2-f1) * 5.0 / 127.0\n        if dt<=0: continue\n        if s1 > s2 > 0:\n            decel_samples.append((s1-s2)/dt)\nprint(\"deceleration samples:\", len(decel_samples))\nif decel_samples:\n    decel_samples.sort()\n    print(\"median decel:\", decel_samples[len(decel_samples)//2])\n",
+    "output": "collision distance samples: 0\n\nERROR:\nTraceback (most recent call last):\n  File \"C:\\Users\\aashraf\\AppData\\Local\\Temp\\tmp3y0t_cv5\\runner.py\", line 12, in <module>\n    exec(spec[\"code\"], ns)\n    ~~~~^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 133, in <module>\nNameError: name '_parse_motion' is not defined\n"
+   },
+   {
+    "step": "explore",
+    "try": 4,
+    "code": "import math, re\n# simple parsing of a motion log for a given scope\ndef _read_motion_for_scope(scope_title):\n    mot = {}\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope_title), None)\n    if not scope_node:\n        return mot\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, sp = map(float, row[2:7])  # 6 items: x,y,vx,vy,speed\n                except:\n                    continue\n                mot.setdefault(oid, []).append({\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": sp})\n    for lst in mot.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return mot\n\n# 1. collision distances at recorded events\ndist_samples = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        scope = node[\"title\"]\n        evs = observed_events(doc, scope)\n        if not evs:\n            continue\n        motion = _read_motion_for_scope(scope)\n        for ev in evs:\n            t = int(ev[\"time\"])\n            o1, o2 = ev[\"participants\"]\n            r1 = next((r for r in motion.get(o1, []) if r[\"frame\"] == t), None)\n            r2 = next((r for r in motion.get(o2, []) if r[\"frame\"] == t), None)\n            if r1 and r2:\n                dist_samples.append(math.hypot(r1[\"x\"]-r2[\"x\"], r1[\"y\"]-r2[\"y\"]))\nprint(\"collision distance samples:\", len(dist_samples))\nif dist_samples:\n    print(\"min:\", min(dist_samples), \"max:\", max(dist_samples))\n\n# 2. speeds at collision times\nspeed_samples = []\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"list\" and node.get(\"title\", \"\").startswith(\"Video \"):\n        scope = node[\"title\"]\n        evs = observed_events(doc, scope)\n        motion = _read_motion_for_scope(scope)\n        for ev in evs:\n            t = int(ev[\"time\"])\n            for oid in ev[\"participants\"]:\n                r = next((r for r in motion.get(oid, []) if r[\"frame\"] == t), None)\n                if r:\n                    speed_samples.append(r[\"speed\"])\nprint(\"speed samples at collisions:\", len(speed_samples))\nif speed_samples:\n    print(\"min:\", min(speed_samples), \"max:\", max(speed_samples))\n\n\n# collision detection quality: how often adjacent records show near overlap?\nviolations = 0\ntotal = 0\nfor node in doc[\"nodes\"]:\n    if node.get(\"kind\") == \"table\" and node.get(\"title\", \"\").endswith(\": Motion log\"):\n        for row in node[\"table\"][\"rows\"]:\n            try:\n                oid = row[1].split()[0]\n                sp = float(row[6])\n            except:\n                continue\n            total += 1\nprint(\"total records inspected:\", total)\n",
+    "output": "collision distance samples: 0\nspeed samples at collisions: 0\ntotal records inspected: 1774\n"
+   },
+   {
+    "step": "simulate",
+    "try": 1,
+    "report": {
+     "scopes": [
+      {
+       "scope": "Video 10119",
+       "start": 32.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 34.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 109.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10136",
+       "start": 34.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 36.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 82.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10570",
+       "start": 12.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 14.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 113.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10898",
+       "start": 49.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 51.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 71.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 11311",
+       "start": 13.73,
+       "f1": 0.0,
+       "observed": 3,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 15.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "3"
+         ]
+        },
+        {
+         "time": 40.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        },
+        {
+         "time": 55.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 11375",
+       "start": 29.73,
+       "f1": 0.0,
+       "observed": 3,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 31.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 35.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        },
+        {
+         "time": 57.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        }
+       ],
+       "extra": []
+      }
+     ],
+     "mean_f1": 0.0,
+     "passed": false,
+     "error": null
+    },
+    "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n\n\n# ---- step 2: forward model ----\nimport math, re\nfrom typing import List, Dict, Any\n\n# ----------------------------------------------------------------------\n# Constants (empirical values derived from the corpus)\n# ----------------------------------------------------------------------\nFRAME_TIME = 5.0 / 127.0                # seconds per frame\nFRICTION_DECEL = 7.98                    # m/s\u00b2 \u2013 median of recorded decelerations\nCOLLISION_DISTANCE = 0.3                 # typical contact distance (tunable)\n\n# ----------------------------------------------------------------------\n# Helper: parse the motion log for a specific scope\n# ----------------------------------------------------------------------\ndef _parse_motion(doc: Dict[str, Any], scope: str) -> Dict[str, List[Dict[str, float]]]:\n    \"\"\"\n    Return a dictionary {obj_id: list of records} for the requested scope.\n    Each record contains: frame, x, y, vx, vy, speed.\n    \"\"\"\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope), None)\n    if not scope_node:\n        return {}\n\n    motion = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, speed = map(float, row[2:7])\n                except Exception:\n                    continue\n                motion.setdefault(oid, []).append(\n                    {\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": speed}\n                )\n    for lst in motion.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return motion\n\n# ----------------------------------------------------------------------\n# Forward simulation\n# ----------------------------------------------------------------------\ndef simulate(doc: Dict[str, Any], scope: str, removed=(), horizon=None, start=0.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Run a simple kinematic model for the given scope.  Only records at or\n    before ``start`` are used; everything else is predicted.\n    \"\"\"\n    # 1. Determine the set of objects to keep in this simulation\n    obj_ids = {e[\"id\"] for e in entities(doc, scope)} - set(removed)\n\n    # 2. Load motion data for the scope\n    motion = _parse_motion(doc, scope)\n\n    # 3. Initialise states at the start time\n    states = {}\n    for oid in obj_ids:\n        recs = motion.get(oid, [])\n        if not recs:\n            continue\n\n        first_f, last_f = recs[0][\"frame\"], recs[-1][\"frame\"]\n        state = None\n        for r in recs:\n            if r[\"frame\"] <= start:\n                state = r\n\n        if state:  # object already in view at start\n            dt = (start - state[\"frame\"]) * FRAME_TIME\n            x, y, vx, vy, sp = state[\"x\"], state[\"y\"], state[\"vx\"], state[\"vy\"], state[\"speed\"]\n            if sp > 0:\n                ux, uy = vx / sp, vy / sp\n                if FRICTION_DECEL > 0:\n                    if sp <= FRICTION_DECEL * dt:\n                        disp = 0.5 * sp * sp / FRICTION_DECEL\n                        x += ux * disp\n                        y += uy * disp\n                        vx = vy = 0.0\n                        sp = 0.0\n                    else:\n                        disp = sp * dt - 0.5 * FRICTION_DECEL * dt * dt\n                        x += ux * disp\n                        y += uy * disp\n                        new_sp = sp - FRICTION_DECEL * dt\n                        vx = ux * new_sp\n                        vy = uy * new_sp\n                        sp = new_sp\n            states[oid] = {\n                \"frame\": start,\n                \"x\": x,\n                \"y\": y,\n                \"vx\": vx,\n                \"vy\": vy,\n                \"speed\": sp,\n                \"first_frame\": first_f,\n                \"last_frame\": last_f,\n            }\n        else:      # object appears after start\n            r0 = recs[0]\n            states[oid] = {\n                \"frame\": r0[\"frame\"],\n                \"x\": r0[\"x\"],\n                \"y\": r0[\"y\"],\n                \"vx\": r0[\"vx\"],\n                \"vy\": r0[\"vy\"],\n                \"speed\": r0[\"speed\"],\n                \"first_frame\": r0[\"frame\"],\n                \"last_frame\": last_f,\n            }\n\n    # 4. Set simulation horizon\n    if horizon is None:\n        horizon = recorded_end(doc, scope)\n\n    # 5. Simulation loop\n    dt_step_frames = 0.05            # time step in frames\n    cur_time = start\n    events: List[Dict[str, Any]] = []\n    processed_pairs = set()\n\n    def speed_and_unit(vx: float, vy: float):\n        sp = math.hypot(vx, vy)\n        return sp, (vx / sp if sp > 0 else 0.0, vy / sp if sp > 0 else 0.0)\n\n    while cur_time < horizon:\n        # 5a. Integrate motion with friction\n        for oid, st in states.items():\n            if cur_time < st[\"first_frame\"] - 1e-9:\n                continue\n            dt = dt_step_frames * FRAME_TIME\n            sp, (ux, uy) = speed_and_unit(st[\"vx\"], st[\"vy\"])\n            if sp > 0:\n                if FRICTION_DECEL > 0:\n                    if sp <= FRICTION_DECEL * dt:\n                        disp = 0.5 * sp * sp / FRICTION_DECEL\n                        st[\"x\"] += ux * disp\n                        st[\"y\"] += uy * disp\n                        st[\"vx\"] = st[\"vy\"] = 0.0\n                        st[\"speed\"] = 0.0\n                    else:\n                        disp = sp * dt - 0.5 * FRICTION_DECEL * dt * dt\n                        st[\"x\"] += ux * disp\n                        st[\"y\"] += uy * disp\n                        new_sp = sp - FRICTION_DECEL * dt\n                        st[\"vx\"] = ux * new_sp\n                        st[\"vy\"] = uy * new_sp\n                        st[\"speed\"] = new_sp\n                else:\n                    st[\"x\"] += st[\"vx\"] * dt\n                    st[\"y\"] += st[\"vy\"] * dt\n\n        # 5b. Collision detection and response\n        objs = list(states.keys())\n        for i in range(len(objs)):\n            oi = objs[i]\n            sti = states[oi]\n            if cur_time < sti[\"first_frame\"] - 1e-9 or sti[\"speed\"] == 0.0:\n                continue\n            xi, yi = sti[\"x\"], sti[\"y\"]\n            for j in range(i + 1, len(objs)):\n                oj = objs[j]\n                stj = states[oj]\n                if cur_time < stj[\"first_frame\"] - 1e-9 or stj[\"speed\"] == 0.0:\n                    continue\n                pair_key = tuple(sorted((oi, oj)))\n                if pair_key in processed_pairs:\n                    continue\n                dx, dy = xi - stj[\"x\"], yi - stj[\"y\"]\n                d = math.hypot(dx, dy)\n                if d <= COLLISION_DISTANCE + 1e-6:\n                    events.append({\n                        \"time\": float(cur_time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oi, oj]\n                    })\n                    processed_pairs.add(pair_key)\n\n                    # Elastic collision with equal masses\n                    if d == 0:\n                        continue\n                    nx, ny = dx / d, dy / d\n                    rvx, rvy = sti[\"vx\"] - stj[\"vx\"], sti[\"vy\"] - stj[\"vy\"]\n                    rel = rvx * nx + rvy * ny\n                    sti[\"vx\"] -= rel * nx\n                    sti[\"vy\"] -= rel * ny\n                    stj[\"vx\"] += rel * nx\n                    stj[\"vy\"] += rel * ny\n                    sti[\"speed\"] = math.hypot(sti[\"vx\"], sti[\"vy\"])\n                    stj[\"speed\"] = math.hypot(stj[\"vx\"], stj[\"vy\"])\n\n        cur_time += dt_step_frames\n\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n",
+    "explore_runs_before": 4
+   },
+   {
+    "step": "simulate",
+    "try": 2,
+    "report": {
+     "scopes": [
+      {
+       "scope": "Video 10119",
+       "start": 32.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 34.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 109.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10136",
+       "start": 34.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 36.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 82.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10570",
+       "start": 12.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 14.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 113.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10898",
+       "start": 49.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 51.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 71.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 11311",
+       "start": 13.73,
+       "f1": 0.0,
+       "observed": 3,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 15.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "3"
+         ]
+        },
+        {
+         "time": 40.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        },
+        {
+         "time": 55.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 11375",
+       "start": 29.73,
+       "f1": 0.0,
+       "observed": 3,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 31.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 35.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        },
+        {
+         "time": 57.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        }
+       ],
+       "extra": []
+      }
+     ],
+     "mean_f1": 0.0,
+     "passed": false,
+     "error": null
+    },
+    "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n\n\n# ---- step 2: forward model ----\nimport math, re\nfrom typing import List, Dict, Any\n\n# ----------------------------------------------------------------------\n# Global constants (derived from data exploration)\n# ----------------------------------------------------------------------\nFRAME_TIME = 5.0 / 127.0          # seconds per video frame\nFRICTION_DECEL = 7.98              # m/s\u00b2 \u2013 median of observed decelerations\nCOLLISION_DIST = 0.6               # threshold for contact (tuned to data)\n\n# ----------------------------------------------------------------------\n# Helper: parse motion log for a scope\n# ----------------------------------------------------------------------\ndef _parse_motion(doc: Dict[str, Any], scope: str) -> Dict[str, List[Dict[str, float]]]:\n    \"\"\"\n    Return {obj_id: list of records} for the scope.  Each record contains\n    frame, x, y, vx, vy, speed.\n    \"\"\"\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope), None)\n    if not scope_node:\n        return {}\n\n    motion = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, speed = map(float, row[2:7])\n                except Exception:\n                    continue\n                motion.setdefault(oid, []).append(\n                    {\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": speed}\n                )\n    for lst in motion.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return motion\n\n# ----------------------------------------------------------------------\n# Forward simulation\n# ----------------------------------------------------------------------\ndef simulate(doc: Dict[str, Any],\n             scope: str,\n             removed=(),\n             horizon=None,\n             start=0.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Run a simple kinematic / collision model for the given scope.\n    \"\"\"\n    # 1. List of objects involved\n    obj_ids = {e[\"id\"] for e in entities(doc, scope)} - set(removed)\n\n    # 2. Load motion data\n    motion = _parse_motion(doc, scope)\n\n    # 3. Initialise states at the start time\n    states = {}\n    for oid in obj_ids:\n        recs = motion.get(oid, [])\n        if not recs:\n            continue\n\n        first_f, last_f = recs[0][\"frame\"], recs[-1][\"frame\"]\n        # Find last record <= start (or None)\n        state = None\n        for r in recs:\n            if r[\"frame\"] <= start:\n                state = r\n\n        if state:  # object already in view\n            dt = (start - state[\"frame\"]) * FRAME_TIME\n            x, y, vx, vy, sp = state[\"x\"], state[\"y\"], state[\"vx\"], state[\"vy\"], state[\"speed\"]\n            if sp > 0:\n                ux, uy = vx / sp, vy / sp\n                if FRICTION_DECEL > 0:\n                    if sp <= FRICTION_DECEL * dt:\n                        d = 0.5 * sp * sp / FRICTION_DECEL\n                        x += ux * d\n                        y += uy * d\n                        vx = vy = sp = 0.0\n                    else:\n                        d = sp * dt - 0.5 * FRICTION_DECEL * dt * dt\n                        x += ux * d\n                        y += uy * d\n                        sp -= FRICTION_DECEL * dt\n                        vx = ux * sp\n                        vy = uy * sp\n            states[oid] = {\n                \"frame\": start,\n                \"x\": x, \"y\": y,\n                \"vx\": vx, \"vy\": vy,\n                \"speed\": sp,\n                \"first_frame\": first_f,\n                \"last_frame\": last_f,\n            }\n        else:      # object appears after start\n            r0 = recs[0]\n            states[oid] = {\n                \"frame\": r0[\"frame\"],\n                \"x\": r0[\"x\"],\n                \"y\": r0[\"y\"],\n                \"vx\": r0[\"vx\"],\n                \"vy\": r0[\"vy\"],\n                \"speed\": r0[\"speed\"],\n                \"first_frame\": r0[\"frame\"],\n                \"last_frame\": last_f,\n            }\n\n    # 4. Simulation time horizon\n    if horizon is None:\n        horizon = recorded_end(doc, scope)\n\n    # 5. Simulation loop\n    dt_step_frames = 1.0          # one frame per step \u2013 simple but robust\n    cur_time = start\n    events: List[Dict[str, Any]] = []\n    processed_pairs = set()\n\n    def speed_and_unit(vx, vy):\n        sp = math.hypot(vx, vy)\n        return sp, (vx / sp if sp else 0.0, vy / sp if sp else 0.0)\n\n    while cur_time < horizon:\n        # 5a. Advance every object by one frame\n        for oid, st in states.items():\n            if cur_time < st[\"first_frame\"] - 1e-9:\n                continue\n            dt = FRAME_TIME\n            sp, (ux, uy) = speed_and_unit(st[\"vx\"], st[\"vy\"])\n            if sp > 0:\n                if FRICTION_DECEL > 0:\n                    if sp <= FRICTION_DECEL * dt:\n                        d = 0.5 * sp * sp / FRICTION_DECEL\n                        st[\"x\"] += ux * d\n                        st[\"y\"] += uy * d\n                        st[\"vx\"] = st[\"vy\"] = st[\"speed\"] = 0.0\n                    else:\n                        d = sp * dt - 0.5 * FRICTION_DECEL * dt * dt\n                        st[\"x\"] += ux * d\n                        st[\"y\"] += uy * d\n                        sp -= FRICTION_DECEL * dt\n                        st[\"vx\"] = ux * sp\n                        st[\"vy\"] = uy * sp\n                        st[\"speed\"] = sp\n                else:\n                    st[\"x\"] += st[\"vx\"] * dt\n                    st[\"y\"] += st[\"vy\"] * dt\n\n        # 5b. Binary collision detection and response\n        oids = list(states.keys())\n        for i in range(len(oids)):\n            oi = oids[i]\n            sti = states[oi]\n            if cur_time < sti[\"first_frame\"] - 1e-9 or sti[\"speed\"] == 0.0:\n                continue\n            xi, yi = sti[\"x\"], sti[\"y\"]\n            for j in range(i + 1, len(oids)):\n                oj = oids[j]\n                stj = states[oj]\n                if cur_time < stj[\"first_frame\"] - 1e-9 or stj[\"speed\"] == 0.0:\n                    continue\n                pair = tuple(sorted((oi, oj)))\n                if pair in processed_pairs:\n                    continue\n\n                # positions at start and end of this step\n                dx0, dy0 = xi - stj[\"x\"], yi - stj[\"y\"]\n                d0 = math.hypot(dx0, dy0)\n\n                xj_new = stj[\"x\"] + stj[\"vx\"] * FRAME_TIME\n                yj_new = stj[\"y\"] + stj[\"vy\"] * FRAME_TIME\n                xi_new = sti[\"x\"] + sti[\"vx\"] * FRAME_TIME\n                yi_new = sti[\"y\"] + sti[\"vy\"] * FRAME_TIME\n                dx1, dy1 = xi_new - xj_new, yi_new - yj_new\n                d1 = math.hypot(dx1, dy1)\n\n                # simple crossing test\n                if d0 <= COLLISION_DIST:\n                    col_time = cur_time\n                elif d1 <= COLLISION_DIST:\n                    col_time = cur_time + FRAME_TIME\n                elif (d0 - COLLISION_DIST) * (d1 - COLLISION_DIST) <= 0:\n                    col_time = cur_time + FRAME_TIME / 2.0\n                else:\n                    continue\n\n                # Record event\n                events.append({\"time\": float(col_time), \"kind\": \"collision\",\n                               \"participants\": [oi, oj]})\n                processed_pairs.add(pair)\n\n                # Elastic collision (equal masses) \u2013 instantaneous reversal of normal component\n                nx, ny = dx0 / d0 if d0 else (1.0, 0.0)\n                rvx, rvy = sti[\"vx\"] - stj[\"vx\"], sti[\"vy\"] - stj[\"vy\"]\n                rel = rvx * nx + rvy * ny\n                sti[\"vx\"] -= rel * nx\n                sti[\"vy\"] -= rel * ny\n                stj[\"vx\"] += rel * nx\n                stj[\"vy\"] += rel * ny\n                sti[\"speed\"] = math.hypot(sti[\"vx\"], sti[\"vy\"])\n                stj[\"speed\"] = math.hypot(stj[\"vx\"], stj[\"vy\"])\n\n        cur_time += dt_step_frames\n\n    # Keep only events after the start time\n    events = [e for e in events if e[\"time\"] >= start]\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n",
+    "explore_runs_before": 4
+   },
+   {
+    "step": "simulate",
+    "try": 3,
+    "report": {
+     "scopes": [
+      {
+       "scope": "Video 10119",
+       "start": 32.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 2,
+       "missed": [
+        {
+         "time": 34.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 109.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 66.72999999999999,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        },
+        {
+         "time": 108.72999999999999,
+         "kind": "collision",
+         "participants": [
+          "3",
+          "2"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10136",
+       "start": 34.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 1,
+       "missed": [
+        {
+         "time": 36.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 82.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 100.72999999999999,
+         "kind": "collision",
+         "participants": [
+          "2",
+          "3"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10570",
+       "start": 12.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 0,
+       "missed": [
+        {
+         "time": 14.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 113.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10898",
+       "start": 49.73,
+       "f1": 0.0,
+       "observed": 2,
+       "simulated": 1,
+       "missed": [
+        {
+         "time": 51.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 71.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 88.72999999999999,
+         "kind": "collision",
+         "participants": [
+          "3",
+          "2"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 11311",
+       "start": 13.73,
+       "f1": 0.0,
+       "observed": 3,
+       "simulated": 1,
+       "missed": [
+        {
+         "time": 15.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "3"
+         ]
+        },
+        {
+         "time": 40.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        },
+        {
+         "time": 55.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 26.73,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 11375",
+       "start": 29.73,
+       "f1": 0.0,
+       "observed": 3,
+       "simulated": 1,
+       "missed": [
+        {
+         "time": 31.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 35.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        },
+        {
+         "time": 57.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 31.73,
+         "kind": "collision",
+         "participants": [
+          "2",
+          "0"
+         ]
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.0,
+     "passed": false,
+     "error": null
+    },
+    "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n\n\n# ---- step 2: forward model ----\nimport math, re\nfrom typing import List, Dict, Any\n\n# ----------------------------------------------------------------------\n# Global physical parameters (chosen empirically from the dataset)\n# ----------------------------------------------------------------------\nFRAME_TIME = 5.0 / 127.0          # seconds per frame\nCOLLISION_DIST = 0.6              # typical contact distance inferred from data\n\n# ----------------------------------------------------------------------\n# Helper: parse the motion log for a scope\n# ----------------------------------------------------------------------\ndef _parse_motion(doc: Dict[str, Any], scope: str) -> Dict[str, List[Dict[str, float]]]:\n    \"\"\"\n    Return a dictionary {obj_id: list of records} for the requested scope.\n    Each record contains: frame, x, y, vx, vy, speed.\n    \"\"\"\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope), None)\n    if not scope_node:\n        return {}\n\n    motion = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, speed = map(float, row[2:7])\n                except Exception:\n                    continue\n                motion.setdefault(oid, []).append(\n                    {\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": speed}\n                )\n    for lst in motion.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return motion\n\n# ----------------------------------------------------------------------\n# Forward simulation\n# ----------------------------------------------------------------------\ndef simulate(doc: Dict[str, Any],\n             scope: str,\n             removed=(),\n             horizon=None,\n             start=0.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Run a na\u00efve kinematic model: constant velocity motion, no friction.\n    Detect collisions when the distance between two objects falls below\n    COLLISION_DIST.  Events are reported at the first time step where this\n    occurs.\n    \"\"\"\n    # 1. Identify objects in the simulation\n    obj_ids = {e[\"id\"] for e in entities(doc, scope)} - set(removed)\n\n    # 2. Load motion logs\n    motion = _parse_motion(doc, scope)\n\n    # 3. Initialise states at the start time\n    states = {}\n    for oid in obj_ids:\n        recs = motion.get(oid, [])\n        if not recs:\n            continue\n        first_f, last_f = recs[0][\"frame\"], recs[-1][\"frame\"]\n\n        # Find the last record <= start\n        state_before = None\n        for r in recs:\n            if r[\"frame\"] <= start:\n                state_before = r\n\n        if state_before:\n            # Advance this record to the start time (no friction -> same velocity)\n            dt = (start - state_before[\"frame\"]) * FRAME_TIME\n            x = state_before[\"x\"] + state_before[\"vx\"] * dt\n            y = state_before[\"y\"] + state_before[\"vy\"] * dt\n            states[oid] = {\n                \"frame\": start,\n                \"x\": x,\n                \"y\": y,\n                \"vx\": state_before[\"vx\"],\n                \"vy\": state_before[\"vy\"],\n                \"speed\": state_before[\"speed\"],\n                \"first_frame\": first_f,\n                \"last_frame\": last_f,\n            }\n        else:\n            # Object appears after start; use its first record\n            r0 = recs[0]\n            states[oid] = {\n                \"frame\": r0[\"frame\"],\n                \"x\": r0[\"x\"],\n                \"y\": r0[\"y\"],\n                \"vx\": r0[\"vx\"],\n                \"vy\": r0[\"vy\"],\n                \"speed\": r0[\"speed\"],\n                \"first_frame\": r0[\"frame\"],\n                \"last_frame\": last_f,\n            }\n\n    # 4. Simulation horizon\n    if horizon is None:\n        horizon = recorded_end(doc, scope)\n\n    # 5. Simulation loop (1 frame per step for simplicity)\n    cur_time = start\n    events: List[Dict[str, Any]] = []\n    processed_pairs = set()\n\n    while cur_time < horizon:\n        # Update positions (constant velocity)\n        for oid, st in states.items():\n            if cur_time < st[\"first_frame\"] - 1e-9:\n                continue\n            dt = FRAME_TIME\n            st[\"x\"] += st[\"vx\"] * dt\n            st[\"y\"] += st[\"vy\"] * dt\n\n        # Collision detection\n        oids = list(states.keys())\n        for i in range(len(oids)):\n            oi = oids[i]\n            sti = states[oi]\n            if cur_time < sti[\"first_frame\"] - 1e-9 or sti[\"speed\"] == 0.0:\n                continue\n            xi, yi = sti[\"x\"], sti[\"y\"]\n            for j in range(i + 1, len(oids)):\n                oj = oids[j]\n                stj = states[oj]\n                if cur_time < stj[\"first_frame\"] - 1e-9 or stj[\"speed\"] == 0.0:\n                    continue\n                pair = tuple(sorted((oi, oj)))\n                if pair in processed_pairs:\n                    continue\n                dx = xi - stj[\"x\"]\n                dy = yi - stj[\"y\"]\n                d = math.hypot(dx, dy)\n                if d <= COLLISION_DIST:\n                    events.append({\"time\": float(cur_time), \"kind\": \"collision\",\n                                   \"participants\": [oi, oj]})\n                    processed_pairs.add(pair)\n\n        cur_time += 1.0  # advance one frame\n\n    # 6. Return events that occur after the user\u2011specified start time\n    events = [e for e in events if e[\"time\"] >= start]\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n",
+    "explore_runs_before": 4
+   },
+   {
+    "step": "simulate",
+    "try": 4,
+    "report": {
+     "scopes": [
+      {
+       "scope": "Video 10119",
+       "start": 32.73,
+       "f1": 0.006,
+       "observed": 2,
+       "simulated": 323,
+       "missed": [
+        {
+         "time": 109.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 33.20709762850306,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "0"
+         ]
+        },
+        {
+         "time": 33.20709762850306,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "0"
+         ]
+        },
+        {
+         "time": 33.20709762850306,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "0"
+         ]
+        },
+        {
+         "time": 33.20709762850306,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "0"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10136",
+       "start": 34.73,
+       "f1": 0.002,
+       "observed": 2,
+       "simulated": 1246,
+       "missed": [
+        {
+         "time": 82.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 35.18178127344221,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 35.18178127344221,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 35.18178127344221,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        },
+        {
+         "time": 35.18178127344221,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10570",
+       "start": 12.73,
+       "f1": 0.003,
+       "observed": 2,
+       "simulated": 601,
+       "missed": [
+        {
+         "time": 113.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 13.128812507173995,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "0"
+         ]
+        },
+        {
+         "time": 13.244424824955544,
+         "kind": "collision",
+         "participants": [
+          "4",
+          "0"
+         ]
+        },
+        {
+         "time": 13.273297589470271,
+         "kind": "collision",
+         "participants": [
+          "4",
+          "0"
+         ]
+        },
+        {
+         "time": 13.273297589470271,
+         "kind": "collision",
+         "participants": [
+          "4",
+          "0"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10898",
+       "start": 49.73,
+       "f1": 0.006,
+       "observed": 2,
+       "simulated": 339,
+       "missed": [
+        {
+         "time": 71.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 50.25157713348262,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "0"
+         ]
+        },
+        {
+         "time": 50.33844661498226,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        },
+        {
+         "time": 50.33844661498226,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        },
+        {
+         "time": 50.33844661498226,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 11311",
+       "start": 13.73,
+       "f1": 0.003,
+       "observed": 3,
+       "simulated": 627,
+       "missed": [
+        {
+         "time": 40.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        },
+        {
+         "time": 55.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 13.823878810262942,
+         "kind": "collision",
+         "participants": [
+          "2",
+          "1"
+         ]
+        },
+        {
+         "time": 13.823878810262942,
+         "kind": "collision",
+         "participants": [
+          "2",
+          "1"
+         ]
+        },
+        {
+         "time": 13.987417509626445,
+         "kind": "collision",
+         "participants": [
+          "5",
+          "1"
+         ]
+        },
+        {
+         "time": 14.060655627641198,
+         "kind": "collision",
+         "participants": [
+          "3",
+          "0"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 11375",
+       "start": 29.73,
+       "f1": 0.364,
+       "observed": 3,
+       "simulated": 8,
+       "missed": [
+        {
+         "time": 57.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 29.887315091278854,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        },
+        {
+         "time": 29.947967083719174,
+         "kind": "collision",
+         "participants": [
+          "2",
+          "4"
+         ]
+        },
+        {
+         "time": 30.007878363083883,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        },
+        {
+         "time": 30.29907846885624,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.064,
+     "passed": false,
+     "error": null
+    },
+    "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n\n\n# ---- step 2: forward model ----\nimport math, re\nfrom typing import List, Dict, Any\n\n# ----------------------------------------------------------------------\n# Empirical constants (tuned on the data)\n# ----------------------------------------------------------------------\nFRAME_TIME = 5.0 / 127.0          # seconds per frame\nCOLLISION_DIST = 0.6              # typical contact distance in units used in the logs\n\n# ----------------------------------------------------------------------\n# Helper: parse the motion log for a scope\n# ----------------------------------------------------------------------\ndef _parse_motion(doc: Dict[str, Any], scope: str) -> Dict[str, List[Dict[str, float]]]:\n    \"\"\"\n    Return a dictionary {obj_id: list of records} for the requested scope.\n    Each record contains: frame, x, y, vx, vy, speed.\n    \"\"\"\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope), None)\n    if not scope_node:\n        return {}\n\n    motion = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, speed = map(float, row[2:7])\n                except Exception:\n                    continue\n                motion.setdefault(oid, []).append(\n                    {\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": speed}\n                )\n    for lst in motion.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return motion\n\n# ----------------------------------------------------------------------\n# Forward simulation \u2015 event driven, elastic equal\u2011mass collisions\n# ----------------------------------------------------------------------\ndef simulate(doc: Dict[str, Any],\n             scope: str,\n             removed=(),\n             horizon=None,\n             start=0.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Simulate motions and collisions for the objects in *scope*.\n    Returns a list of collision events occurring after *start* (inclusive).\n    \"\"\"\n    # 1. Objects to retain\n    obj_ids = {e[\"id\"] for e in entities(doc, scope)} - set(removed)\n\n    # 2. Load motion data\n    motion = _parse_motion(doc, scope)\n\n    # 3. Initialise states at the simulation start\n    states = {}\n    for oid in obj_ids:\n        recs = motion.get(oid, [])\n        if not recs:\n            continue\n        first_f, last_f = recs[0][\"frame\"], recs[-1][\"frame\"]\n\n        # last record <= start\n        state = None\n        for r in recs:\n            if r[\"frame\"] <= start:\n                state = r\n\n        if state:  # exists in view at start\n            dt = (start - state[\"frame\"]) * FRAME_TIME\n            x = state[\"x\"] + state[\"vx\"] * dt\n            y = state[\"y\"] + state[\"vy\"] * dt\n            states[oid] = {\n                \"frame\": start,\n                \"x\": x,\n                \"y\": y,\n                \"vx\": state[\"vx\"],\n                \"vy\": state[\"vy\"],\n                \"speed\": state[\"speed\"],\n                \"first_frame\": first_f,\n                \"last_frame\": last_f,\n            }\n        else:      # appears after start\n            r0 = recs[0]\n            states[oid] = {\n                \"frame\": r0[\"frame\"],\n                \"x\": r0[\"x\"],\n                \"y\": r0[\"y\"],\n                \"vx\": r0[\"vx\"],\n                \"vy\": r0[\"vy\"],\n                \"speed\": r0[\"speed\"],\n                \"first_frame\": r0[\"frame\"],\n                \"last_frame\": last_f,\n            }\n\n    # 4. Simulation time horizon\n    if horizon is None:\n        horizon = recorded_end(doc, scope)\n\n    cur_time = start\n    events: List[Dict[str, Any]] = []\n\n    # 5. Event\u2011driven loop\n    while cur_time < horizon:\n        # 5a. Find nearest collision event\n        next_time = None\n        next_pair = None\n        oids = list(states.keys())\n        for i in range(len(oids)):\n            oi = oids[i]\n            sti = states[oi]\n            if cur_time < sti[\"first_frame\"] - 1e-9:\n                continue\n            for j in range(i + 1, len(oids)):\n                oj = oids[j]\n                stj = states[oj]\n                if cur_time < stj[\"first_frame\"] - 1e-9:\n                    continue\n\n                # Relative vector and velocity\n                rx = sti[\"x\"] - stj[\"x\"]\n                ry = sti[\"y\"] - stj[\"y\"]\n                vx = sti[\"vx\"] - stj[\"vx\"]\n                vy = sti[\"vy\"] - stj[\"vy\"]\n\n                # Solve (r + v*t)^2 = d^2\n                a = vx * vx + vy * vy\n                b = 2 * (rx * vx + ry * vy)\n                c = rx * rx + ry * ry - COLLISION_DIST * COLLISION_DIST\n\n                if a == 0.0:\n                    continue  # no relative motion\n\n                disc = b * b - 4 * a * c\n                if disc < 0.0:\n                    continue  # never reach distance threshold\n\n                sqrt_disc = math.sqrt(disc)\n                t1 = (-b - sqrt_disc) / (2 * a)\n                t2 = (-b + sqrt_disc) / (2 * a)\n                t_candidates = [t for t in (t1, t2) if t >= 0.0]\n                if not t_candidates:\n                    continue\n                t_coll = min(t_candidates)\n\n                if next_time is None or t_coll < next_time:\n                    next_time = t_coll\n                    next_pair = (oi, oj)\n\n        # If no collision before horizon, break\n        if next_time is None or cur_time + next_time > horizon:\n            break\n\n        # 5b. Advance all objects by next_time\n        for oid, st in states.items():\n            if cur_time < st[\"first_frame\"] - 1e-9:\n                continue\n            st[\"x\"] += st[\"vx\"] * next_time\n            st[\"y\"] += st[\"vy\"] * next_time\n\n        cur_time += next_time\n\n        # 5c. Record event\n        if cur_time >= start:\n            events.append({\n                \"time\": float(cur_time),\n                \"kind\": \"collision\",\n                \"participants\": [next_pair[0], next_pair[1]],\n            })\n\n        # 5d. Process elastic collision (equal masses)\n        oi, oj = next_pair\n        sti = states[oi]\n        stj = states[oj]\n        # Normal unit vector\n        nx = current_distance = math.hypot(sti[\"x\"] - stj[\"x\"], sti[\"y\"] - stj[\"y\"])\n        if nx == 0.0:\n            nx, ny = 1.0, 0.0\n        else:\n            nx /= current_distance\n            ny = (sti[\"y\"] - stj[\"y\"]) / current_distance\n\n        # Relative velocity\n        dvx = sti[\"vx\"] - stj[\"vx\"]\n        dvy = sti[\"vy\"] - stj[\"vy\"]\n        rel_norm = dvx * nx + dvy * ny\n\n        # Update velocities\n        sti[\"vx\"] -= rel_norm * nx\n        sti[\"vy\"] -= rel_norm * ny\n        stj[\"vx\"] += rel_norm * nx\n        stj[\"vy\"] += rel_norm * ny\n\n        sti[\"speed\"] = math.hypot(sti[\"vx\"], sti[\"vy\"])\n        stj[\"speed\"] = math.hypot(stj[\"vx\"], stj[\"vy\"])\n\n    # 6. Return events after the requested start time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n",
+    "explore_runs_before": 4
+   },
+   {
+    "step": "simulate",
+    "try": 5,
+    "report": {
+     "scopes": [
+      {
+       "scope": "Video 10119",
+       "start": 32.73,
+       "f1": 0.5,
+       "observed": 2,
+       "simulated": 2,
+       "missed": [
+        {
+         "time": 109.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 64.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "2"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10136",
+       "start": 34.73,
+       "f1": 1.0,
+       "observed": 2,
+       "simulated": 2,
+       "missed": [],
+       "extra": []
+      },
+      {
+       "scope": "Video 10570",
+       "start": 12.73,
+       "f1": 0.5,
+       "observed": 2,
+       "simulated": 2,
+       "missed": [
+        {
+         "time": 113.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 35.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "4"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 10898",
+       "start": 49.73,
+       "f1": 0.5,
+       "observed": 2,
+       "simulated": 2,
+       "missed": [
+        {
+         "time": 71.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 60.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "2"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 11311",
+       "start": 13.73,
+       "f1": 0.2,
+       "observed": 3,
+       "simulated": 7,
+       "missed": [
+        {
+         "time": 40.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        },
+        {
+         "time": 55.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 16.0,
+         "kind": "collision",
+         "participants": [
+          "2",
+          "1"
+         ]
+        },
+        {
+         "time": 20.0,
+         "kind": "collision",
+         "participants": [
+          "5",
+          "1"
+         ]
+        },
+        {
+         "time": 28.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        },
+        {
+         "time": 46.0,
+         "kind": "collision",
+         "participants": [
+          "0",
+          "1"
+         ]
+        }
+       ]
+      },
+      {
+       "scope": "Video 11375",
+       "start": 29.73,
+       "f1": 0.667,
+       "observed": 3,
+       "simulated": 3,
+       "missed": [
+        {
+         "time": 57.0,
+         "kind": "collision",
+         "participants": [
+          "1",
+          "3"
+         ]
+        }
+       ],
+       "extra": [
+        {
+         "time": 34.0,
+         "kind": "collision",
+         "participants": [
+          "4",
+          "2"
+         ]
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.561,
+     "passed": true,
+     "error": null
+    },
+    "code": "import re\nfrom typing import List, Dict, Any\n\n# The helpers node_by_title, children, scope_nodes are assumed to be available in the environment.\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"\n    Return a list of distinct entities in the given scope.\n    Each entity is a dictionary with 'id' and 'description'.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n\n    # Collect entity descriptions from the : Objects list\n    entities_map = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Objects\"):\n            for line in child.get(\"lines\", []):\n                m = re.match(r\"Object (\\d+):\\s+([^(\\n]+)\", line)\n                if m:\n                    obj_id = m.group(1)\n                    desc = m.group(2).strip()\n                    entities_map[obj_id] = desc\n\n    return [{\"id\": oid, \"description\": desc} for oid, desc in entities_map.items()]\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> float:\n    \"\"\"\n    Return the last time point covered by the scope's records.\n    The time unit is frame number, expressed as a float.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return 0.0\n\n    max_frame = -1\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child.get(\"table\", {}).get(\"rows\", []):\n                try:\n                    frame = int(row[0])\n                except (ValueError, IndexError):\n                    continue\n                if frame > max_frame:\n                    max_frame = frame\n\n    return float(max_frame if max_frame >= 0 else 0)\n\n\ndef observed_events(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"\n    Return a list of interaction events (collisions) in the given scope, sorted by time.\n    Each event dict contains 'time', 'kind', and 'participants' (list of entity ids).\n    \"\"\"\n    # Get the set of valid entity ids in this scope\n    valid_ids = {e[\"id\"] for e in entities(doc, scope)}\n    events = []\n\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return events\n\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child is None:\n            continue\n        if child.get(\"kind\") == \"list\" and child.get(\"title\", \"\").endswith(\": Events\"):\n            for line in child.get(\"lines\", []):\n                # Look for lines that mention a collision\n                if \"collides\" not in line:\n                    continue\n                # Pattern: Frame <num>: Object <id> ... collides with Object <id> ...\n                m = re.search(r\"Frame (\\d+):\\s+Object (\\d+).*collides with Object (\\d+)\", line)\n                if not m:\n                    continue\n                time = int(m.group(1))\n                oid1, oid2 = m.group(2), m.group(3)\n                if oid1 in valid_ids and oid2 in valid_ids:\n                    events.append({\n                        \"time\": float(time),\n                        \"kind\": \"collision\",\n                        \"participants\": [oid1, oid2]\n                    })\n\n    # Sort events by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n\n\n# ---- step 2: forward model ----\nimport math, re\nfrom typing import List, Dict, Any\n\n# ----------------------------------------------------------------------\n# Parameters tuned from exploratory analysis\n# ----------------------------------------------------------------------\nFRAME_TIME = 5.0 / 127.0      # seconds per frame\nCOLLISION_DIST = 0.6          # approximate contact distance\n\n# ----------------------------------------------------------------------\n# Helper: parse motion log for a scope\n# ----------------------------------------------------------------------\ndef _parse_motion(doc: Dict[str, Any], scope: str) -> Dict[str, List[Dict[str, float]]]:\n    \"\"\"\n    Return `{obj_id: list of records}` for the requested scope.\n    Each record contains: frame, x, y, vx, vy, speed.\n    \"\"\"\n    scope_node = next((n for n in doc[\"nodes\"] if n.get(\"title\") == scope), None)\n    if not scope_node:\n        return {}\n\n    motion = {}\n    for child_id in scope_node.get(\"children\", []):\n        child = next((n for n in doc[\"nodes\"] if n[\"node_id\"] == child_id), None)\n        if child and child.get(\"kind\") == \"table\" and child.get(\"title\", \"\").endswith(\": Motion log\"):\n            for row in child[\"table\"][\"rows\"]:\n                try:\n                    frame = int(row[0])\n                    oid = row[1].split()[0]\n                    x, y, vx, vy, speed = map(float, row[2:7])\n                except Exception:\n                    continue\n                motion.setdefault(oid, []).append(\n                    {\"frame\": frame, \"x\": x, \"y\": y, \"vx\": vx, \"vy\": vy, \"speed\": speed}\n                )\n    for lst in motion.values():\n        lst.sort(key=lambda r: r[\"frame\"])\n    return motion\n\n# ----------------------------------------------------------------------\n# Simulation routine\n# ----------------------------------------------------------------------\ndef simulate(doc: Dict[str, Any],\n             scope: str,\n             removed=(),\n             horizon=None,\n             start=0.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Simulate motion for the objects in *scope*.\n    Returns collision events (time as frame number) occurring after *start*.\n    \"\"\"\n    # 1. Set of objects to consider\n    obj_ids = {e[\"id\"] for e in entities(doc, scope)} - set(removed)\n\n    # 2. Load motion logs\n    motion = _parse_motion(doc, scope)\n\n    # 3. Initialise states at the start time\n    states = {}\n    for oid in obj_ids:\n        recs = motion.get(oid, [])\n        if not recs:\n            continue\n        first_f, last_f = recs[0][\"frame\"], recs[-1][\"frame\"]\n\n        # Find last record <= start\n        state = None\n        for r in recs:\n            if r[\"frame\"] <= start:\n                state = r\n\n        if state:\n            dt = (start - state[\"frame\"]) * FRAME_TIME\n            x = state[\"x\"] + state[\"vx\"] * dt\n            y = state[\"y\"] + state[\"vy\"] * dt\n            states[oid] = {\n                \"frame\": start,\n                \"x\": x,\n                \"y\": y,\n                \"vx\": state[\"vx\"],\n                \"vy\": state[\"vy\"],\n                \"speed\": state[\"speed\"],\n                \"first_frame\": first_f,\n                \"last_frame\": last_f,\n            }\n        else:\n            r0 = recs[0]\n            states[oid] = {\n                \"frame\": r0[\"frame\"],\n                \"x\": r0[\"x\"],\n                \"y\": r0[\"y\"],\n                \"vx\": r0[\"vx\"],\n                \"vy\": r0[\"vy\"],\n                \"speed\": r0[\"speed\"],\n                \"first_frame\": r0[\"frame\"],\n                \"last_frame\": last_f,\n            }\n\n    # 4. Simulation limits\n    if horizon is None:\n        horizon = recorded_end(doc, scope)\n\n    # 5. Collision state tracking\n    pair_active: Dict[tuple, bool] = {}\n\n    # 6. Simulation loop \u2013 step one frame at a time\n    cur_frame = int(math.floor(start))\n    events: List[Dict[str, Any]] = []\n\n    while cur_frame < int(math.floor(horizon)):\n        t_seconds = cur_frame * FRAME_TIME\n\n        # Move every visible object\n        for st in states.values():\n            if t_seconds < st[\"first_frame\"] * FRAME_TIME:\n                continue\n            st[\"x\"] += st[\"vx\"] * FRAME_TIME\n            st[\"y\"] += st[\"vy\"] * FRAME_TIME\n\n        # Check collisions between all pairs\n        oid_list = list(states.keys())\n        for i in range(len(oid_list)):\n            oi = oid_list[i]\n            sti = states[oi]\n            if t_seconds < sti[\"first_frame\"] * FRAME_TIME:\n                continue\n            for j in range(i + 1, len(oid_list)):\n                oj = oid_list[j]\n                stj = states[oj]\n                if t_seconds < stj[\"first_frame\"] * FRAME_TIME:\n                    continue\n\n                pair = tuple(sorted((oi, oj)))\n                dx = sti[\"x\"] - stj[\"x\"]\n                dy = sti[\"y\"] - stj[\"y\"]\n                d = math.hypot(dx, dy)\n\n                active = pair_active.get(pair, False)\n                if d <= COLLISION_DIST:\n                    if not active:\n                        event_time = cur_frame + 1.0  # event occurs after this frame step\n                        if event_time >= start:\n                            events.append({\n                                \"time\": event_time,\n                                \"kind\": \"collision\",\n                                \"participants\": [oi, oj],\n                            })\n                        # Simple elastic response (equal mass)\n                        # Normal vector\n                        if d == 0:\n                            nx, ny = 1.0, 0.0\n                        else:\n                            nx, ny = dx / d, dy / d\n                        rvx, rvy = sti[\"vx\"] - stj[\"vx\"], sti[\"vy\"] - stj[\"vy\"]\n                        rel = rvx * nx + rvy * ny\n                        sti[\"vx\"] -= rel * nx\n                        sti[\"vy\"] -= rel * ny\n                        stj[\"vx\"] += rel * nx\n                        stj[\"vy\"] += rel * ny\n                        sti[\"speed\"] = math.hypot(sti[\"vx\"], sti[\"vy\"])\n                        stj[\"speed\"] = math.hypot(stj[\"vx\"], stj[\"vy\"])\n                        pair_active[pair] = True\n                else:\n                    # became separated \u2013 allow a future collision\n                    pair_active[pair] = False\n\n        cur_frame += 1\n\n    # 7. Return events sorted by time\n    events.sort(key=lambda e: e[\"time\"])\n    return events\n",
+    "explore_runs_before": 4
+   }
+  ],
+  "failed_step": null
+ },
+ "latency_s": 256.19955039024353,
+ "usage": {
+  "input_tokens": 406594,
+  "cached_input_tokens": 374400,
+  "output_tokens": 62047,
+  "reasoning_tokens": 35820,
+  "llm_calls": 40,
+  "total_tokens": 468641
+ }
+}

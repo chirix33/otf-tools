@@ -1,0 +1,7 @@
+parsers attempt 1: outcomes() found no records in any checked scope; parse what the process produces
+parsers attempt 2: outcomes() found no records in any checked scope; parse what the process produces
+parsers attempt 3: inputs('Video 10331') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpiblsdsal\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 169, in inputs
+StopIteration

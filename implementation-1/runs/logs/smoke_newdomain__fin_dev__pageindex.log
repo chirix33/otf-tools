@@ -1,0 +1,33 @@
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.47 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.43 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.46 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.84 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.67 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.99 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.79 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.85 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.71 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=600.72 seconds
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out. - timeout value=600.0, time taken=601.16 seconds
+WARNING:root:Retrying LLM completion
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-386' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-419' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-452' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-485' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+[pageindex] setup: 129275 tokens, 1243.6s {'doc_id': 'pi-f2bfb9762c7d4f67a33dfd3120e4dc64', 'cached_index': False, 'tree_nodes': 31}
+[pageindex] 0 already answered, 2 to go
+[pageindex] 2/2  correct=2  errors=0  436s

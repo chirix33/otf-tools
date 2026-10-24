@@ -1,0 +1,34 @@
+{
+  "system": "otf_v3gate1",
+  "model": "gpt-oss-20b",
+  "reasoning_effort": "medium",
+  "model_spec": {
+    "alias": "gpt-oss-20b",
+    "served_name": "openai/gpt-oss-20b",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": "medium",
+    "temperature": null,
+    "top_p": null,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {}
+  },
+  "usage": {
+    "input_tokens": 377088,
+    "cached_input_tokens": 342320,
+    "output_tokens": 45205,
+    "reasoning_tokens": 17305,
+    "llm_calls": 25,
+    "total_tokens": 422293
+  },
+  "latency_s": 207.08851861953735,
+  "info": {
+    "nodes": 21,
+    "scopes": 4,
+    "model_passed": true,
+    "model_f1": 0.807,
+    "model_tries": 10,
+    "model_reused_from": null
+  },
+  "system_as_run": "otf"
+}

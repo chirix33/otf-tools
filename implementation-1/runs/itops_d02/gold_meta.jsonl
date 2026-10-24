@@ -1,0 +1,60 @@
+{"uid": "itops-w10-01"}
+{"uid": "itops-w10-02"}
+{"uid": "itops-w10-03"}
+{"uid": "itops-w10-04", "tasks": ["T219", "T185", "T220", "T202"], "next_start": {"T219": 1291, "T185": 1465, "T220": 1633, "T202": 1218}, "head": "T219"}
+{"uid": "itops-w10-05", "kinds": ["p_finish_by", "p_start_on", "p_start_on", "p_start_by"], "args": [{"t": "T223", "x": 2840}, {"t": "T220", "m": "M07"}, {"t": "T179", "m": "M02"}, {"t": "T228", "x": 1650}]}
+{"uid": "itops-w10-06", "task": "T120", "machine": "M01"}
+{"uid": "itops-w10-07", "intervention": {"kind": "remove_job", "job": "J34"}, "baseline": [true, false, false, true], "kinds": ["finish_by", "start_later", "start_earlier", "first_machine"], "args": [{"t": "T169"}, {"t": "T217", "x": 1170}, {"t": "T143", "x": 867}, {"t": "T217", "m": "M01"}]}
+{"uid": "itops-w10-08", "intervention": {"kind": "remove_job", "job": "J74"}, "baseline": [false, false, false, true], "kinds": ["start_later", "finish_by", "start_earlier", "first_machine"], "args": [{"t": "T135", "x": 917}, {"t": "T225"}, {"t": "T170", "x": 988}, {"t": "T180", "m": "M01"}]}
+{"uid": "itops-w10-09", "intervention": {"kind": "remove_job", "job": "J83"}, "baseline": [false, false, true, false], "kinds": ["start_earlier", "start_later", "long_wait", "evicted"], "args": [{"t": "T168", "x": 963}, {"t": "T173", "x": 1002}, {"t": "T128"}, {"t": "T119"}]}
+{"uid": "itops-w14-01"}
+{"uid": "itops-w14-02"}
+{"uid": "itops-w14-03"}
+{"uid": "itops-w14-04", "target": {"kind": "evicted_at", "task": "T072", "time": 359}, "kinds": ["other_machine", "job", "other_machine", "job"], "interventions": [{"kind": "remove_task", "task": "T070"}, {"kind": "remove_job", "job": "J15"}, {"kind": "remove_task", "task": "T069"}, {"kind": "remove_job", "job": "J37"}]}
+{"uid": "itops-w14-05", "target": {"kind": "evicted_at", "task": "T075", "time": 359}, "kinds": ["other_machine", "job", "other_machine", "job"], "interventions": [{"kind": "remove_task", "task": "T063"}, {"kind": "remove_job", "job": "J22"}, {"kind": "remove_task", "task": "T027"}, {"kind": "remove_job", "job": "J35"}]}
+{"uid": "itops-w14-06", "target": {"kind": "evicted_at", "task": "T100", "time": 1080}, "kinds": ["other_machine", "same_machine", "other_machine", "failure"], "interventions": [{"kind": "remove_task", "task": "T101"}, {"kind": "remove_task", "task": "T097"}, {"kind": "remove_task", "task": "T103"}, {"kind": "remove_failure", "machine": "M05"}]}
+{"uid": "itops-w14-07", "task": "T175", "machine": "M04"}
+{"uid": "itops-w14-08", "tasks": ["T151", "T174", "T125", "T152"], "next_start": {"T151": 1225, "T174": 1355, "T125": 1237, "T152": 1225}, "head": "T125"}
+{"uid": "itops-w14-09", "kinds": ["p_start_by", "p_start_on", "p_finish_by", "p_start_on"], "args": [{"t": "T161", "x": 1400}, {"t": "T155", "m": "M08"}, {"t": "T166", "x": 1720}, {"t": "T175", "m": "M03"}]}
+{"uid": "itops-w14-10", "intervention": {"kind": "set_priority", "task": "T141", "value": 9}, "baseline": [false, false, false, false], "kinds": ["start_later", "start_later", "first_machine", "start_earlier"], "args": [{"t": "T119", "x": 606}, {"t": "T142", "x": 1080}, {"t": "T141", "m": "M01"}, {"t": "T141", "x": 980}]}
+{"uid": "itops-w14-11", "intervention": {"kind": "set_priority", "task": "T023", "value": 9}, "baseline": [true, true, false, true], "kinds": ["finish_by", "finish_by", "start_earlier", "first_machine"], "args": [{"t": "T040"}, {"t": "T048"}, {"t": "T066", "x": 227}, {"t": "T023", "m": "M05"}]}
+{"uid": "itops-w14-12", "intervention": {"kind": "set_priority", "task": "T080", "value": 9}, "baseline": [true, false, true, true], "kinds": ["first_machine", "fewer_evictions", "first_machine", "long_wait"], "args": [{"t": "T080", "m": "M02"}, {"n": 14}, {"t": "T077", "m": "M01"}, {"t": "T128"}]}
+{"uid": "itops-w19-01"}
+{"uid": "itops-w19-02"}
+{"uid": "itops-w19-03"}
+{"uid": "itops-w19-04", "target": {"kind": "waited", "task": "T025", "submit": 396}, "kinds": ["holder", "job", "holder", "failure"], "interventions": [{"kind": "remove_task", "task": "T017"}, {"kind": "remove_job", "job": "J20"}, {"kind": "remove_task", "task": "T019"}, {"kind": "remove_failure", "machine": "M06"}]}
+{"uid": "itops-w19-05", "target": {"kind": "waited", "task": "T034", "submit": 432}, "kinds": ["holder", "job", "holder", "failure"], "interventions": [{"kind": "remove_task", "task": "T046"}, {"kind": "remove_job", "job": "J25"}, {"kind": "remove_task", "task": "T026"}, {"kind": "remove_failure", "machine": "M06"}]}
+{"uid": "itops-w19-06", "target": {"kind": "waited", "task": "T101", "submit": 805}, "kinds": ["job", "holder", "failure", "holder"], "interventions": [{"kind": "remove_job", "job": "J09"}, {"kind": "remove_task", "task": "T028"}, {"kind": "remove_failure", "machine": "M06"}, {"kind": "remove_task", "task": "T049"}]}
+{"uid": "itops-w19-07", "target": {"kind": "waited", "task": "T060", "submit": 654}, "kinds": ["holder", "ahead", "ahead", "job"], "interventions": [{"kind": "remove_task", "task": "T021"}, {"kind": "remove_task", "task": "T063"}, {"kind": "remove_task", "task": "T088"}, {"kind": "remove_job", "job": "J13"}]}
+{"uid": "itops-w19-08", "kinds": ["p_finish_by", "p_start_by", "p_start_by", "p_finish_by"], "args": [{"t": "T114", "x": 1610}, {"t": "T082", "x": 1800}, {"t": "T112", "x": 1460}, {"t": "T079", "x": 4230}]}
+{"uid": "itops-w19-09", "task": "T072", "machine": "M07"}
+{"uid": "itops-w19-10", "tasks": ["T030", "T108", "T111", "T073"], "next_start": {"T030": 1222, "T108": 1860, "T111": 1262, "T073": 1396}, "head": "T111"}
+{"uid": "itops-w19-11", "intervention": {"kind": "set_request", "task": "T025", "resource": "mem", "value": 795}, "baseline": [true, false, true, false], "kinds": ["first_machine", "long_wait", "evicted", "start_earlier"], "args": [{"t": "T025", "m": "M07"}, {"t": "T071"}, {"t": "T058"}, {"t": "T057", "x": 880}]}
+{"uid": "itops-w19-12", "intervention": {"kind": "set_request", "task": "T105", "resource": "cpu", "value": 468}, "baseline": [false, false, false, true], "kinds": ["start_earlier", "finish_by", "finish_by", "first_machine"], "args": [{"t": "T105", "x": 1184}, {"t": "T085"}, {"t": "T086"}, {"t": "T105", "m": "M08"}]}
+{"uid": "itops-w19-13", "intervention": {"kind": "set_request", "task": "T089", "resource": "mem", "value": 233}, "baseline": [false, false, false, false], "kinds": ["evicted", "first_machine", "start_earlier", "start_later"], "args": [{"t": "T096"}, {"t": "T089", "m": "M01"}, {"t": "T033", "x": 458}, {"t": "T093", "x": 1064}]}
+{"uid": "itops-w21-01"}
+{"uid": "itops-w21-02"}
+{"uid": "itops-w21-03"}
+{"uid": "itops-w21-04", "target": {"kind": "evicted_at", "task": "T034", "time": 208}, "kinds": ["other_machine", "job", "job", "other_machine"], "interventions": [{"kind": "remove_task", "task": "T043"}, {"kind": "remove_job", "job": "J05"}, {"kind": "remove_job", "job": "J14"}, {"kind": "remove_task", "task": "T026"}]}
+{"uid": "itops-w21-05", "target": {"kind": "evicted_at", "task": "T034", "time": 208}, "kinds": ["job", "other_machine", "other_machine", "same_machine"], "interventions": [{"kind": "remove_job", "job": "J05"}, {"kind": "remove_task", "task": "T026"}, {"kind": "remove_task", "task": "T024"}, {"kind": "remove_task", "task": "T013"}]}
+{"uid": "itops-w21-06", "target": {"kind": "evicted_at", "task": "T012", "time": 208}, "kinds": ["job", "same_machine", "other_machine", "other_machine"], "interventions": [{"kind": "remove_job", "job": "J04"}, {"kind": "remove_task", "task": "T013"}, {"kind": "remove_task", "task": "T025"}, {"kind": "remove_task", "task": "T043"}]}
+{"uid": "itops-w21-07", "target": {"kind": "evicted_at", "task": "T011", "time": 208}, "kinds": ["other_machine", "job", "other_machine", "same_machine"], "interventions": [{"kind": "remove_task", "task": "T043"}, {"kind": "remove_job", "job": "J04"}, {"kind": "remove_task", "task": "T036"}, {"kind": "remove_task", "task": "T010"}]}
+{"uid": "itops-w21-08", "kinds": ["p_start_on", "p_start_on", "p_finish_by", "p_start_by"], "args": [{"t": "T088", "m": "M08"}, {"t": "T090", "m": "M01"}, {"t": "T015", "x": 4080}, {"t": "T015", "x": 1520}]}
+{"uid": "itops-w21-09", "task": "T082", "machine": "M03"}
+{"uid": "itops-w21-10", "tasks": ["T077", "T081", "T088", "T084"], "next_start": {"T077": 1524, "T081": 1208, "T088": 1289, "T084": 1250}, "head": "T077"}
+{"uid": "itops-w21-11", "intervention": {"kind": "remove_failure", "machine": "M06"}, "baseline": [true, false, false, true], "kinds": ["first_machine", "finish_by", "evicted", "finish_by"], "args": [{"t": "T066", "m": "M01"}, {"t": "T067"}, {"t": "T006"}, {"t": "T045"}]}
+{"uid": "itops-w21-12", "intervention": {"kind": "remove_failure", "machine": "M06"}, "baseline": [false, false, false, false], "kinds": ["first_machine", "start_earlier", "start_later", "start_earlier"], "args": [{"t": "T079", "m": "M01"}, {"t": "T015", "x": 58}, {"t": "T079", "x": 989}, {"t": "T019", "x": 58}]}
+{"uid": "itops-w21-13", "intervention": {"kind": "remove_failure", "machine": "M06"}, "baseline": [false, true, false, false], "kinds": ["first_machine", "finish_by", "first_machine", "long_wait"], "args": [{"t": "T068", "m": "M06"}, {"t": "T042"}, {"t": "T066", "m": "M06"}, {"t": "T007"}]}
+{"uid": "itops-w24-01"}
+{"uid": "itops-w24-02"}
+{"uid": "itops-w24-03"}
+{"uid": "itops-w24-04", "target": {"kind": "waited", "task": "T153", "submit": 796}, "kinds": ["failure", "holder", "job", "own_mem"], "interventions": [{"kind": "remove_failure", "machine": "M05"}, {"kind": "remove_task", "task": "T197"}, {"kind": "remove_job", "job": "J69"}, {"kind": "set_request", "task": "T153", "resource": "mem", "value": 0}]}
+{"uid": "itops-w24-05", "target": {"kind": "waited", "task": "T152", "submit": 796}, "kinds": ["failure", "job", "ahead", "job"], "interventions": [{"kind": "remove_failure", "machine": "M05"}, {"kind": "remove_job", "job": "J68"}, {"kind": "remove_task", "task": "T146"}, {"kind": "remove_job", "job": "J25"}]}
+{"uid": "itops-w24-06", "target": {"kind": "waited", "task": "T151", "submit": 796}, "kinds": ["ahead", "job", "holder", "job"], "interventions": [{"kind": "remove_task", "task": "T170"}, {"kind": "remove_job", "job": "J92"}, {"kind": "remove_task", "task": "T114"}, {"kind": "remove_job", "job": "J68"}]}
+{"uid": "itops-w24-07", "target": {"kind": "waited", "task": "T152", "submit": 796}, "kinds": ["holder", "ahead", "ahead", "holder"], "interventions": [{"kind": "remove_task", "task": "T052"}, {"kind": "remove_task", "task": "T163"}, {"kind": "remove_task", "task": "T143"}, {"kind": "remove_task", "task": "T198"}]}
+{"uid": "itops-w24-08", "tasks": ["T157", "T209", "T112", "T194"], "next_start": {"T157": 1202, "T209": 1297, "T112": 1337, "T194": 1404}, "head": "T112"}
+{"uid": "itops-w24-09", "kinds": ["p_start_by", "p_finish_by", "p_finish_by", "p_start_by"], "args": [{"t": "T112", "x": 1250}, {"t": "T175", "x": 1310}, {"t": "T152", "x": 1340}, {"t": "T118", "x": 1650}]}
+{"uid": "itops-w24-10", "task": "T112", "machine": "M06"}
+{"uid": "itops-w24-11", "intervention": {"kind": "remove_machine", "machine": "M06"}, "baseline": [false, false, false, true], "kinds": ["evicted", "long_wait", "first_machine", "finish_by"], "args": [{"t": "T207"}, {"t": "T113"}, {"t": "T068", "m": "M07"}, {"t": "T199"}]}
+{"uid": "itops-w24-12", "intervention": {"kind": "remove_machine", "machine": "M08"}, "baseline": [true, false, false, false], "kinds": ["first_machine", "start_earlier", "first_machine", "start_later"], "args": [{"t": "T125", "m": "M01"}, {"t": "T070", "x": 421}, {"t": "T095", "m": "M01"}, {"t": "T120", "x": 616}]}
+{"uid": "itops-w24-13", "intervention": {"kind": "remove_machine", "machine": "M06"}, "baseline": [false, false, false, false], "kinds": ["finish_by", "first_machine", "finish_by", "start_later"], "args": [{"t": "T201"}, {"t": "T168", "m": "M01"}, {"t": "T211"}, {"t": "T199", "x": 1129}]}

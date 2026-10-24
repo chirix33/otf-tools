@@ -1,0 +1,29 @@
+{
+  "domain": "manufacturing",
+  "n_scopes": 4,
+  "seed": 2027,
+  "period_days": 14,
+  "n_questions": 40,
+  "n_questions_all": 40,
+  "per_type": {
+    "descriptive": 10,
+    "explanatory": 10,
+    "predictive": 10,
+    "counterfactual": 10
+  },
+  "split": "mfg",
+  "doc": 0,
+  "role": "dev (pipeline smoke tests only)",
+  "capacity_kg": {
+    "1912": 34500,
+    "1914": 192950,
+    "2103": 407700,
+    "2114": 300000
+  },
+  "scopes": [
+    "Plant 1912, Period 01",
+    "Plant 1914, Period 01",
+    "Plant 2103, Period 01",
+    "Plant 2114, Period 01"
+  ]
+}

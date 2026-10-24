@@ -1,0 +1,18 @@
+parsers attempt 1: passed
+explore 1: ok, 335 chars
+explore 2: ok, 1016 chars
+simulator conversation 1: best F1 0.0
+explore 1: ok, 301 chars
+explore 2: ok, 154 chars
+simulator conversation 2: best F1 0.0
+explore 1: ok, 1099 chars
+explore 2: ok, 489 chars
+explore 3: ok, 2848 chars
+simulate attempt 1 (after 3 explore runs): mean event-match F1 = 0.622 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.5, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 50.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): [{'time': 23.196186032650246, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}]
+- scope 'Video 10776' (start 15.73): F1 0.667, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 65.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11140' (start 40.73): F1 0.5, recorded 3 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 64.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 3']}, {'time': 82.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11144' (start 33.73): F1 0.667, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 85.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11789' (start 16.73): F1 1.0, recorded 1 interaction events after start, model produced 1; missed (recorded but not produced): []; extra (produced but not recorded): []
+- scope 'Video 12052' (start 39.73): F1 0.4, recorded 2 interaction events after start, model produced 3; missed (recorded but not produced): [{'time': 64.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): [{'time': 40.179170116271486, 'kind': 'collision', 'participants': ['Object 1', 'Object 3']}, {'time': 40.80665631724265, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}]
+simulator conversation 3: best F1 0.622

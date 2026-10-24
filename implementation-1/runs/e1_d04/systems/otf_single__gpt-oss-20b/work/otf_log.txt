@@ -1,0 +1,40 @@
+parsers attempt 1: passed
+explore 1: ok, 428 chars
+explore 2: ok, 214 chars
+simulator conversation 1: best F1 0.0
+explore 1: ok, 173 chars
+explore 2: ok, 337 chars
+simulator conversation 2: best F1 0.0
+explore 1: ok, 1078 chars
+explore 2: error, 67 chars
+explore 3: ok, 284 chars
+explore 4: ok, 316 chars
+simulate attempt 1 (after 4 explore runs): observed_events('Video 10242') failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmphxhuhb46\runner.py", line 22, in <module>
+    exec(spec["code"], ns)
+    ~~~~^^^^^^^^^^^^^^^^^^
+  File "<string>", line 159, in <module>
+NameError: name 'doc' is not defined
+simulate attempt 2 (after 4 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10242' (start 10.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 12.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 96.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+- scope 'Video 10282' (start 30.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 32.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 58.0, 'kind': 'collision', 'participants': ['1', '3']}, {'time': 86.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+- scope 'Video 10709' (start 31.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 33.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 85.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+- scope 'Video 10886' (start 13.73): F1 0.0, recorded 1 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 15.0, 'kind': 'collision', 'participants': ['0', '1']}]; extra (produced but not recorded): []
+- scope 'Video 11345' (start 27.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 29.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 67.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 93.0, 'kind': 'collision', 'participants': ['2', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11421' (start 32.73): F1 0.0, recorded 4 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 34.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 71.0, 'kind': 'collision', 'participants': ['0', '2']}, {'time': 74.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 124.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+simulate attempt 3 (after 4 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10242' (start 10.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 12.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 96.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+- scope 'Video 10282' (start 30.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 32.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 58.0, 'kind': 'collision', 'participants': ['1', '3']}, {'time': 86.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+- scope 'Video 10709' (start 31.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 33.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 85.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+- scope 'Video 10886' (start 13.73): F1 0.0, recorded 1 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 15.0, 'kind': 'collision', 'participants': ['0', '1']}]; extra (produced but not recorded): []
+- scope 'Video 11345' (start 27.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 29.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 67.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 93.0, 'kind': 'collision', 'participants': ['2', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11421' (start 32.73): F1 0.0, recorded 4 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 34.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 71.0, 'kind': 'collision', 'participants': ['0', '2']}, {'time': 74.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 124.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+simulate attempt 4 (after 4 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10242' (start 10.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 12.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 96.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+- scope 'Video 10282' (start 30.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 32.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 58.0, 'kind': 'collision', 'participants': ['1', '3']}, {'time': 86.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+- scope 'Video 10709' (start 31.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 33.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 85.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+- scope 'Video 10886' (start 13.73): F1 0.0, recorded 1 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 15.0, 'kind': 'collision', 'participants': ['0', '1']}]; extra (produced but not recorded): []
+- scope 'Video 11345' (start 27.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 29.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 67.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 93.0, 'kind': 'collision', 'participants': ['2', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11421' (start 32.73): F1 0.0, recorded 4 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 34.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 71.0, 'kind': 'collision', 'participants': ['0', '2']}, {'time': 74.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 124.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+simulate attempt 5 (after 4 explore runs): simulate('Video 10242', start=10.73) failed: timeout after 20s
+simulator conversation 3: best F1 0.0

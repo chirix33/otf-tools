@@ -1,0 +1,26 @@
+parsers attempt 1: entities('Video 10100') failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmppr3yhubb\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 22, in entities
+TypeError: list indices must be integers or slices, not str
+parsers attempt 2: passed
+simulator conversation 1: best F1 0.0
+explore 1: ok, 297 chars
+explore 2: ok, 42 chars
+explore 3: ok, 30 chars
+simulate attempt 1 (after 3 explore runs): simulate('Video 10100', start=22.73) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpuv8i25z8\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 328, in simulate
+  File "<string>", line 256, in _propagate
+KeyError: 'Object 1'
+simulate attempt 2 (after 3 explore runs): mean event-match F1 = 0.0 (need 0.4)
+- scope 'Video 10100' (start 22.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 24.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}, {'time': 44.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 2']}, {'time': 52.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): []
+- scope 'Video 10357' (start 43.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 45.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}, {'time': 70.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}, {'time': 100.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 3']}]; extra (produced but not recorded): []
+- scope 'Video 11385' (start 44.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 46.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}, {'time': 74.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11399' (start 38.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 40.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}, {'time': 52.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 3']}, {'time': 99.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11638' (start 34.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 36.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}, {'time': 59.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}]; extra (produced but not recorded): []
+- scope 'Video 11864' (start 29.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 31.0, 'kind': 'collision', 'participants': ['Object 0', 'Object 1']}, {'time': 53.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 2']}, {'time': 70.0, 'kind': 'collision', 'participants': ['Object 1', 'Object 3']}]; extra (produced but not recorded): []
+simulator conversation 2: best F1 0.0
+explore 1: ok, 614 chars
+simulator conversation 3: best F1 0.0

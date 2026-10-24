@@ -1,0 +1,35 @@
+{
+  "system": "pageindex",
+  "model": "gemma-4-31b-think",
+  "reasoning_effort": null,
+  "model_spec": {
+    "alias": "gemma-4-31b-think",
+    "served_name": "RedHatAI/gemma-4-31B-it-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": null,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "top_k": 64,
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 100804,
+    "cached_input_tokens": 1216,
+    "output_tokens": 3454,
+    "reasoning_tokens": 0,
+    "llm_calls": 22,
+    "total_tokens": 104258
+  },
+  "latency_s": 24.292065858840942,
+  "info": {
+    "doc_id": "pi-b751b82bcb9c48dca2dd325f5bf662f3",
+    "cached_index": true,
+    "tree_nodes": 21
+  }
+}

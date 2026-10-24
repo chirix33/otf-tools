@@ -1,0 +1,53 @@
+parsers attempt 1: entities('Video 10176') failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp20wg63rh\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 54, in entities
+  File "<string>", line 15, in _objects_node
+NameError: name 'scope_doc' is not defined. Did you mean: 'scope_node'?
+parsers attempt 2: entities('Video 10176') failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpfe1rfngg\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 58, in entities
+  File "<string>", line 13, in _objects_list_node
+  File "<string>", line 10, in children
+KeyError: 'nodes'
+parsers attempt 3: passed
+explore 1: ok, 3000 chars
+explore 2: ok, 324 chars
+explore 3: ok, 263 chars
+explore 4: ok, 589 chars
+simulate attempt 1 (after 4 explore runs): simulate('Video 10176', start=44.73) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpq9zhizsj\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 245, in simulate
+ValueError: not enough values to unpack (expected 7, got 6)
+simulate attempt 2 (after 4 explore runs): mean event-match F1 = 0.111 (need 0.4)
+- scope 'Video 10176' (start 44.73): F1 0.0, recorded 1 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 46.0, 'kind': 'collision', 'participants': ['0', '1']}]; extra (produced but not recorded): [{'time': 117.18, 'kind': 'collision', 'participants': ['2', '3']}, {'time': 117.28, 'kind': 'collision', 'participants': ['1', '2']}]
+- scope 'Video 10821' (start 55.73): F1 0.0, recorded 2 interaction events after start, model produced 3; missed (recorded but not produced): [{'time': 57.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 119.0, 'kind': 'collision', 'participants': ['0', '2']}]; extra (produced but not recorded): [{'time': 109.88, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 113.23, 'kind': 'collision', 'participants': ['1', '4']}, {'time': 114.08, 'kind': 'collision', 'participants': ['1', '5']}]
+- scope 'Video 10992' (start 51.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 53.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 103.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 106.0, 'kind': 'collision', 'participants': ['0', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11526' (start 24.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 26.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 47.0, 'kind': 'collision', 'participants': ['1', '3']}, {'time': 61.0, 'kind': 'collision', 'participants': ['0', '2']}]; extra (produced but not recorded): []
+- scope 'Video 11559' (start 20.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 22.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 38.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11797' (start 13.73): F1 0.667, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 75.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+simulate attempt 3 (after 4 explore runs): simulate('Video 10176', start=44.73) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpdaauj6fa\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 268, in simulate
+NameError: name '_' is not defined
+simulate attempt 4 (after 4 explore runs): simulate('Video 10176', start=44.73) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpsaj4ca5h\runner.py", line 23, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 268, in simulate
+NameError: name '_' is not defined
+simulate attempt 5 (after 4 explore runs): mean event-match F1 = 0.111 (need 0.4)
+- scope 'Video 10176' (start 44.73): F1 0.0, recorded 1 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 46.0, 'kind': 'collision', 'participants': ['0', '1']}]; extra (produced but not recorded): [{'time': 117.17, 'kind': 'collision', 'participants': ['2', '3']}, {'time': 117.27, 'kind': 'collision', 'participants': ['1', '2']}]
+- scope 'Video 10821' (start 55.73): F1 0.0, recorded 2 interaction events after start, model produced 2; missed (recorded but not produced): [{'time': 57.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 119.0, 'kind': 'collision', 'participants': ['0', '2']}]; extra (produced but not recorded): [{'time': 109.88, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 112.99, 'kind': 'collision', 'participants': ['1', '4']}]
+- scope 'Video 10992' (start 51.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 53.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 103.0, 'kind': 'collision', 'participants': ['1', '2']}, {'time': 106.0, 'kind': 'collision', 'participants': ['0', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11526' (start 24.73): F1 0.0, recorded 3 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 26.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 47.0, 'kind': 'collision', 'participants': ['1', '3']}, {'time': 61.0, 'kind': 'collision', 'participants': ['0', '2']}]; extra (produced but not recorded): []
+- scope 'Video 11559' (start 20.73): F1 0.0, recorded 2 interaction events after start, model produced 0; missed (recorded but not produced): [{'time': 22.0, 'kind': 'collision', 'participants': ['0', '1']}, {'time': 38.0, 'kind': 'collision', 'participants': ['1', '3']}]; extra (produced but not recorded): []
+- scope 'Video 11797' (start 13.73): F1 0.667, recorded 2 interaction events after start, model produced 1; missed (recorded but not produced): [{'time': 75.0, 'kind': 'collision', 'participants': ['1', '2']}]; extra (produced but not recorded): []
+simulator conversation 1: best F1 0.111
+explore 1: ok, 238 chars
+explore 2: ok, 954 chars
+simulator conversation 2: best F1 0.0
+explore 1: ok, 1357 chars
+simulator conversation 3: best F1 0.0

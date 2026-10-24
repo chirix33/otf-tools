@@ -1,0 +1,576 @@
+2026-10-23 17:24:40  gates: start
+[otf] setup: 19857 tokens, 42.5s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 308 to go
+[otf] 10/308  correct=10  errors=0  3s
+[otf] 20/308  correct=18  errors=0  7s
+[otf] 30/308  correct=28  errors=0  14s
+[otf] 40/308  correct=37  errors=0  21s
+[otf] 50/308  correct=46  errors=0  26s
+[otf] 60/308  correct=55  errors=0  33s
+[otf] 70/308  correct=64  errors=0  37s
+[otf] 80/308  correct=74  errors=0  42s
+[otf] 90/308  correct=80  errors=0  47s
+[otf] 100/308  correct=88  errors=0  49s
+[otf] 110/308  correct=98  errors=0  57s
+[otf] 120/308  correct=103  errors=0  64s
+[otf] 130/308  correct=112  errors=0  68s
+[otf] 140/308  correct=120  errors=0  75s
+[otf] 150/308  correct=130  errors=0  80s
+[otf] 160/308  correct=138  errors=0  84s
+[otf] 170/308  correct=147  errors=0  89s
+[otf] 180/308  correct=154  errors=0  97s
+[otf] 190/308  correct=163  errors=0  101s
+[otf] 200/308  correct=171  errors=0  106s
+[otf] 210/308  correct=180  errors=0  112s
+[otf] 220/308  correct=190  errors=0  118s
+[otf] 230/308  correct=197  errors=0  123s
+[otf] 240/308  correct=206  errors=0  127s
+[otf] 250/308  correct=215  errors=0  132s
+[otf] 260/308  correct=224  errors=0  138s
+[otf] 270/308  correct=232  errors=0  144s
+[otf] 280/308  correct=241  errors=0  151s
+[otf] 290/308  correct=249  errors=0  157s
+[otf] 300/308  correct=257  errors=0  161s
+[otf] 308/308  correct=262  errors=0  177s
+2026-10-23 17:29:24  done (0, 3.7 min): run --run pilot20 --system otf  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf_oracle] setup: 0 tokens, 1.8s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': None, 'model_tries': 0, 'model_reused_from': None, 'model_code': 'C:\\Users\\aashraf\\Desktop\\Work\\2026\\MLSystem 2027\\implementation-1\\oracle\\oracle_model.py'}
+[otf_oracle] 0 already answered, 308 to go
+[otf_oracle] 10/308  correct=9  errors=0  4s
+[otf_oracle] 20/308  correct=17  errors=0  9s
+[otf_oracle] 30/308  correct=26  errors=0  15s
+[otf_oracle] 40/308  correct=36  errors=0  22s
+[otf_oracle] 50/308  correct=45  errors=0  31s
+[otf_oracle] 60/308  correct=54  errors=0  36s
+[otf_oracle] 70/308  correct=63  errors=0  42s
+[otf_oracle] 80/308  correct=72  errors=0  49s
+[otf_oracle] 90/308  correct=80  errors=0  54s
+[otf_oracle] 100/308  correct=89  errors=0  59s
+[otf_oracle] 110/308  correct=97  errors=0  69s
+[otf_oracle] 120/308  correct=104  errors=0  79s
+[otf_oracle] 130/308  correct=113  errors=0  87s
+[otf_oracle] 140/308  correct=121  errors=0  95s
+[otf_oracle] 150/308  correct=130  errors=0  104s
+[otf_oracle] 160/308  correct=139  errors=0  108s
+[otf_oracle] 170/308  correct=148  errors=0  113s
+[otf_oracle] 180/308  correct=158  errors=0  124s
+[otf_oracle] 190/308  correct=167  errors=0  131s
+[otf_oracle] 200/308  correct=177  errors=0  140s
+[otf_oracle] 210/308  correct=184  errors=0  147s
+[otf_oracle] 220/308  correct=193  errors=0  153s
+[otf_oracle] 230/308  correct=199  errors=0  165s
+[otf_oracle] 240/308  correct=209  errors=0  168s
+[otf_oracle] 250/308  correct=218  errors=0  175s
+[otf_oracle] 260/308  correct=225  errors=0  181s
+[otf_oracle] 270/308  correct=233  errors=0  188s
+[otf_oracle] 280/308  correct=242  errors=0  195s
+[otf_oracle] 290/308  correct=250  errors=0  207s
+[otf_oracle] 300/308  correct=259  errors=0  213s
+[otf_oracle] 308/308  correct=266  errors=0  234s
+2026-10-23 17:33:21  done (0, 3.9 min): run --run pilot20 --system otf_oracle  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf] setup: 360333 tokens, 787.7s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.622, 'model_tries': 9, 'model_reused_from': None, 'cached_model': True}
+[otf] 32 already answered, 276 to go
+[otf] 10/276  correct=8  errors=0  4s
+[otf] 20/276  correct=17  errors=0  6s
+[otf] 30/276  correct=27  errors=0  8s
+[otf] 40/276  correct=37  errors=0  11s
+[otf] 50/276  correct=47  errors=0  15s
+[otf] 60/276  correct=56  errors=0  19s
+[otf] 70/276  correct=65  errors=0  24s
+[otf] 80/276  correct=72  errors=0  31s
+[otf] 90/276  correct=81  errors=0  38s
+[otf] 100/276  correct=90  errors=0  43s
+[otf] 110/276  correct=100  errors=0  47s
+[otf] 120/276  correct=110  errors=0  52s
+[otf] 130/276  correct=119  errors=0  55s
+[otf] 140/276  correct=127  errors=0  61s
+[otf] 150/276  correct=135  errors=0  64s
+[otf] 160/276  correct=143  errors=0  68s
+[otf] 170/276  correct=152  errors=0  72s
+[otf] 180/276  correct=160  errors=0  80s
+[otf] 190/276  correct=168  errors=0  84s
+[otf] 200/276  correct=176  errors=0  89s
+[otf] 210/276  correct=186  errors=0  94s
+[otf] 220/276  correct=194  errors=0  99s
+[otf] 230/276  correct=203  errors=0  102s
+[otf] 240/276  correct=213  errors=0  108s
+[otf] 250/276  correct=223  errors=0  113s
+[otf] 260/276  correct=232  errors=0  119s
+[otf] 270/276  correct=238  errors=0  122s
+[otf] 276/276  correct=241  errors=0  129s
+2026-10-23 17:35:33  done (0, 2.2 min): run --run pilot20 --system otf  [in C:\Users\aashraf\AppData\Local\Temp\claude\C--Users-aashraf-Desktop-Work-2026-MLSystem-2027-claude-work\a9d1fcf5-5d86-4dd0-930e-c266ced7aad2\scratchpad\otf_v2_worktree\implementation-1]
+[otf_oracle] setup: 0 tokens, 1.9s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': None, 'model_tries': 0, 'model_reused_from': None, 'model_code': 'C:\\Users\\aashraf\\AppData\\Local\\Temp\\claude\\C--Users-aashraf-Desktop-Work-2026-MLSystem-2027-claude-work\\a9d1fcf5-5d86-4dd0-930e-c266ced7aad2\\scratchpad\\otf_v2_worktree\\implementation-1\\oracle\\oracle_model.py'}
+[otf_oracle] 32 already answered, 276 to go
+[otf_oracle] 10/276  correct=9  errors=0  4s
+[otf_oracle] 20/276  correct=17  errors=0  6s
+[otf_oracle] 30/276  correct=27  errors=0  9s
+[otf_oracle] 40/276  correct=36  errors=0  12s
+[otf_oracle] 50/276  correct=46  errors=0  15s
+[otf_oracle] 60/276  correct=54  errors=0  20s
+[otf_oracle] 70/276  correct=63  errors=0  25s
+[otf_oracle] 80/276  correct=70  errors=0  29s
+[otf_oracle] 90/276  correct=79  errors=0  35s
+[otf_oracle] 100/276  correct=86  errors=0  39s
+[otf_oracle] 110/276  correct=95  errors=0  44s
+[otf_oracle] 120/276  correct=105  errors=0  47s
+[otf_oracle] 130/276  correct=114  errors=0  51s
+[otf_oracle] 140/276  correct=122  errors=0  55s
+[otf_oracle] 150/276  correct=131  errors=0  60s
+[otf_oracle] 160/276  correct=139  errors=0  63s
+[otf_oracle] 170/276  correct=149  errors=0  67s
+[otf_oracle] 180/276  correct=158  errors=0  72s
+[otf_oracle] 190/276  correct=167  errors=0  75s
+[otf_oracle] 200/276  correct=176  errors=0  81s
+[otf_oracle] 210/276  correct=185  errors=0  84s
+[otf_oracle] 220/276  correct=192  errors=0  89s
+[otf_oracle] 230/276  correct=202  errors=0  92s
+[otf_oracle] 240/276  correct=210  errors=0  96s
+[otf_oracle] 250/276  correct=220  errors=0  100s
+[otf_oracle] 260/276  correct=229  errors=0  106s
+[otf_oracle] 270/276  correct=237  errors=0  109s
+[otf_oracle] 276/276  correct=243  errors=0  115s
+2026-10-23 17:37:31  done (0, 2.0 min): run --run pilot20 --system otf_oracle  [in C:\Users\aashraf\AppData\Local\Temp\claude\C--Users-aashraf-Desktop-Work-2026-MLSystem-2027-claude-work\a9d1fcf5-5d86-4dd0-930e-c266ced7aad2\scratchpad\otf_v2_worktree\implementation-1]
+2026-10-23 17:37:31  v2 results copied back as otf_v2 / otf_oracle_v2
+[otf] setup: 27438 tokens, 55.3s {'nodes': 21, 'scopes': 4, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 4 to go
+[otf] 4/4  correct=3  errors=0  14s
+2026-10-23 17:38:42  done (0, 1.2 min): run --run mfg_dev --system otf --system-arg use_library=false --limit 4  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf] setup: 422293 tokens, 207.1s {'nodes': 21, 'scopes': 4, 'model_passed': True, 'model_f1': 0.807, 'model_tries': 10, 'model_reused_from': None}
+[otf] 0 already answered, 4 to go
+[otf] 4/4  correct=2  errors=0  96s
+2026-10-23 17:43:46  done (0, 5.1 min): run --run itops_dev --system otf --system-arg use_library=false --limit 4  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf] setup: 527910 tokens, 167.7s {'nodes': 91, 'scopes': 30, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 12, 'model_reused_from': None}
+[otf] 0 already answered, 4 to go
+[otf] 4/4  correct=2  errors=0  4s
+2026-10-23 17:46:39  done (0, 2.9 min): run --run fin_dev --system otf --system-arg use_library=false --limit 4  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+# CLEVRER document-QA benchmark: pilot20
+
+- Videos: 20 (validation split, seed 0), questions: 308
+- Document: `C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\runs\pilot20\document.pdf` (52 pages), rendered from ground-truth annotations (observed 128 frames only; motion log every 8 frames + event frames)
+- Descriptive: exact match. Multiple-choice: per-option accuracy, and per-question accuracy (all options of the question correct). Overall question accuracy counts each question once.
+
+## Overall
+
+| System | Model | Answered | Errors | Question acc. (%) | Option acc. (%) | Parse err. |
+|---|---|---|---|---|---|---|
+| full_context_file | gpt-5.5 | 308/308 | 0 | 92.86 | 94.31 | 0 |
+| full_context_text | gemma-4-31b-nothink | 32/308 | 0 | 62.50 | 81.58 | 0 |
+| full_context_text | gemma-4-31b-think | 32/308 | 0 | 87.50 | 89.47 | 0 |
+| full_context_text | gpt-oss-20b | 32/308 | 0 | 59.38 | 69.74 | 2 |
+| full_context_text | qwen3.6-27b | 48/308 | 0 | 72.92 | 79.83 | 0 |
+| otf | gpt-oss-20b | 308/308 | 0 | 85.06 | 87.45 | 0 |
+| otf_oracle | gpt-oss-20b | 308/308 | 0 | 86.36 | 87.84 | 0 |
+| otf_oracle | gpt-oss-20b | 308/308 | 0 | 88.31 | 90.98 | 0 |
+| otf | gemma-4-31b-think | 32/308 | 0 | 87.50 | 90.79 | 0 |
+| otf | gpt-oss-20b | 308/308 | 0 | 87.34 | 88.82 | 0 |
+| pageindex | gpt-5.5 | 308/308 | 0 | 92.86 | 93.92 | 0 |
+| pageindex | gpt-oss-20b | 32/308 | 0 | 50.00 | 68.42 | 0 |
+| pageindex | qwen3.6-27b | 32/308 | 0 | 87.50 | 88.16 | 0 |
+| rag | gpt-oss-20b | 32/308 | 0 | 56.25 | 76.32 | 0 |
+
+## Accuracy by question type
+
+Descriptive: accuracy. Others: per-option / per-question.
+
+| System | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|
+| full_context_file | 97.27 (n=220) | 96.90 / 94.44 (n=36) | 100.00 / 100.00 (n=14) | 85.71 / 63.16 (n=38) |
+| full_context_text | 100.00 (n=8) | 96.30 / 87.50 (n=8) | 56.25 / 12.50 (n=8) | 76.00 / 50.00 (n=8) |
+| full_context_text | 100.00 (n=8) | 92.59 / 87.50 (n=8) | 100.00 / 100.00 (n=8) | 76.00 / 62.50 (n=8) |
+| full_context_text | 100.00 (n=8) | 66.67 / 37.50 (n=8) | 68.75 / 37.50 (n=8) | 64.00 / 62.50 (n=8) |
+| full_context_text | 91.67 (n=12) | 73.81 / 41.67 (n=12) | 100.00 / 100.00 (n=12) | 70.73 / 58.33 (n=12) |
+| otf | 97.27 (n=220) | 77.52 / 47.22 (n=36) | 85.71 / 78.57 (n=14) | 81.20 / 52.63 (n=38) |
+| otf_oracle | 94.55 (n=220) | 80.62 / 63.89 (n=36) | 100.00 / 100.00 (n=14) | 81.20 / 55.26 (n=38) |
+| otf_oracle | 95.45 (n=220) | 83.72 / 58.33 (n=36) | 100.00 / 100.00 (n=14) | 88.72 / 71.05 (n=38) |
+| otf | 100.00 (n=8) | 92.59 / 87.50 (n=8) | 93.75 / 87.50 (n=8) | 84.00 / 75.00 (n=8) |
+| otf | 97.27 (n=220) | 86.05 / 63.89 (n=36) | 100.00 / 100.00 (n=14) | 75.19 / 47.37 (n=38) |
+| pageindex | 97.73 (n=220) | 94.57 / 91.67 (n=36) | 100.00 / 100.00 (n=14) | 85.71 / 63.16 (n=38) |
+| pageindex | 87.50 (n=8) | 81.48 / 62.50 (n=8) | 56.25 / 12.50 (n=8) | 56.00 / 37.50 (n=8) |
+| pageindex | 100.00 (n=8) | 85.19 / 75.00 (n=8) | 87.50 / 87.50 (n=8) | 88.00 / 87.50 (n=8) |
+| rag | 62.50 (n=8) | 77.78 / 50.00 (n=8) | 75.00 / 50.00 (n=8) | 80.00 / 62.50 (n=8) |
+
+### Question accuracy (%) with 95% bootstrap CI
+
+| System | Model | overall | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|---|---|
+| full_context_file | gpt-5.5 | 92.9 [89.9, 95.8] | 97.3 [95.0, 99.1] | 94.4 [86.1, 100.0] | 100.0 [100.0, 100.0] | 63.2 [47.4, 79.0] |
+| full_context_text | gemma-4-31b-nothink | 62.5 [46.9, 78.1] | 100.0 [100.0, 100.0] | 87.5 [62.5, 100.0] | 12.5 [0.0, 37.5] | 50.0 [12.5, 87.5] |
+| full_context_text | gemma-4-31b-think | 87.5 [75.0, 96.9] | 100.0 [100.0, 100.0] | 87.5 [62.5, 100.0] | 100.0 [100.0, 100.0] | 62.5 [25.0, 87.5] |
+| full_context_text | gpt-oss-20b | 59.4 [43.8, 75.0] | 100.0 [100.0, 100.0] | 37.5 [12.5, 75.0] | 37.5 [12.5, 75.0] | 62.5 [25.0, 87.5] |
+| full_context_text | qwen3.6-27b | 72.9 [58.3, 85.4] | 91.7 [75.0, 100.0] | 41.7 [16.7, 66.7] | 100.0 [100.0, 100.0] | 58.3 [33.3, 83.3] |
+| otf | gpt-oss-20b | 85.1 [81.2, 89.0] | 97.3 [95.0, 99.1] | 47.2 [30.6, 63.9] | 78.6 [57.1, 100.0] | 52.6 [36.8, 68.4] |
+| otf_oracle | gpt-oss-20b | 86.4 [82.5, 89.9] | 94.5 [91.4, 97.3] | 63.9 [47.2, 77.8] | 100.0 [100.0, 100.0] | 55.3 [39.5, 71.0] |
+| otf_oracle | gpt-oss-20b | 88.3 [84.4, 91.9] | 95.5 [92.3, 98.2] | 58.3 [41.7, 72.2] | 100.0 [100.0, 100.0] | 71.0 [57.9, 84.2] |
+| otf | gemma-4-31b-think | 87.5 [75.0, 96.9] | 100.0 [100.0, 100.0] | 87.5 [62.5, 100.0] | 87.5 [62.5, 100.0] | 75.0 [50.0, 100.0] |
+| otf | gpt-oss-20b | 87.3 [83.4, 90.9] | 97.3 [95.0, 99.1] | 63.9 [47.2, 80.6] | 100.0 [100.0, 100.0] | 47.4 [31.6, 63.2] |
+| pageindex | gpt-5.5 | 92.9 [89.9, 95.5] | 97.7 [95.5, 99.5] | 91.7 [83.3, 100.0] | 100.0 [100.0, 100.0] | 63.2 [47.4, 79.0] |
+| pageindex | gpt-oss-20b | 50.0 [34.4, 65.6] | 87.5 [62.5, 100.0] | 62.5 [25.0, 87.5] | 12.5 [0.0, 37.5] | 37.5 [0.0, 75.0] |
+| pageindex | qwen3.6-27b | 87.5 [75.0, 96.9] | 100.0 [100.0, 100.0] | 75.0 [37.5, 100.0] | 87.5 [62.5, 100.0] | 87.5 [62.5, 100.0] |
+| rag | gpt-oss-20b | 56.2 [40.6, 71.9] | 62.5 [25.0, 87.5] | 50.0 [12.5, 87.5] | 50.0 [12.5, 87.5] | 62.5 [25.0, 87.8] |
+
+### Paired differences: reference minus other (accuracy points, 95% paired-bootstrap CI, p = share of resamples <= 0)
+
+| Model | Reference vs other | overall | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|---|---|
+| gpt-oss-20b | otf vs full_context_text | +18.8 [+3.1, +34.4] p=0.013 | +0.0 [+0.0, +0.0] p=1.000 | +25.0 [+0.0, +50.0] p=0.103 | +37.5 [+12.2, +75.0] p=0.025 | +12.5 [-25.0, +50.0] p=0.398 |
+| gpt-oss-20b | otf vs otf_oracle | -1.3 [-4.9, +1.9] p=0.809 | +2.7 [+0.0, +5.5] p=0.032 | -16.7 [-30.6, -2.8] p=0.996 | -21.4 [-42.9, +0.0] p=1.000 | -2.6 [-18.4, +13.2] p=0.683 |
+| gpt-oss-20b | otf vs otf_oracle | -3.2 [-6.8, +0.0] p=0.983 | +1.8 [-0.9, +4.5] p=0.126 | -11.1 [-22.2, -2.8] p=1.000 | -21.4 [-42.9, +0.0] p=1.000 | -18.4 [-34.2, +0.0] p=0.987 |
+| gpt-oss-20b | otf vs otf | -2.3 [-5.5, +0.7] p=0.935 | +0.0 [-2.7, +2.7] p=0.591 | -16.7 [-30.6, -2.8] p=0.997 | -21.4 [-42.9, +0.0] p=1.000 | +5.3 [-7.9, +18.4] p=0.271 |
+| gpt-oss-20b | otf vs pageindex | +28.1 [+12.5, +43.8] p=0.000 | +12.5 [+0.0, +37.5] p=0.327 | +0.0 [+0.0, +0.0] p=1.000 | +62.5 [+25.0, +87.5] p=0.000 | +37.5 [+0.0, +75.0] p=0.025 |
+| gpt-oss-20b | otf vs rag | +21.9 [+9.4, +37.5] p=0.001 | +37.5 [+12.5, +75.0] p=0.019 | +12.5 [+0.0, +37.5] p=0.327 | +25.0 [+0.0, +50.0] p=0.094 | +12.5 [+0.0, +37.5] p=0.357 |
+| gemma-4-31b-think | otf vs full_context_text | +0.0 [-12.5, +12.5] p=0.596 | +0.0 [+0.0, +0.0] p=1.000 | +0.0 [+0.0, +0.0] p=1.000 | -12.5 [-37.5, +0.0] p=1.000 | +12.5 [-25.0, +50.0] p=0.384 |
+| gpt-oss-20b | otf vs full_context_text | +28.1 [+12.5, +43.8] p=0.000 | +0.0 [+0.0, +0.0] p=1.000 | +37.5 [+12.5, +75.0] p=0.018 | +62.5 [+25.0, +100.0] p=0.001 | +12.5 [+0.0, +37.5] p=0.340 |
+| gpt-oss-20b | otf vs otf | +2.3 [-0.7, +5.5] p=0.097 | +0.0 [-2.7, +2.7] p=0.566 | +16.7 [+2.8, +30.6] p=0.014 | +21.4 [+0.0, +42.9] p=0.036 | -5.3 [-18.4, +7.9] p=0.843 |
+| gpt-oss-20b | otf vs otf_oracle | +1.0 [-2.3, +4.2] p=0.326 | +2.7 [+0.0, +5.5] p=0.031 | +0.0 [-16.7, +16.7] p=0.552 | +0.0 [+0.0, +0.0] p=1.000 | -7.9 [-21.1, +5.3] p=0.914 |
+| gpt-oss-20b | otf vs otf_oracle | -1.0 [-4.5, +2.3] p=0.755 | +1.8 [-0.5, +4.1] p=0.093 | +5.6 [-8.3, +19.4] p=0.297 | +0.0 [+0.0, +0.0] p=1.000 | -23.7 [-39.5, -7.9] p=0.999 |
+| gpt-oss-20b | otf vs pageindex | +37.5 [+21.9, +53.1] p=0.000 | +12.5 [+0.0, +37.5] p=0.327 | +12.5 [+0.0, +37.5] p=0.339 | +87.5 [+62.5, +100.0] p=0.000 | +37.5 [+12.5, +75.0] p=0.019 |
+| gpt-oss-20b | otf vs rag | +31.2 [+15.6, +46.9] p=0.000 | +37.5 [+12.5, +75.0] p=0.019 | +25.0 [+0.0, +62.5] p=0.086 | +50.0 [+12.5, +87.5] p=0.004 | +12.5 [+0.0, +37.5] p=0.339 |
+
+### Descriptive subtypes (accuracy %)
+
+| System | count | exist | query_color | query_material | query_shape |
+|---|---|---|---|---|---|
+| full_context_file | 93.75 | 97.50 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 75.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| otf | 96.25 | 95.00 | 100.00 | 97.22 | 100.00 |
+| otf_oracle | 87.50 | 97.50 | 100.00 | 97.22 | 100.00 |
+| otf_oracle | 88.75 | 97.50 | 100.00 | 100.00 | 100.00 |
+| otf | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| otf | 93.75 | 97.50 | 100.00 | 100.00 | 100.00 |
+| pageindex | 95.00 | 97.50 | 100.00 | 100.00 | 100.00 |
+| pageindex | 50.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| pageindex | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| rag | 100.00 | 0.00 | 33.33 | 100.00 | 100.00 |
+
+## Token consumption
+
+Query tokens are per question (mean). Cached input is a subset of input; reasoning is a subset of output. Setup = one-time cost (e.g. PageIndex tree build). Amortized = (setup + all query tokens) / questions answered.
+
+| System | Input | Cached input | Output | Reasoning | Total / q | Setup total | Amortized total / q | Sum (all q) | LLM calls / q | Tool calls / q | Latency / q (s) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| full_context_file | 66,206.7 | 64,856.1 | 288.3 | 274.0 | 66,495.0 | 0 | 66,495.0 | 20,480,457 | 1.00 | - | 5.65 |
+| full_context_text | 68,085.0 | 63,753.0 | 20.4 | 0.0 | 68,105.3 | 0 | 68,105.3 | 2,179,371 | 1.00 | 0.00 | 8.47 |
+| full_context_text | 68,083.0 | 61,631.0 | 1,488.2 | 1,466.2 | 69,571.2 | 0 | 69,571.2 | 2,226,278 | 1.00 | 0.00 | 100.86 |
+| full_context_text | 54,376.9 | 50,928.0 | 2,309.7 | 2,289.2 | 56,686.7 | 0 | 56,686.7 | 1,813,973 | 1.00 | 0.00 | 27.42 |
+| full_context_text | 65,915.4 | 46,403.0 | 1,902.2 | 1,884.3 | 67,817.6 | 0 | 67,817.6 | 3,255,247 | 1.00 | 0.00 | 216.73 |
+| otf | 3,584.8 | 3,128.6 | 577.1 | 542.4 | 4,161.9 | 19,857 | 4,226.4 | 1,281,868 | 2.00 | 0.00 | 4.35 |
+| otf_oracle | 3,035.9 | 2,808.8 | 768.3 | 714.7 | 3,804.2 | 0 | 3,804.2 | 1,171,697 | 2.23 | 0.00 | 5.76 |
+| otf_oracle | 2,857.4 | 2,713.9 | 452.5 | 415.8 | 3,309.9 | 0 | 3,309.9 | 1,019,450 | 2.12 | 0.00 | 3.78 |
+| otf | 1,428.4 | 1,002.0 | 1,252.9 | 1,212.3 | 2,681.3 | 284,969 | 11,586.6 | 85,802 | 2.25 | 0.00 | 55.85 |
+| otf | 2,878.3 | 2,724.3 | 527.1 | 490.4 | 3,405.4 | 360,333 | 4,575.3 | 1,048,856 | 2.12 | 0.00 | 4.47 |
+| pageindex | 20,249.2 | 9,375.6 | 363.9 | 293.0 | 20,613.1 | 85,569 | 20,890.9 | 6,348,841 | 2.84 | 1.84 | 7.10 |
+| pageindex | 15,847.8 | 7,361.0 | 991.9 | 938.7 | 16,839.8 | 97,234 | 19,878.3 | 538,873 | 0.00 | 0.00 | 11.56 |
+| pageindex | 26,867.7 | 11,662.0 | 2,604.6 | 2,372.1 | 29,472.2 | 134,725 | 33,682.4 | 943,112 | 0.00 | 0.00 | 90.36 |
+| rag | 1,209.2 | 391.0 | 665.4 | 643.0 | 1,874.6 | 0 | 1,874.6 | 59,987 | 1.00 | 0.00 | 8.37 |
+
+### Mean total tokens per question, by type
+
+| System | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|
+| full_context_file | 66,285.0 | 66,682.8 | 66,712.6 | 67,452.8 |
+| full_context_text | 68,069.5 | 68,131.9 | 68,096.9 | 68,123.1 |
+| full_context_text | 68,384.2 | 69,517.6 | 69,492.8 | 70,890.1 |
+| full_context_text | 54,617.1 | 55,935.5 | 57,090.5 | 59,103.5 |
+| full_context_text | 66,433.2 | 68,020.0 | 67,782.8 | 69,034.6 |
+| otf | 3,846.5 | 4,505.0 | 4,524.6 | 5,529.4 |
+| otf_oracle | 3,844.0 | 4,663.7 | 1,264.5 | 3,695.5 |
+| otf_oracle | 3,841.0 | 2,246.9 | 1,154.5 | 2,036.4 |
+| otf | 3,204.1 | 2,449.8 | 1,327.8 | 3,743.6 |
+| otf | 3,834.6 | 2,352.7 | 1,213.2 | 2,725.1 |
+| pageindex | 19,613.7 | 22,856.4 | 22,817.7 | 23,461.8 |
+| pageindex | 18,787.1 | 14,648.8 | 15,215.1 | 18,708.1 |
+| pageindex | 23,189.1 | 25,509.0 | 26,298.2 | 42,892.6 |
+| rag | 1,589.8 | 1,817.6 | 1,858.5 | 2,232.5 |
+
+### Setup details
+
+- **full_context_file**: 0 tokens (0 in / 0 out, 0 calls), 1.1s, info: `{"file_id": "file-FsgeXE4ZcoujG7hFcQ9qV4"}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.2s, info: `{"doc_chars": 115835}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.2s, info: `{"doc_chars": 115835}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.3s, info: `{"doc_chars": 115835}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.2s, info: `{"doc_chars": 115835}`
+- **otf**: 19,857 tokens (9,511 in / 10,346 out, 3 calls), 42.5s, info: `{"nodes": 81, "scopes": 20, "model_passed": false, "model_f1": 0.0, "model_tries": 3, "model_reused_from": null}`
+- **otf_oracle**: 0 tokens (0 in / 0 out, 0 calls), 1.8s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": null, "model_tries": 0, "model_reused_from": null, "model_code": "C:\\Users\\aashraf\\Desktop\\Work\\2026\\MLSystem 2027\\implementation-1\\oracle\\oracle_model.py"}`
+- **otf_oracle**: 0 tokens (0 in / 0 out, 0 calls), 1.9s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": null, "model_tries": 0, "model_reused_from": null, "model_code": "C:\\Users\\aashraf\\AppData\\Local\\Temp\\claude\\C--Users-aashraf-Desktop-Work-2026-MLSystem-2027-claude-work\\a9d1fcf5-5d86-4dd0-930e-c266ced7aad2\\scratchpad\\otf_v2_worktree\\implementation-1\\oracle\\oracle_model.py"}`
+- **otf**: 284,969 tokens (234,567 in / 50,402 out, 17 calls), 1628.8s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": 0.722, "model_tries": 14, "model_reused_from": null}`
+- **otf**: 360,333 tokens (291,402 in / 68,931 out, 48 calls), 787.7s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": 0.622, "model_tries": 9, "model_reused_from": null, "cached_model": true}`
+- **pageindex**: 85,569 tokens (81,048 in / 4,521 out, 22 calls), 22.8s, info: `{"doc_id": "pi-3174cba6806d4f7293aae1004e7580b9", "cached_index": true, "tree_nodes": 21}`
+- **pageindex**: 97,234 tokens (83,227 in / 14,007 out, 22 calls), 24.4s, info: `{"doc_id": "pi-a450321eb06b4f00a5b8b08f14c303f5", "cached_index": true, "tree_nodes": 21}`
+- **pageindex**: 134,725 tokens (95,109 in / 39,616 out, 22 calls), 187.5s, info: `{"doc_id": "pi-8c91e8a37ff6408289dda6df59ed06c5", "cached_index": false, "tree_nodes": 21}`
+- **rag**: 0 tokens (0 in / 0 out, 0 calls), 8.5s, info: `{"chunks": 174, "embed_model": "BAAI/bge-small-en-v1.5", "top_k": 5}`
+
+2026-10-23 17:46:39  pilot20 report written (runs/pilot20/report.md)
+2026-10-23 17:46:46  gates: done; Qwen orchestrator restarted (gemma-4-31b-think, qwen3.6-27b; non-OTF systems)
+2026-10-23 18:04:24  ===== gate run 2 (after fixes logged in SPEC sec. 5) =====
+2026-10-23 18:04:24  gates: start
+[otf] setup: 16749 tokens, 33.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 308 to go
+[otf] 10/308  correct=10  errors=0  3s
+[otf] 20/308  correct=17  errors=0  9s
+[otf] 30/308  correct=25  errors=0  13s
+[otf] 40/308  correct=35  errors=0  16s
+[otf] 50/308  correct=44  errors=0  23s
+[otf] 60/308  correct=53  errors=0  28s
+[otf] 70/308  correct=63  errors=0  33s
+[otf] 80/308  correct=71  errors=0  39s
+[otf] 90/308  correct=78  errors=0  46s
+[otf] 100/308  correct=85  errors=0  50s
+[otf] 110/308  correct=93  errors=0  56s
+[otf] 120/308  correct=100  errors=0  63s
+[otf] 130/308  correct=108  errors=0  67s
+[otf] 140/308  correct=117  errors=0  78s
+[otf] 150/308  correct=126  errors=0  85s
+[otf] 160/308  correct=133  errors=0  90s
+[otf] 170/308  correct=141  errors=0  96s
+[otf] 180/308  correct=150  errors=0  102s
+[otf] 190/308  correct=159  errors=0  107s
+[otf] 200/308  correct=167  errors=0  112s
+[otf] 210/308  correct=176  errors=0  117s
+[otf] 220/308  correct=183  errors=0  122s
+[otf] 230/308  correct=191  errors=0  128s
+[otf] 240/308  correct=200  errors=0  131s
+[otf] 250/308  correct=208  errors=0  140s
+[otf] 260/308  correct=217  errors=0  146s
+[otf] 270/308  correct=224  errors=0  153s
+[otf] 280/308  correct=231  errors=0  158s
+[otf] 290/308  correct=239  errors=0  167s
+[otf] 300/308  correct=247  errors=0  171s
+[otf] 308/308  correct=253  errors=0  180s
+2026-10-23 18:09:02  done (0, 3.6 min): run --run pilot20 --system otf  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf_oracle] setup: 0 tokens, 2.0s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': None, 'model_tries': 0, 'model_reused_from': None, 'model_code': 'C:\\Users\\aashraf\\Desktop\\Work\\2026\\MLSystem 2027\\implementation-1\\oracle\\oracle_model.py'}
+[otf_oracle] 0 already answered, 308 to go
+[otf_oracle] 10/308  correct=10  errors=0  3s
+[otf_oracle] 20/308  correct=19  errors=0  9s
+[otf_oracle] 30/308  correct=28  errors=0  18s
+[otf_oracle] 40/308  correct=38  errors=0  25s
+[otf_oracle] 50/308  correct=47  errors=0  34s
+[otf_oracle] 60/308  correct=56  errors=0  39s
+[otf_oracle] 70/308  correct=66  errors=0  44s
+[otf_oracle] 80/308  correct=74  errors=0  50s
+[otf_oracle] 90/308  correct=82  errors=0  57s
+[otf_oracle] 100/308  correct=92  errors=0  62s
+[otf_oracle] 110/308  correct=100  errors=0  71s
+[otf_oracle] 120/308  correct=109  errors=0  81s
+[otf_oracle] 130/308  correct=118  errors=0  88s
+[otf_oracle] 140/308  correct=128  errors=0  97s
+[otf_oracle] 150/308  correct=136  errors=0  101s
+[otf_oracle] 160/308  correct=146  errors=0  105s
+[otf_oracle] 170/308  correct=155  errors=0  112s
+[otf_oracle] 180/308  correct=164  errors=0  123s
+[otf_oracle] 190/308  correct=174  errors=0  130s
+[otf_oracle] 200/308  correct=183  errors=0  139s
+[otf_oracle] 210/308  correct=191  errors=0  146s
+[otf_oracle] 220/308  correct=199  errors=0  153s
+[otf_oracle] 230/308  correct=206  errors=0  162s
+[otf_oracle] 240/308  correct=216  errors=0  166s
+[otf_oracle] 250/308  correct=223  errors=0  174s
+[otf_oracle] 260/308  correct=232  errors=0  181s
+[otf_oracle] 270/308  correct=242  errors=0  190s
+[otf_oracle] 280/308  correct=252  errors=0  197s
+[otf_oracle] 290/308  correct=261  errors=0  203s
+[otf_oracle] 300/308  correct=270  errors=0  209s
+[otf_oracle] 308/308  correct=275  errors=0  228s
+2026-10-23 18:12:54  done (0, 3.9 min): run --run pilot20 --system otf_oracle  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+2026-10-23 18:12:54  v2 skipped (results already present)
+[otf] setup: 28493 tokens, 55.2s {'nodes': 21, 'scopes': 4, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 4 to go
+[otf] 4/4  correct=3  errors=0  20s
+2026-10-23 18:14:10  done (0, 1.3 min): run --run mfg_dev --system otf --system-arg use_library=false --limit 4  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf] setup: 681663 tokens, 352.3s {'nodes': 21, 'scopes': 4, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 11, 'model_reused_from': None}
+[otf] 0 already answered, 4 to go
+[otf] 4/4  correct=2  errors=0  40s
+2026-10-23 18:20:44  done (0, 6.6 min): run --run itops_dev --system otf --system-arg use_library=false --limit 4  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+[otf] setup: 529589 tokens, 241.6s {'nodes': 91, 'scopes': 30, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 21, 'model_reused_from': None}
+[otf] 0 already answered, 4 to go
+[otf] 4/4  correct=2  errors=0  4s
+2026-10-23 18:24:51  done (0, 4.1 min): run --run fin_dev --system otf --system-arg use_library=false --limit 4  [in C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1]
+# CLEVRER document-QA benchmark: pilot20
+
+- Videos: 20 (validation split, seed 0), questions: 308
+- Document: `C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\runs\pilot20\document.pdf` (52 pages), rendered from ground-truth annotations (observed 128 frames only; motion log every 8 frames + event frames)
+- Descriptive: exact match. Multiple-choice: per-option accuracy, and per-question accuracy (all options of the question correct). Overall question accuracy counts each question once.
+
+## Overall
+
+| System | Model | Answered | Errors | Question acc. (%) | Option acc. (%) | Parse err. |
+|---|---|---|---|---|---|---|
+| full_context_file | gpt-5.5 | 308/308 | 0 | 92.86 | 94.31 | 0 |
+| full_context_text | gemma-4-31b-nothink | 32/308 | 0 | 62.50 | 81.58 | 0 |
+| full_context_text | gemma-4-31b-think | 32/308 | 0 | 87.50 | 89.47 | 0 |
+| full_context_text | gpt-oss-20b | 32/308 | 0 | 59.38 | 69.74 | 2 |
+| full_context_text | qwen3.6-27b | 48/308 | 0 | 72.92 | 79.83 | 0 |
+| otf | gpt-oss-20b | 308/308 | 0 | 82.14 | 84.71 | 0 |
+| otf_oracle | gpt-oss-20b | 308/308 | 0 | 89.29 | 91.96 | 0 |
+| otf_oracle | gpt-oss-20b | 308/308 | 0 | 88.31 | 90.98 | 0 |
+| otf_oracle | gpt-oss-20b | 308/308 | 0 | 86.36 | 87.84 | 0 |
+| otf | gemma-4-31b-think | 32/308 | 0 | 87.50 | 90.79 | 0 |
+| otf | gpt-oss-20b | 308/308 | 0 | 87.34 | 88.82 | 0 |
+| otf | gpt-oss-20b | 308/308 | 0 | 85.06 | 87.45 | 0 |
+| pageindex | gpt-5.5 | 308/308 | 0 | 92.86 | 93.92 | 0 |
+| pageindex | gpt-oss-20b | 32/308 | 0 | 50.00 | 68.42 | 0 |
+| pageindex | qwen3.6-27b | 32/308 | 0 | 87.50 | 88.16 | 0 |
+| rag | gpt-oss-20b | 32/308 | 0 | 56.25 | 76.32 | 0 |
+
+## Accuracy by question type
+
+Descriptive: accuracy. Others: per-option / per-question.
+
+| System | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|
+| full_context_file | 97.27 (n=220) | 96.90 / 94.44 (n=36) | 100.00 / 100.00 (n=14) | 85.71 / 63.16 (n=38) |
+| full_context_text | 100.00 (n=8) | 96.30 / 87.50 (n=8) | 56.25 / 12.50 (n=8) | 76.00 / 50.00 (n=8) |
+| full_context_text | 100.00 (n=8) | 92.59 / 87.50 (n=8) | 100.00 / 100.00 (n=8) | 76.00 / 62.50 (n=8) |
+| full_context_text | 100.00 (n=8) | 66.67 / 37.50 (n=8) | 68.75 / 37.50 (n=8) | 64.00 / 62.50 (n=8) |
+| full_context_text | 91.67 (n=12) | 73.81 / 41.67 (n=12) | 100.00 / 100.00 (n=12) | 70.73 / 58.33 (n=12) |
+| otf | 96.36 (n=220) | 73.64 / 44.44 (n=36) | 78.57 / 57.14 (n=14) | 77.44 / 44.74 (n=38) |
+| otf_oracle | 96.82 (n=220) | 86.82 / 61.11 (n=36) | 100.00 / 100.00 (n=14) | 87.22 / 68.42 (n=38) |
+| otf_oracle | 95.45 (n=220) | 83.72 / 58.33 (n=36) | 100.00 / 100.00 (n=14) | 88.72 / 71.05 (n=38) |
+| otf_oracle | 94.55 (n=220) | 80.62 / 63.89 (n=36) | 100.00 / 100.00 (n=14) | 81.20 / 55.26 (n=38) |
+| otf | 100.00 (n=8) | 92.59 / 87.50 (n=8) | 93.75 / 87.50 (n=8) | 84.00 / 75.00 (n=8) |
+| otf | 97.27 (n=220) | 86.05 / 63.89 (n=36) | 100.00 / 100.00 (n=14) | 75.19 / 47.37 (n=38) |
+| otf | 97.27 (n=220) | 77.52 / 47.22 (n=36) | 85.71 / 78.57 (n=14) | 81.20 / 52.63 (n=38) |
+| pageindex | 97.73 (n=220) | 94.57 / 91.67 (n=36) | 100.00 / 100.00 (n=14) | 85.71 / 63.16 (n=38) |
+| pageindex | 87.50 (n=8) | 81.48 / 62.50 (n=8) | 56.25 / 12.50 (n=8) | 56.00 / 37.50 (n=8) |
+| pageindex | 100.00 (n=8) | 85.19 / 75.00 (n=8) | 87.50 / 87.50 (n=8) | 88.00 / 87.50 (n=8) |
+| rag | 62.50 (n=8) | 77.78 / 50.00 (n=8) | 75.00 / 50.00 (n=8) | 80.00 / 62.50 (n=8) |
+
+### Question accuracy (%) with 95% bootstrap CI
+
+| System | Model | overall | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|---|---|
+| full_context_file | gpt-5.5 | 92.9 [89.9, 95.8] | 97.3 [95.0, 99.1] | 94.4 [86.1, 100.0] | 100.0 [100.0, 100.0] | 63.2 [47.4, 79.0] |
+| full_context_text | gemma-4-31b-nothink | 62.5 [46.9, 78.1] | 100.0 [100.0, 100.0] | 87.5 [62.5, 100.0] | 12.5 [0.0, 37.5] | 50.0 [12.5, 87.5] |
+| full_context_text | gemma-4-31b-think | 87.5 [75.0, 96.9] | 100.0 [100.0, 100.0] | 87.5 [62.5, 100.0] | 100.0 [100.0, 100.0] | 62.5 [25.0, 87.5] |
+| full_context_text | gpt-oss-20b | 59.4 [43.8, 75.0] | 100.0 [100.0, 100.0] | 37.5 [12.5, 75.0] | 37.5 [12.5, 75.0] | 62.5 [25.0, 87.5] |
+| full_context_text | qwen3.6-27b | 72.9 [58.3, 85.4] | 91.7 [75.0, 100.0] | 41.7 [16.7, 66.7] | 100.0 [100.0, 100.0] | 58.3 [33.3, 83.3] |
+| otf | gpt-oss-20b | 82.1 [77.6, 86.4] | 96.4 [93.6, 98.6] | 44.4 [27.8, 61.1] | 57.1 [28.6, 78.6] | 44.7 [28.9, 60.5] |
+| otf_oracle | gpt-oss-20b | 89.3 [85.7, 92.5] | 96.8 [94.1, 99.1] | 61.1 [44.4, 75.0] | 100.0 [100.0, 100.0] | 68.4 [52.6, 81.6] |
+| otf_oracle | gpt-oss-20b | 88.3 [84.4, 91.9] | 95.5 [92.3, 98.2] | 58.3 [41.7, 72.2] | 100.0 [100.0, 100.0] | 71.0 [57.9, 84.2] |
+| otf_oracle | gpt-oss-20b | 86.4 [82.5, 89.9] | 94.5 [91.4, 97.3] | 63.9 [47.2, 77.8] | 100.0 [100.0, 100.0] | 55.3 [39.5, 71.0] |
+| otf | gemma-4-31b-think | 87.5 [75.0, 96.9] | 100.0 [100.0, 100.0] | 87.5 [62.5, 100.0] | 87.5 [62.5, 100.0] | 75.0 [50.0, 100.0] |
+| otf | gpt-oss-20b | 87.3 [83.4, 90.9] | 97.3 [95.0, 99.1] | 63.9 [47.2, 80.6] | 100.0 [100.0, 100.0] | 47.4 [31.6, 63.2] |
+| otf | gpt-oss-20b | 85.1 [81.2, 89.0] | 97.3 [95.0, 99.1] | 47.2 [30.6, 63.9] | 78.6 [57.1, 100.0] | 52.6 [36.8, 68.4] |
+| pageindex | gpt-5.5 | 92.9 [89.9, 95.5] | 97.7 [95.5, 99.5] | 91.7 [83.3, 100.0] | 100.0 [100.0, 100.0] | 63.2 [47.4, 79.0] |
+| pageindex | gpt-oss-20b | 50.0 [34.4, 65.6] | 87.5 [62.5, 100.0] | 62.5 [25.0, 87.5] | 12.5 [0.0, 37.5] | 37.5 [0.0, 75.0] |
+| pageindex | qwen3.6-27b | 87.5 [75.0, 96.9] | 100.0 [100.0, 100.0] | 75.0 [37.5, 100.0] | 87.5 [62.5, 100.0] | 87.5 [62.5, 100.0] |
+| rag | gpt-oss-20b | 56.2 [40.6, 71.9] | 62.5 [25.0, 87.5] | 50.0 [12.5, 87.5] | 50.0 [12.5, 87.5] | 62.5 [25.0, 87.8] |
+
+### Paired differences: reference minus other (accuracy points, 95% paired-bootstrap CI, p = share of resamples <= 0)
+
+| Model | Reference vs other | overall | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|---|---|
+| gpt-oss-20b | otf vs full_context_text | +12.5 [-3.1, +28.1] p=0.095 | +0.0 [+0.0, +0.0] p=1.000 | +25.0 [+0.0, +50.0] p=0.103 | +25.0 [-12.5, +75.0] p=0.203 | +0.0 [-37.5, +37.5] p=0.660 |
+| gpt-oss-20b | otf vs otf_oracle | -7.1 [-11.0, -3.6] p=1.000 | -0.5 [-2.7, +1.8] p=0.718 | -16.7 [-33.3, +0.0] p=0.982 | -42.9 [-71.4, -21.4] p=1.000 | -23.7 [-39.5, -7.9] p=1.000 |
+| gpt-oss-20b | otf vs otf_oracle | -6.2 [-10.1, -2.3] p=1.000 | +0.9 [-2.3, +4.1] p=0.342 | -13.9 [-27.8, +0.0] p=0.991 | -42.9 [-71.4, -21.4] p=1.000 | -26.3 [-42.1, -10.5] p=1.000 |
+| gpt-oss-20b | otf vs otf_oracle | -4.2 [-7.8, -0.7] p=0.994 | +1.8 [-0.9, +4.5] p=0.140 | -19.4 [-33.3, -8.3] p=1.000 | -42.9 [-71.4, -21.4] p=1.000 | -10.5 [-26.3, +5.3] p=0.929 |
+| gpt-oss-20b | otf vs otf | -5.2 [-8.8, -1.6] p=0.999 | -0.9 [-3.6, +1.4] p=0.811 | -19.4 [-33.3, -5.6] p=0.998 | -42.9 [-71.4, -21.4] p=1.000 | -2.6 [-18.4, +13.2] p=0.694 |
+| gpt-oss-20b | otf vs otf | -2.9 [-6.2, +0.0] p=0.976 | -0.9 [-3.2, +1.4] p=0.852 | -2.8 [-13.9, +8.3] p=0.758 | -21.4 [-57.1, +14.3] p=0.908 | -7.9 [-21.1, +5.3] p=0.920 |
+| gpt-oss-20b | otf vs pageindex | +21.9 [+9.4, +37.5] p=0.002 | +12.5 [+0.0, +37.5] p=0.327 | +0.0 [+0.0, +0.0] p=1.000 | +50.0 [+12.5, +87.5] p=0.004 | +25.0 [+0.0, +62.5] p=0.088 |
+| gpt-oss-20b | otf vs rag | +15.6 [+0.0, +31.2] p=0.036 | +37.5 [+12.5, +75.0] p=0.019 | +12.5 [+0.0, +37.5] p=0.327 | +12.5 [-25.0, +50.0] p=0.366 | +0.0 [+0.0, +0.0] p=1.000 |
+| gemma-4-31b-think | otf vs full_context_text | +0.0 [-12.5, +12.5] p=0.596 | +0.0 [+0.0, +0.0] p=1.000 | +0.0 [+0.0, +0.0] p=1.000 | -12.5 [-37.5, +0.0] p=1.000 | +12.5 [-25.0, +50.0] p=0.384 |
+| gpt-oss-20b | otf vs full_context_text | +28.1 [+12.5, +43.8] p=0.000 | +0.0 [+0.0, +0.0] p=1.000 | +37.5 [+12.5, +75.0] p=0.018 | +62.5 [+25.0, +100.0] p=0.001 | +12.5 [+0.0, +37.5] p=0.340 |
+| gpt-oss-20b | otf vs otf | +5.2 [+1.6, +8.8] p=0.003 | +0.9 [-1.4, +3.6] p=0.289 | +19.4 [+5.6, +33.3] p=0.007 | +42.9 [+21.4, +71.4] p=0.000 | +2.6 [-13.2, +18.4] p=0.425 |
+| gpt-oss-20b | otf vs otf_oracle | -1.9 [-5.5, +1.6] p=0.877 | +0.5 [-2.3, +3.2] p=0.408 | +2.8 [-13.9, +22.2] p=0.455 | +0.0 [+0.0, +0.0] p=1.000 | -21.1 [-34.2, -5.3] p=1.000 |
+| gpt-oss-20b | otf vs otf_oracle | -1.0 [-4.5, +2.3] p=0.755 | +1.8 [-0.5, +4.1] p=0.093 | +5.6 [-8.3, +19.4] p=0.297 | +0.0 [+0.0, +0.0] p=1.000 | -23.7 [-39.5, -7.9] p=0.999 |
+| gpt-oss-20b | otf vs otf_oracle | +1.0 [-2.3, +4.2] p=0.326 | +2.7 [+0.0, +5.5] p=0.031 | +0.0 [-16.7, +16.7] p=0.552 | +0.0 [+0.0, +0.0] p=1.000 | -7.9 [-21.1, +5.3] p=0.914 |
+| gpt-oss-20b | otf vs otf | +2.3 [-0.7, +5.5] p=0.097 | +0.0 [-2.7, +2.7] p=0.566 | +16.7 [+2.8, +30.6] p=0.014 | +21.4 [+0.0, +42.9] p=0.036 | -5.3 [-18.4, +7.9] p=0.843 |
+| gpt-oss-20b | otf vs pageindex | +37.5 [+21.9, +53.1] p=0.000 | +12.5 [+0.0, +37.5] p=0.327 | +12.5 [+0.0, +37.5] p=0.339 | +87.5 [+62.5, +100.0] p=0.000 | +37.5 [+12.5, +75.0] p=0.019 |
+| gpt-oss-20b | otf vs rag | +31.2 [+15.6, +46.9] p=0.000 | +37.5 [+12.5, +75.0] p=0.019 | +25.0 [+0.0, +62.5] p=0.086 | +50.0 [+12.5, +87.5] p=0.004 | +12.5 [+0.0, +37.5] p=0.339 |
+| gpt-oss-20b | otf vs full_context_text | +18.8 [+3.1, +34.4] p=0.013 | +0.0 [+0.0, +0.0] p=1.000 | +25.0 [+0.0, +50.0] p=0.103 | +37.5 [+12.2, +75.0] p=0.025 | +12.5 [-25.0, +50.0] p=0.398 |
+| gpt-oss-20b | otf vs otf | +2.9 [+0.0, +6.2] p=0.040 | +0.9 [-1.4, +3.2] p=0.271 | +2.8 [-8.3, +13.9] p=0.401 | +21.4 [-14.3, +57.1] p=0.170 | +7.9 [-5.3, +21.1] p=0.152 |
+| gpt-oss-20b | otf vs otf_oracle | -4.2 [-7.8, -0.7] p=0.992 | +0.5 [-1.8, +2.7] p=0.409 | -13.9 [-30.6, +2.8] p=0.964 | -21.4 [-42.9, +0.0] p=1.000 | -15.8 [-31.6, +0.0] p=0.976 |
+| gpt-oss-20b | otf vs otf_oracle | -3.2 [-6.8, +0.0] p=0.983 | +1.8 [-0.9, +4.5] p=0.126 | -11.1 [-22.2, -2.8] p=1.000 | -21.4 [-42.9, +0.0] p=1.000 | -18.4 [-34.2, +0.0] p=0.987 |
+| gpt-oss-20b | otf vs otf_oracle | -1.3 [-4.9, +1.9] p=0.809 | +2.7 [+0.0, +5.5] p=0.032 | -16.7 [-30.6, -2.8] p=0.996 | -21.4 [-42.9, +0.0] p=1.000 | -2.6 [-18.4, +13.2] p=0.683 |
+| gpt-oss-20b | otf vs otf | -2.3 [-5.5, +0.7] p=0.935 | +0.0 [-2.7, +2.7] p=0.591 | -16.7 [-30.6, -2.8] p=0.997 | -21.4 [-42.9, +0.0] p=1.000 | +5.3 [-7.9, +18.4] p=0.271 |
+| gpt-oss-20b | otf vs pageindex | +28.1 [+12.5, +43.8] p=0.000 | +12.5 [+0.0, +37.5] p=0.327 | +0.0 [+0.0, +0.0] p=1.000 | +62.5 [+25.0, +87.5] p=0.000 | +37.5 [+0.0, +75.0] p=0.025 |
+| gpt-oss-20b | otf vs rag | +21.9 [+9.4, +37.5] p=0.001 | +37.5 [+12.5, +75.0] p=0.019 | +12.5 [+0.0, +37.5] p=0.327 | +25.0 [+0.0, +50.0] p=0.094 | +12.5 [+0.0, +37.5] p=0.357 |
+
+### Descriptive subtypes (accuracy %)
+
+| System | count | exist | query_color | query_material | query_shape |
+|---|---|---|---|---|---|
+| full_context_file | 93.75 | 97.50 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| full_context_text | 75.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| otf | 93.75 | 95.00 | 100.00 | 97.22 | 100.00 |
+| otf_oracle | 92.50 | 97.50 | 100.00 | 100.00 | 100.00 |
+| otf_oracle | 88.75 | 97.50 | 100.00 | 100.00 | 100.00 |
+| otf_oracle | 87.50 | 97.50 | 100.00 | 97.22 | 100.00 |
+| otf | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| otf | 93.75 | 97.50 | 100.00 | 100.00 | 100.00 |
+| otf | 96.25 | 95.00 | 100.00 | 97.22 | 100.00 |
+| pageindex | 95.00 | 97.50 | 100.00 | 100.00 | 100.00 |
+| pageindex | 50.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| pageindex | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 |
+| rag | 100.00 | 0.00 | 33.33 | 100.00 | 100.00 |
+
+## Token consumption
+
+Query tokens are per question (mean). Cached input is a subset of input; reasoning is a subset of output. Setup = one-time cost (e.g. PageIndex tree build). Amortized = (setup + all query tokens) / questions answered.
+
+| System | Input | Cached input | Output | Reasoning | Total / q | Setup total | Amortized total / q | Sum (all q) | LLM calls / q | Tool calls / q | Latency / q (s) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| full_context_file | 66,206.7 | 64,856.1 | 288.3 | 274.0 | 66,495.0 | 0 | 66,495.0 | 20,480,457 | 1.00 | - | 5.65 |
+| full_context_text | 68,085.0 | 63,753.0 | 20.4 | 0.0 | 68,105.3 | 0 | 68,105.3 | 2,179,371 | 1.00 | 0.00 | 8.47 |
+| full_context_text | 68,083.0 | 61,631.0 | 1,488.2 | 1,466.2 | 69,571.2 | 0 | 69,571.2 | 2,226,278 | 1.00 | 0.00 | 100.86 |
+| full_context_text | 54,376.9 | 50,928.0 | 2,309.7 | 2,289.2 | 56,686.7 | 0 | 56,686.7 | 1,813,973 | 1.00 | 0.00 | 27.42 |
+| full_context_text | 65,915.4 | 46,403.0 | 1,902.2 | 1,884.3 | 67,817.6 | 0 | 67,817.6 | 3,255,247 | 1.00 | 0.00 | 216.73 |
+| otf | 3,584.8 | 3,128.6 | 600.8 | 566.0 | 4,185.6 | 16,749 | 4,240.0 | 1,289,157 | 2.00 | 0.00 | 4.59 |
+| otf_oracle | 3,052.2 | 2,824.5 | 771.5 | 719.0 | 3,823.7 | 0 | 3,823.7 | 1,177,696 | 2.24 | 0.00 | 5.71 |
+| otf_oracle | 2,857.4 | 2,713.9 | 452.5 | 415.8 | 3,309.9 | 0 | 3,309.9 | 1,019,450 | 2.12 | 0.00 | 3.78 |
+| otf_oracle | 3,035.9 | 2,808.8 | 768.3 | 714.7 | 3,804.2 | 0 | 3,804.2 | 1,171,697 | 2.23 | 0.00 | 5.76 |
+| otf | 1,428.4 | 1,002.0 | 1,252.9 | 1,212.3 | 2,681.3 | 284,969 | 11,586.6 | 85,802 | 2.25 | 0.00 | 55.85 |
+| otf | 2,878.3 | 2,724.3 | 527.1 | 490.4 | 3,405.4 | 360,333 | 4,575.3 | 1,048,856 | 2.12 | 0.00 | 4.47 |
+| otf | 3,584.8 | 3,128.6 | 577.1 | 542.4 | 4,161.9 | 19,857 | 4,226.4 | 1,281,868 | 2.00 | 0.00 | 4.35 |
+| pageindex | 20,249.2 | 9,375.6 | 363.9 | 293.0 | 20,613.1 | 85,569 | 20,890.9 | 6,348,841 | 2.84 | 1.84 | 7.10 |
+| pageindex | 15,847.8 | 7,361.0 | 991.9 | 938.7 | 16,839.8 | 97,234 | 19,878.3 | 538,873 | 0.00 | 0.00 | 11.56 |
+| pageindex | 26,867.7 | 11,662.0 | 2,604.6 | 2,372.1 | 29,472.2 | 134,725 | 33,682.4 | 943,112 | 0.00 | 0.00 | 90.36 |
+| rag | 1,209.2 | 391.0 | 665.4 | 643.0 | 1,874.6 | 0 | 1,874.6 | 59,987 | 1.00 | 0.00 | 8.37 |
+
+### Mean total tokens per question, by type
+
+| System | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|
+| full_context_file | 66,285.0 | 66,682.8 | 66,712.6 | 67,452.8 |
+| full_context_text | 68,069.5 | 68,131.9 | 68,096.9 | 68,123.1 |
+| full_context_text | 68,384.2 | 69,517.6 | 69,492.8 | 70,890.1 |
+| full_context_text | 54,617.1 | 55,935.5 | 57,090.5 | 59,103.5 |
+| full_context_text | 66,433.2 | 68,020.0 | 67,782.8 | 69,034.6 |
+| otf | 3,851.1 | 4,638.5 | 4,541.1 | 5,561.8 |
+| otf_oracle | 3,844.7 | 4,847.8 | 1,266.9 | 3,673.7 |
+| otf_oracle | 3,841.0 | 2,246.9 | 1,154.5 | 2,036.4 |
+| otf_oracle | 3,844.0 | 4,663.7 | 1,264.5 | 3,695.5 |
+| otf | 3,204.1 | 2,449.8 | 1,327.8 | 3,743.6 |
+| otf | 3,834.6 | 2,352.7 | 1,213.2 | 2,725.1 |
+| otf | 3,846.5 | 4,505.0 | 4,524.6 | 5,529.4 |
+| pageindex | 19,613.7 | 22,856.4 | 22,817.7 | 23,461.8 |
+| pageindex | 18,787.1 | 14,648.8 | 15,215.1 | 18,708.1 |
+| pageindex | 23,189.1 | 25,509.0 | 26,298.2 | 42,892.6 |
+| rag | 1,589.8 | 1,817.6 | 1,858.5 | 2,232.5 |
+
+### Setup details
+
+- **full_context_file**: 0 tokens (0 in / 0 out, 0 calls), 1.1s, info: `{"file_id": "file-FsgeXE4ZcoujG7hFcQ9qV4"}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.2s, info: `{"doc_chars": 115835}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.2s, info: `{"doc_chars": 115835}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.3s, info: `{"doc_chars": 115835}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.2s, info: `{"doc_chars": 115835}`
+- **otf**: 16,749 tokens (8,802 in / 7,947 out, 3 calls), 33.4s, info: `{"nodes": 81, "scopes": 20, "model_passed": false, "model_f1": 0.0, "model_tries": 3, "model_reused_from": null}`
+- **otf_oracle**: 0 tokens (0 in / 0 out, 0 calls), 2.0s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": null, "model_tries": 0, "model_reused_from": null, "model_code": "C:\\Users\\aashraf\\Desktop\\Work\\2026\\MLSystem 2027\\implementation-1\\oracle\\oracle_model.py"}`
+- **otf_oracle**: 0 tokens (0 in / 0 out, 0 calls), 1.9s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": null, "model_tries": 0, "model_reused_from": null, "model_code": "C:\\Users\\aashraf\\AppData\\Local\\Temp\\claude\\C--Users-aashraf-Desktop-Work-2026-MLSystem-2027-claude-work\\a9d1fcf5-5d86-4dd0-930e-c266ced7aad2\\scratchpad\\otf_v2_worktree\\implementation-1\\oracle\\oracle_model.py"}`
+- **otf_oracle**: 0 tokens (0 in / 0 out, 0 calls), 1.8s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": null, "model_tries": 0, "model_reused_from": null, "model_code": "C:\\Users\\aashraf\\Desktop\\Work\\2026\\MLSystem 2027\\implementation-1\\oracle\\oracle_model.py"}`
+- **otf**: 284,969 tokens (234,567 in / 50,402 out, 17 calls), 1628.8s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": 0.722, "model_tries": 14, "model_reused_from": null}`
+- **otf**: 360,333 tokens (291,402 in / 68,931 out, 48 calls), 787.7s, info: `{"nodes": 81, "scopes": 20, "model_passed": true, "model_f1": 0.622, "model_tries": 9, "model_reused_from": null, "cached_model": true}`
+- **otf**: 19,857 tokens (9,511 in / 10,346 out, 3 calls), 42.5s, info: `{"nodes": 81, "scopes": 20, "model_passed": false, "model_f1": 0.0, "model_tries": 3, "model_reused_from": null}`
+- **pageindex**: 85,569 tokens (81,048 in / 4,521 out, 22 calls), 22.8s, info: `{"doc_id": "pi-3174cba6806d4f7293aae1004e7580b9", "cached_index": true, "tree_nodes": 21}`
+- **pageindex**: 97,234 tokens (83,227 in / 14,007 out, 22 calls), 24.4s, info: `{"doc_id": "pi-a450321eb06b4f00a5b8b08f14c303f5", "cached_index": true, "tree_nodes": 21}`
+- **pageindex**: 134,725 tokens (95,109 in / 39,616 out, 22 calls), 187.5s, info: `{"doc_id": "pi-8c91e8a37ff6408289dda6df59ed06c5", "cached_index": false, "tree_nodes": 21}`
+- **rag**: 0 tokens (0 in / 0 out, 0 calls), 8.5s, info: `{"chunks": 174, "embed_model": "BAAI/bge-small-en-v1.5", "top_k": 5}`
+
+2026-10-23 18:24:51  pilot20 report written (runs/pilot20/report.md)
+2026-10-23 18:24:58  gates: done; Qwen orchestrator restarted (gemma-4-31b-think, qwen3.6-27b; non-OTF systems)
+2026-10-23 18:29:48  ===== Qwen v3 generation probe (pilot20, mfg_dev, itops_dev, fin_dev), sharing the Qwen server =====

@@ -1,0 +1,34 @@
+parsers attempt 1: outcomes('Cell window 08') uses entities ['M03.'] that are not ids from entities() (ids are ['J01', 'J02', 'J03', 'J04', 'J05', 'J06', 'J07', 'J08', 'J09', 'J10', 'J11', 'J12']); record: {"time": 424.0, "kind": "event_line", "entities": ["M03.", "T025"], "value": null, "src": [["n0004", 1]]}; outcomes('Cell window 17') uses entities ['M04.'] that are not ids from entities() (ids are ['J01', 'J02', 'J03', 'J04', 'J05', 'J06', 'J07', 'J08', 'J09', 'J10', 'J11', 'J12']); record: {"time": 65.0, "kind": "event_line", "entities": ["M04.", "T018", "T013"], "value": null, "src": [["n0009", 0]]}; outcomes('Cell window 27') uses entities ['M05.'] that are not ids from entities() (ids are ['J01', 'J02', 'J03', 'J04', 'J05', 'J06', 'J07', 'J08', 'J09', 'J10', 'J11', 'J12']); record: {"time": 437.0, "kind": "event_line", "entities": ["M05.", "T027", "T047"], "value": null, "src": [["n0014", 1]]}; outcomes('Cell window 30') uses entities ['M03.'] that are not ids from entities() (ids are ['J01', 'J02', 'J03', 'J04', 'J05', 'J06', 'J07', 'J08', 'J09', 'J10', 'J11', 'J12']); record: {"time": 764.0, "kind": "event_line", "entities": ["M03.", "T111", "T024"], "value": null, "src": [["n0019", 1]]}
+WHAT YOUR FUNCTIONS RETURNED on scope 'Cell window 08': 136 entities (first: [{"id": "M01", "description": "Machine M01"}]), recorded_end = 1192.0, 93 inputs (first: [{"id": "M01", "time": null, "kind": "machine_spec", "entities": ["M01"], "fields": {"cpu": 6250, "memory": 6244, "fails_at": null, "returns_at": null}}]), 145 outcomes (first: [{"time": 27.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}]), params = {}
+- 4 of 13 lines of 'Cell window 08: Events' are not the src of any input or outcome, e.g.: 'Longest waits (submission to first start, tasks started by the window end): task T041 waited 160 s (submitted at' | '597, first started at 757); task T079 waited 145 s (submitted at 1042, first started at 1187); task T039 waited 143' | 's (submitted at 597, first started at 740); task T040 waited 143 s (submitted at 597, first started at 740); task T038' | 'waited 127 s (submitted at 597, first started at 724).'
+parsers attempt 2: passed
+explore 1: ok, 411 chars
+explore 2: ok, 261 chars
+explore 3: ok, 59 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 08' (start 15.35): F1 0.0, 145 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 27.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}, {"time": 43.0, "kind": "task_event", "entities": ["T002", "M01"], "value": null}, {"time": 46.0, "kind": "task_event", "entities": ["T003", "M01"], "value": null}, {"time": 62.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 3.27): F1 0.0, 205 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 15.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}, {"time": 50.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}, {"time": 62.0, "kind": "task_event", "entities": ["T002", "M01"], "value": null}, {"time": 62.0, "kind": "task_event", "entities": ["T003", "M01"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.45): F1 0.0, 212 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 38.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}, {"time": 98.0, "kind": "task_event", "entities": ["T002", "M02"], "value": null}, {"time": 99.0, "kind": "task_event", "entities": ["T003", "M01"], "value": null}, {"time": 100.0, "kind": "task_event", "entities": ["T004", "M03"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -5.91): F1 0.0, 269 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 6.0, "kind": "task_event", "entities": ["T001", "M01"], "value": null}, {"time": 43.0, "kind": "task_event", "entities": ["T002", "M02"], "value": null}, {"time": 44.0, "kind": "task_event", "entities": ["T003", "M01"], "value": null}, {"time": 45.0, "kind": "task_event", "entities": ["T004", "M03"], "value": null}]; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.0
+explore 1: ok, 137 chars
+explore 2: ok, 934 chars
+explore 3: ok, 74 chars
+simulate attempt 1 (after 3 explore runs): simulate('Cell window 08', start=15.35) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp4rfugi0j\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 578, in simulate
+  File "<string>", line 534, in _simulate_batch
+  File "<string>", line 365, in scheduling_round
+  File "<string>", line 365, in <lambda>
+  File "<string>", line 239, in _queue_key
+KeyError: 'id'
+simulate attempt 2 (after 3 explore runs): simulate('Cell window 08', start=15.35) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpx3gj3365\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 577, in simulate
+  File "<string>", line 498, in _simulate_batch
+KeyError: 'T031'
+simulator conversation 2: best F1 0.0
+simulator conversation 3: best F1 0.0

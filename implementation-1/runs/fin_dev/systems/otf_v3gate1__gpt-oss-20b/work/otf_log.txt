@@ -1,0 +1,29 @@
+parsers attempt 1: entities('Report R-901') failed: File "<string>", line 100, in entities
+  File "<string>", line 71, in _get_entity_mapping
+TypeError: cannot use 'tuple' as a dict key (unhashable type: 'list')
+parsers attempt 2: passed
+explore 1: ok, 1042 chars
+explore 2: ok, 297 chars
+explore 3: ok, 1332 chars
+simulate attempt 1 (after 3 explore runs): simulate('Report R-901', start=2017.99) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpmjy9gpbv\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 249, in simulate
+ValueError: No inputs supplied for scope Report R-901
+simulate attempt 2 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Report R-901' (start 2017.99): F1 0.0, 16 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Steam Specialties"], "value": 3.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Steam Specialties"], "value": 3.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Electric Thermal Solutions"], "value": 1.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Electric Thermal Solutions"], "value": 1.0}]; extra (produced but not hidden): []
+- scope 'Report R-903' (start 2014.96): F1 0.0, 46 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 2015.0, "kind": "amount", "entities": ["Report R-903@Revenue"], "value": 8.0}, {"time": 2015.0, "kind": "amount", "entities": ["Report R-903@EBITDA"], "value": 2.0}, {"time": 2015.0, "kind": "amount", "entities": ["Report R-903@EPS"], "value": 1.0}, {"time": 2015.0, "kind": "amount", "entities": ["Report R-903@Profit for the year"], "value": 1.0}]; extra (produced but not hidden): []
+- scope 'Report R-909' (start 2017.99): F1 0.0, 6 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 2018.0, "kind": "amount", "entities": ["Report R-909@Buildings and building improvements"], "value": 2.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-909@Machinery, equipment and furniture"], "value": 5.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-909@Less, accumulated depreciation"], "value": -4.0}, {"time": 2019.0, "kind": "amount", "entities": ["Report R-909@Buildings and building improvements"], "value": 2.0}]; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.0
+explore 1: ok, 679 chars
+simulator conversation 2: best F1 0.0
+explore 1: ok, 1797 chars
+explore 2: ok, 454 chars
+explore 3: ok, 1334 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Report R-901' (start 2017.99): F1 0.0, 16 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Steam Specialties"], "value": 3.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Steam Specialties"], "value": 3.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Electric Thermal Solutions"], "value": 1.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-901@Electric Thermal Solutions"], "value": 1.0}]; extra (produced but not hidden): []
+- scope 'Report R-903' (start 2014.96): F1 0.0, 46 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 2015.0, "kind": "amount", "entities": ["Report R-903@Revenue"], "value": 8.0}, {"time": 2015.0, "kind": "amount", "entities": ["Report R-903@EBITDA"], "value": 2.0}, {"time": 2015.0, "kind": "amount", "entities": ["Report R-903@EPS"], "value": 1.0}, {"time": 2015.0, "kind": "amount", "entities": ["Report R-903@Profit for the year"], "value": 1.0}]; extra (produced but not hidden): []
+- scope 'Report R-909' (start 2017.99): F1 0.0, 6 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 2018.0, "kind": "amount", "entities": ["Report R-909@Buildings and building improvements"], "value": 2.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-909@Machinery, equipment and furniture"], "value": 5.0}, {"time": 2018.0, "kind": "amount", "entities": ["Report R-909@Less, accumulated depreciation"], "value": -4.0}, {"time": 2019.0, "kind": "amount", "entities": ["Report R-909@Buildings and building improvements"], "value": 2.0}]; extra (produced but not hidden): []
+simulator conversation 3: best F1 0.0

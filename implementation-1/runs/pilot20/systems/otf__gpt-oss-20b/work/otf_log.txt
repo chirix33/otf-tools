@@ -1,0 +1,15 @@
+parsers attempt 1: entities('Video 10331') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmp74tt3nxu\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 25, in entities
+AttributeError: 'NoneType' object has no attribute 'get'
+parsers attempt 2: entities('Video 10331') returned no entities; entities('Video 10776') returned no entities; entities('Video 11140') returned no entities; entities('Video 11144') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10331': 0 entities (first: []), recorded_end = None, 0 inputs (first: []), 0 outcomes (first: []), params = {}
+- 4 of 4 lines of 'Video 10331: Objects' are not the src of any input or outcome, e.g.: 'Object 0: brown metal sphere (color=brown, material=metal, shape=sphere)' | 'Object 1: cyan rubber sphere (color=cyan, material=rubber, shape=sphere)' | 'Object 2: green rubber cube (color=green, material=rubber, shape=cube)' | 'Object 3: purple metal sphere (color=purple, material=metal, shape=sphere)'
+- 8 of 8 lines of 'Video 10331: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 1 (cyan rubber sphere) is in view when the video begins.' | 'Frame 0: Object 2 (green rubber cube) is in view when the video begins.' | 'Frame 14: Object 0 (brown metal sphere) enters the scene.' | 'Frame 24: Object 0 (brown metal sphere) collides with Object 1 (cyan rubber sphere).'
+- 53 of 53 rows of table 'Video 10331: Motion log' are not the src of any input or outcome
+parsers attempt 3: entities('Video 10331') returned no entities; entities('Video 10776') returned no entities; entities('Video 11140') returned no entities; entities('Video 11144') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10331': 0 entities (first: []), recorded_end = None, 0 inputs (first: []), 0 outcomes (first: []), params = {}
+- 4 of 4 lines of 'Video 10331: Objects' are not the src of any input or outcome, e.g.: 'Object 0: brown metal sphere (color=brown, material=metal, shape=sphere)' | 'Object 1: cyan rubber sphere (color=cyan, material=rubber, shape=sphere)' | 'Object 2: green rubber cube (color=green, material=rubber, shape=cube)' | 'Object 3: purple metal sphere (color=purple, material=metal, shape=sphere)'
+- 8 of 8 lines of 'Video 10331: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 1 (cyan rubber sphere) is in view when the video begins.' | 'Frame 0: Object 2 (green rubber cube) is in view when the video begins.' | 'Frame 14: Object 0 (brown metal sphere) enters the scene.' | 'Frame 24: Object 0 (brown metal sphere) collides with Object 1 (cyan rubber sphere).'
+- 53 of 53 rows of table 'Video 10331: Motion log' are not the src of any input or outcome

@@ -1,0 +1,71 @@
+{"time": "2026-10-21T22:03:36", "event": "start", "models": ["gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex"]}
+{"time": "2026-10-21T22:04:23", "event": "server_ready", "model": "gpt-oss-20b", "seconds": 42}
+{"time": "2026-10-21T22:04:23", "event": "pass_start", "model": "gpt-oss-20b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-22T10:42:01", "event": "start", "models": ["gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag"]}
+{"time": "2026-10-22T10:42:49", "event": "server_ready", "model": "gpt-oss-20b", "seconds": 42}
+{"time": "2026-10-22T10:42:49", "event": "pass_start", "model": "gpt-oss-20b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 1640, "errored": 0}
+{"time": "2026-10-22T10:58:07", "event": "start", "models": ["gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag", "otf", "otf_oracle"]}
+{"time": "2026-10-22T10:58:55", "event": "server_ready", "model": "gpt-oss-20b", "seconds": 42}
+{"time": "2026-10-22T10:58:55", "event": "pass_start", "model": "gpt-oss-20b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 1888, "errored": 0}
+{"time": "2026-10-22T11:22:53", "event": "pass_end", "model": "gpt-oss-20b", "system": "full_context_text", "pass_no": 1, "hours": 0.4, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T11:22:53", "event": "system_done", "model": "gpt-oss-20b", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T11:22:53", "event": "pass_start", "model": "gpt-oss-20b", "system": "pageindex", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-22T13:25:44", "event": "start", "models": ["gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag", "otf", "otf_oracle"]}
+{"time": "2026-10-22T13:26:33", "event": "server_ready", "model": "gpt-oss-20b", "seconds": 42}
+{"time": "2026-10-22T13:26:33", "event": "system_done", "model": "gpt-oss-20b", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T13:26:33", "event": "pass_start", "model": "gpt-oss-20b", "system": "pageindex", "pass_no": 1, "expected": 2166, "answered": 1463, "errored": 0}
+{"time": "2026-10-22T13:44:58", "event": "pass_end", "model": "gpt-oss-20b", "system": "pageindex", "pass_no": 1, "hours": 0.31, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T13:44:58", "event": "system_done", "model": "gpt-oss-20b", "system": "pageindex", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T13:44:59", "event": "system_done", "model": "gpt-oss-20b", "system": "rag", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T13:44:59", "event": "pass_start", "model": "gpt-oss-20b", "system": "otf", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-22T14:57:22", "event": "pass_end", "model": "gpt-oss-20b", "system": "otf", "pass_no": 1, "hours": 1.21, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T14:57:22", "event": "system_done", "model": "gpt-oss-20b", "system": "otf", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T14:57:22", "event": "pass_start", "model": "gpt-oss-20b", "system": "otf_oracle", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-22T15:24:25", "event": "pass_end", "model": "gpt-oss-20b", "system": "otf_oracle", "pass_no": 1, "hours": 0.45, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T15:24:25", "event": "system_done", "model": "gpt-oss-20b", "system": "otf_oracle", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T15:24:31", "event": "model_done", "model": "gpt-oss-20b"}
+{"time": "2026-10-22T15:54:40", "event": "server_failed", "model": "gemma-4-31b-think", "error": "vLLM server for gemma-4-31b-think not ready after 1800s"}
+{"time": "2026-10-22T16:26:12", "event": "start", "models": ["gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag", "otf", "otf_oracle"]}
+{"time": "2026-10-22T16:26:59", "event": "server_ready", "model": "gpt-oss-20b", "seconds": 42}
+{"time": "2026-10-22T16:26:59", "event": "system_done", "model": "gpt-oss-20b", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T16:26:59", "event": "system_done", "model": "gpt-oss-20b", "system": "pageindex", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T16:26:59", "event": "system_done", "model": "gpt-oss-20b", "system": "rag", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T16:26:59", "event": "pass_start", "model": "gpt-oss-20b", "system": "otf", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-22T16:53:51", "event": "pass_end", "model": "gpt-oss-20b", "system": "otf", "pass_no": 1, "hours": 0.45, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T16:53:58", "event": "otf_library_pass", "model": "gpt-oss-20b", "documents_switched": 0}
+{"time": "2026-10-22T16:53:58", "event": "system_done", "model": "gpt-oss-20b", "system": "otf", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T16:53:58", "event": "system_done", "model": "gpt-oss-20b", "system": "otf_oracle", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T16:54:04", "event": "model_done", "model": "gpt-oss-20b"}
+{"time": "2026-10-22T16:54:52", "event": "server_ready", "model": "gemma-4-31b-think", "seconds": 43}
+{"time": "2026-10-22T16:54:52", "event": "pass_start", "model": "gemma-4-31b-think", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-22T21:06:57", "event": "pass_end", "model": "gemma-4-31b-think", "system": "full_context_text", "pass_no": 1, "hours": 4.2, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T21:06:57", "event": "system_done", "model": "gemma-4-31b-think", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-22T21:06:57", "event": "pass_start", "model": "gemma-4-31b-think", "system": "pageindex", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-23T08:37:19", "event": "start", "models": ["gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag", "otf", "otf_oracle"]}
+{"time": "2026-10-23T08:37:20", "event": "model_already_complete", "model": "gpt-oss-20b"}
+{"time": "2026-10-23T08:38:26", "event": "server_ready", "model": "gemma-4-31b-think", "seconds": 56}
+{"time": "2026-10-23T08:38:26", "event": "system_done", "model": "gemma-4-31b-think", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-23T08:38:26", "event": "pass_start", "model": "gemma-4-31b-think", "system": "pageindex", "pass_no": 1, "expected": 2166, "answered": 614, "errored": 0}
+{"time": "2026-10-23T12:35:57", "event": "pass_end", "model": "gemma-4-31b-think", "system": "pageindex", "pass_no": 1, "hours": 3.96, "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-23T12:35:57", "event": "system_done", "model": "gemma-4-31b-think", "system": "pageindex", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-23T12:35:57", "event": "pass_start", "model": "gemma-4-31b-think", "system": "rag", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-23T16:45:31", "event": "start", "models": ["gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag"]}
+{"time": "2026-10-23T16:45:31", "event": "model_already_complete", "model": "gemma-4-31b-think"}
+{"time": "2026-10-23T16:47:02", "event": "server_ready", "model": "qwen3.6-27b", "seconds": 85}
+{"time": "2026-10-23T16:47:02", "event": "pass_start", "model": "qwen3.6-27b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-23T17:46:46", "event": "start", "models": ["gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag"]}
+{"time": "2026-10-23T17:46:46", "event": "model_already_complete", "model": "gemma-4-31b-think"}
+{"time": "2026-10-23T17:48:02", "event": "server_ready", "model": "qwen3.6-27b", "seconds": 71}
+{"time": "2026-10-23T17:48:02", "event": "pass_start", "model": "qwen3.6-27b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 257, "errored": 0}
+{"time": "2026-10-23T18:24:58", "event": "start", "models": ["gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag"]}
+{"time": "2026-10-23T18:24:58", "event": "model_already_complete", "model": "gemma-4-31b-think"}
+{"time": "2026-10-23T18:25:48", "event": "server_ready", "model": "qwen3.6-27b", "seconds": 44}
+{"time": "2026-10-23T18:25:48", "event": "pass_start", "model": "qwen3.6-27b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 343, "errored": 0}
+{"time": "2026-10-23T20:10:56", "event": "otf_alongside_start", "model": "qwen3.6-27b"}
+{"time": "2026-10-23T20:10:56", "event": "otf_alongside_pass_start", "model": "qwen3.6-27b", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-24T10:44:07", "event": "otf_alongside_start", "model": "qwen3.6-27b"}
+{"time": "2026-10-24T10:44:07", "event": "start", "models": ["gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag"]}
+{"time": "2026-10-24T10:44:07", "event": "model_already_complete", "model": "gemma-4-31b-think"}
+{"time": "2026-10-24T10:45:12", "event": "otf_alongside_pass_start", "model": "qwen3.6-27b", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-24T10:45:15", "event": "server_ready", "model": "qwen3.6-27b", "seconds": 56}
+{"time": "2026-10-24T10:45:15", "event": "pass_start", "model": "qwen3.6-27b", "system": "full_context_text", "pass_no": 1, "expected": 2166, "answered": 1487, "errored": 0}

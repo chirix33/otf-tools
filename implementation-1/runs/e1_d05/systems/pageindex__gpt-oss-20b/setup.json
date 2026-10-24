@@ -1,0 +1,30 @@
+{
+  "system": "pageindex",
+  "model": "gpt-oss-20b",
+  "reasoning_effort": "medium",
+  "model_spec": {
+    "alias": "gpt-oss-20b",
+    "served_name": "openai/gpt-oss-20b",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": "medium",
+    "temperature": null,
+    "top_p": null,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {}
+  },
+  "usage": {
+    "input_tokens": 86644,
+    "cached_input_tokens": 2544,
+    "output_tokens": 11388,
+    "reasoning_tokens": 6144,
+    "llm_calls": 22,
+    "total_tokens": 98032
+  },
+  "latency_s": 14.865271091461182,
+  "info": {
+    "doc_id": "pi-354fd8fca160429ebc2c7726565089eb",
+    "cached_index": true,
+    "tree_nodes": 21
+  }
+}

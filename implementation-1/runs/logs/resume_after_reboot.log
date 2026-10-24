@@ -1,0 +1,30 @@
+﻿2026-10-22 10:49:48  logon: checking E1 jobs
+2026-10-22 10:49:48  orchestrator: already running, not started
+2026-10-22 10:49:48  watcher: already running, not started
+2026-10-22 13:25:43  logon: checking E1 jobs
+2026-10-22 13:25:44  repair: repair done: 0 torn line(s) dropped
+2026-10-22 13:25:44  orchestrator: started
+2026-10-22 13:25:44  watcher: started (pending: gemma-4-31b-think, qwen3.6-27b)
+2026-10-22 16:26:11  logon: checking E1 jobs
+2026-10-22 16:26:12  repair: repair done: 0 torn line(s) dropped
+2026-10-22 16:26:12  orchestrator: started
+2026-10-22 16:26:12  watcher: started (pending: gemma-4-31b-think, qwen3.6-27b)
+2026-10-23 08:37:18  logon: checking E1 jobs
+2026-10-23 08:37:19  repair: repair done: 0 torn line(s) dropped
+2026-10-23 08:37:19  orchestrator: started
+2026-10-23 08:37:19  watcher: started (pending: qwen3.6-27b)
+2026-10-23 15:46:15  hold: stopped orchestrator (46348) and OTF watcher (23576); Gemma RAG pass 3160 left running
+2026-10-23 15:46:16  hold: waiting for Gemma RAG pass (PID 3160) to exit
+2026-10-23 16:45:30  hold: RAG pass exited; starting orchestrator without OTF
+2026-10-23 16:45:30  hold: orchestrator started (gemma-4-31b-think, qwen3.6-27b; full_context_text pageindex rag)
+2026-10-23 17:24:15  gates: paused Qwen orchestrator and worker (58600, 36260) for OTF v3 gates on gpt-oss
+2026-10-23 18:04:24  gates: paused Qwen (57664, 37732) for OTF v3 gate run 2
+2026-10-23 20:10:55  otf v3 (tag otf-v3): started Qwen OTF E1 alongside the Qwen baselines (scripts\run_otf_alongside.py)
+2026-10-23 21:28:03  queue: started (scripts\run_queue.py waits for the E1 orchestrator, then Qwen -> gpt-oss -> Gemma stages)
+2026-10-23 21:29:34  queue: restarted while still waiting (added E2 full context to the gpt-oss stage)
+2026-10-24 10:44:02  logon: checking E1 jobs
+2026-10-24 10:44:06  repair: repair done: 0 torn line(s) dropped
+2026-10-24 10:44:07  orchestrator: started
+2026-10-24 10:44:07  otf alongside (qwen): started
+2026-10-24 10:44:07  queue: started (waits for the E1 orchestrator)
+2026-10-24 10:44:07  watcher: held while OTF is generalised, not started

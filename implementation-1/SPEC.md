@@ -206,6 +206,19 @@ orchestrator brings their servers up. Results go to `runs/logs/otf_generation__<
 bugcheck and no dump, plus corrected PCIe errors on the GPU's slot (02:00.0). Runs resumed at 10:42 on
 2026-10-22 with no data lost: one torn prediction line was dropped and will be re-asked. About 11 GPU-hours were lost.
 
+**Incident 2026-10-23/24 (same pattern):** unexpected shutdown at 23:04:13 under GPU load (RTX 5090 at its 575 W
+limit, ~516 W drawn; Qwen full context + Qwen OTF generation), automatic reboot at 23:06 with nobody logged on (the
+resume task runs at logon, so nothing restarted), a second unexpected shutdown at 23:35:46 with no jobs running, and
+no boot until 10:41. Corrected WHEA hardware errors at both boots (4 / 19 / 6 / 2 on Oct 21 / 22 / 23 / 24). Runs
+resumed at 10:44 with no data lost (0 torn lines). About 11.5 GPU-hours were lost. Qwen's OTF generation for
+e1_d01 was in its second simulator conversation and restarted from scratch (generation is not resumable); the
+interrupted attempts' tokens are not in its setup cost, and the restart is a fresh draw within the same budget.
+**Mitigation (2026-10-24 ~11:00):** the GPU power limit was capped at 450 W (default 575 W) with `nvidia-smi -pl 450`
+in an admin terminal; confirmed enforced (444 W drawn at 68 C, full utilization). The cap applies to every system and
+model run from then on; it changes speed, not outputs (same checkpoints, sampling and caps), so accuracy and token
+counts stay comparable with earlier runs; latency is reported per system and is not compared across this change.
+The cap does not survive a reboot and must be re-applied after any restart.
+
 ## 6. Durability
 
 - Resumable runs (already in `runner.py`). Errors are retried; truncation is recorded, not retried.

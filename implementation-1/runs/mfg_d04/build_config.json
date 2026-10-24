@@ -1,0 +1,36 @@
+{
+  "domain": "manufacturing",
+  "n_scopes": 11,
+  "seed": 2027,
+  "period_days": 14,
+  "n_questions": 60,
+  "n_questions_all": 60,
+  "per_type": {
+    "descriptive": 15,
+    "explanatory": 15,
+    "predictive": 15,
+    "counterfactual": 15
+  },
+  "split": "mfg",
+  "doc": 4,
+  "role": "test",
+  "capacity_kg": {
+    "1912": 34500,
+    "1914": 192950,
+    "2103": 407700,
+    "2114": 300000
+  },
+  "scopes": [
+    "Plant 1912, Period 03",
+    "Plant 1914, Period 03",
+    "Plant 1912, Period 04",
+    "Plant 1912, Period 05",
+    "Plant 1912, Period 09",
+    "Plant 2103, Period 10",
+    "Plant 1912, Period 11",
+    "Plant 1914, Period 11",
+    "Plant 2103, Period 11",
+    "Plant 1912, Period 12",
+    "Plant 2103, Period 13"
+  ]
+}
