@@ -54,6 +54,18 @@ if ($otfDone) {
     Write-Log "otf alongside (qwen): started"
 }
 
+# 1c) GPU queue after the E1 baselines (scripts\run_queue.py waits for the orchestrator, then runs its stages)
+$qStatus = Join-Path $Root "runs\logs\queue__status.jsonl"
+$qDone = (Test-Path $qStatus) -and (Select-String -Path $qStatus -Pattern '"event": "queue_done"' -Quiet)
+if ($qDone) {
+    Write-Log "queue: already finished, not started"
+} elseif (Test-Running "run_queue.py") {
+    Write-Log "queue: already running, not started"
+} else {
+    Start-Process -FilePath $Python -WorkingDirectory $Root -ArgumentList @("scripts\run_queue.py")
+    Write-Log "queue: started (waits for the E1 orchestrator)"
+}
+
 # 2) OTF generation watcher (Gemma and Qwen tests run when their servers come up)
 # 2026-10-23: held with OTF (it would test the old OTF on Qwen and share the GPU with Qwen's runs).
 $models = @("gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b")
