@@ -79,18 +79,20 @@ class PageIndexSystem(QASystem):
     def setup(self, doc: Document) -> SetupResult:
         from pageindex import PageIndexClient
 
-        from ..llm import LOCAL_API_KEY, get_model
+        from ..llm import endpoint_key, get_model
 
         store = doc.work_dir / "pageindex_store"
         index_spec = get_model(self.index_model)
         index_side = {"mode": "local", "model": index_spec.served_name, "storage_path": str(store)}
         chat_side = {"mode": "local", "model": self.spec.served_name}
         if index_spec.is_local:   # LiteLLM routes "openai/<id>" + api_base to an OpenAI-compatible server
-            index_side.update(model=f"openai/{index_spec.served_name}",
-                              backend={"api_base": index_spec.base_url, "api_key": LOCAL_API_KEY})
+            backend = {"api_base": index_spec.base_url, "api_key": endpoint_key(index_spec)}
+            if "provider" in index_spec.extra_body:   # hosted: indexing calls use the same locked provider
+                backend["extra_body"] = {"provider": index_spec.extra_body["provider"]}
+            index_side.update(model=f"openai/{index_spec.served_name}", backend=backend)
         if self.spec.is_local:
             chat_side.update(model=f"openai/{self.spec.served_name}",
-                             backend={"base_url": self.spec.base_url, "api_key": LOCAL_API_KEY})
+                             backend={"base_url": self.spec.base_url, "api_key": endpoint_key(self.spec)})
         self.client = PageIndexClient(index=index_side, chat=chat_side)
         cache = doc.work_dir / "pageindex_index.json"
         key = {"pdf_sha": _file_hash(doc.pdf_path), "index_model": self.index_model}

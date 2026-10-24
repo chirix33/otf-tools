@@ -49,5 +49,63 @@
     },
     "max_tokens": 16384,
     "context_len": 131072
+  },
+  "_comment_openrouter": "or-* = the same three models hosted on OpenRouter (SPEC.md sec. 2, 2026-10-25). Key: OPENROUTER_API_KEY in .env. Each alias is locked to one provider with no fallback, so every call uses the same weights. gpt-oss: CoreWeave fp4 (the official MXFP4 release format). Gemma: Crusoe bf16 (Novita bf16 rejected a 21k-token prompt, so its real context is too small; Crusoe sometimes returns 429, which the clients retry). Qwen: Alibaba (the model's publisher; OpenRouter lists its precision as unknown; no provider serves fp4, the others serve fp8). Qwen drops min_p=0.0 because Alibaba rejects the parameter and 0.0 disables it anyway. context_len stays 131072 so full-context truncation (E2) is unchanged.",
+  "or-gpt-oss-20b": {
+    "served_name": "openai/gpt-oss-20b",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "reasoning_effort": "medium",
+    "extra_body": {
+      "provider": {
+        "order": ["CoreWeave"],
+        "quantizations": ["fp4"],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    },
+    "max_tokens": 16384,
+    "context_len": 131072
+  },
+  "or-qwen3.6-27b": {
+    "served_name": "qwen/qwen3.6-27b",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "extra_body": {
+      "top_k": 20,
+      "reasoning": {
+        "enabled": true
+      },
+      "provider": {
+        "order": ["Alibaba"],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    },
+    "max_tokens": 16384,
+    "context_len": 131072
+  },
+  "or-gemma-4-31b-think": {
+    "served_name": "google/gemma-4-31b-it",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "extra_body": {
+      "top_k": 64,
+      "reasoning": {
+        "enabled": true
+      },
+      "provider": {
+        "order": ["Crusoe"],
+        "quantizations": ["bf16"],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    },
+    "max_tokens": 16384,
+    "context_len": 131072
   }
 }

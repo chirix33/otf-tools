@@ -36,6 +36,10 @@ python run.py run    --run pilot20 --system pageindex
 python run.py report --run pilot20                       # runs/pilot20/report.md + report.json
 ```
 
+Hosted models (OpenRouter): put `OPENROUTER_API_KEY=...` in `.env` and use an `or-*` alias from
+`configs/models.json`, for example `python run.py run --run "mfg_d*" --system rag --model or-gpt-oss-20b`.
+Each alias is locked to one provider; see SPEC.md sec. 2.
+
 Runs can be resumed: answered questions are skipped, and failed ones are retried on the next
 invocation. Useful flags: `--workers`, `--reasoning-effort`, `--types predictive counterfactual`,
 `--system-arg key=value`.
