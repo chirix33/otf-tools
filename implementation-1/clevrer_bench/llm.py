@@ -1,12 +1,14 @@
 """Model registry (configs/models.json): where each model is served and its frozen sampling settings.
 
 `--model` on the CLI is an alias into the registry. Aliases with a `base_url` are served by an
-OpenAI-compatible server (vLLM) and are called through chat completions; aliases without one go to
-the OpenAI API as in the pilot. Unknown aliases fall back to the OpenAI API with the alias as model id.
+OpenAI-compatible server (local vLLM, or a hosted one such as OpenRouter) and are called through chat
+completions; aliases without one go to the OpenAI API as in the pilot. Unknown aliases fall back to the
+OpenAI API with the alias as model id.
 """
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -28,9 +30,11 @@ class ModelSpec:
     max_tokens: Optional[int] = None
     context_len: Optional[int] = None    # served context window (vLLM --max-model-len)
     extra_body: dict = field(default_factory=dict)
+    api_key_env: Optional[str] = None    # env var holding the endpoint's key (hosted endpoints); None for vLLM
 
     @property
     def is_local(self) -> bool:
+        # True for every OpenAI-compatible endpoint (chat completions), hosted ones included
         return self.base_url is not None
 
     def to_dict(self) -> dict:
@@ -41,6 +45,16 @@ def get_model(alias: str) -> ModelSpec:
     reg = json.loads(REGISTRY.read_text()) if REGISTRY.exists() else {}
     conf = reg.get(alias, {"served_name": alias})
     return ModelSpec(alias=alias, **conf)
+
+
+def endpoint_key(spec: ModelSpec) -> str:
+    """API key for a base_url endpoint: the env var named by api_key_env, else vLLM's placeholder."""
+    if not spec.api_key_env:
+        return LOCAL_API_KEY
+    key = os.environ.get(spec.api_key_env)
+    if not key:
+        raise RuntimeError(f"model {spec.alias!r} needs {spec.api_key_env} in the environment or .env")
+    return key
 
 
 def chat_sampling(spec: ModelSpec, reasoning_effort: Optional[str] = None) -> dict:

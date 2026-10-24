@@ -19,7 +19,7 @@ import numpy as np
 from openai import OpenAI
 
 from ..data import QAItem
-from ..llm import LOCAL_API_KEY, chat_sampling, chat_usage
+from ..llm import chat_sampling, chat_usage, endpoint_key
 from .base import Document, Prediction, QASystem, SetupResult, Usage
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
@@ -68,7 +68,7 @@ class RAGSystem(QASystem):
         super().__init__(model, reasoning_effort)
         self.top_k, self.chunk_tokens, self.overlap = top_k, chunk_tokens, overlap_tokens
         if self.spec.is_local:
-            self.client = OpenAI(base_url=self.spec.base_url, api_key=LOCAL_API_KEY, max_retries=6, timeout=1800)
+            self.client = OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=1800)
         else:
             self.client = OpenAI(max_retries=6, timeout=600)
         self._embed_lock = threading.Lock()

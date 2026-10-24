@@ -21,6 +21,25 @@ Drafted 2026-10-21. Internal deadline for all numbers + paper: **2026-10-28** (s
 | Llama-3.3-70B-Instruct | 4-bit is ~40 GB and does not fit. CPU offload with 64 GB RAM gives ~3-5 tok/s (days per system). 2-bit fits but damages the model enough that reviewers would reject it. | **No** | — | **DROPPED** (2026-10-21), replaced by Gemma-4-31B-it (next row) |
 | Gemma-4-31B-it | `google/gemma-4-31B-it`, served as Red Hat's NVFP4 build `RedHatAI/gemma-4-31B-it-NVFP4` @ `5df75cca` (23.3 GB) with FP8 KV cache. NVIDIA's own NVFP4 build is 32.6 GB (attention kept BF16) and does not fit. Fallback: `LilaRest/gemma-4-31B-it-NVFP4-turbo` (19.3 GB, text-only). KV: 10 global layers (~80 KB/token BF16) + 50 sliding-window layers (fixed ~0.8 GB per sequence). | Yes, at 4-bit | T=1.0, top_p=0.95, top_k=64. Thinking on or off is frozen after the smoke test (registry aliases `gemma-4-31b-think` / `gemma-4-31b-nothink`) | **Thinking ON** (frozen 2026-10-21 by the pre-set rule: 0% truncation, ~14 s per question; alias `gemma-4-31b-think`) | FROZEN |
 
+**Hosted models on OpenRouter (2026-10-25, OPEN until all authors agree).** The local GPU cannot finish the runs
+before the deadline, and one collaborator has no GPU. The proposal: run every system on the same three models through
+OpenRouter, with no local quantized builds, so all rows in a table use the same weights. Aliases `or-gpt-oss-20b`,
+`or-qwen3.6-27b`, `or-gemma-4-31b-think` in `configs/models.json`. Each alias is locked to one provider with no
+fallback:
+
+| Alias | Provider | Precision | Note |
+|---|---|---|---|
+| `or-gpt-oss-20b` | CoreWeave | fp4 | MXFP4 is the official release format, so this is the original model |
+| `or-qwen3.6-27b` | Alibaba | not listed by OpenRouter | The model's publisher. No provider serves fp4; the others serve fp8. `min_p` is dropped: Alibaba rejects it, and 0.0 disables it anyway |
+| `or-gemma-4-31b-think` | Crusoe | bf16 | Novita (bf16) rejected a 21k-token prompt. Crusoe sometimes returns 429; the clients retry |
+
+Sampling and caps are the same as the local entries. Thinking is set with OpenRouter's `reasoning` field instead of
+vLLM's `chat_template_kwargs`. `context_len` stays 131,072, so the E2 full-context cut does not change. Put
+`OPENROUTER_API_KEY=...` in `.env`. Use `run.py run` directly; `scripts/run_baselines.py` and `run_queue.py`
+start local vLLM servers. The new aliases write to new `systems/<system>__or-*` folders, so local and hosted
+predictions never mix. Smoke test (2026-10-25, `mfg_dev`, one question per type): full context ran on all three
+aliases, and RAG and PageIndex ran on `or-gpt-oss-20b`, with no errors.
+
 Rule: every LLM call inside every system uses the model under test, including PageIndex tree building, RAG answering,
 and our map builder, tool generator and router. One-time costs are reported as setup tokens and amortized.
 
