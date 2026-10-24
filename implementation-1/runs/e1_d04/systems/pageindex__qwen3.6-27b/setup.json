@@ -1,0 +1,33 @@
+{
+  "system": "pageindex",
+  "model": "qwen3.6-27b",
+  "reasoning_effort": null,
+  "model_spec": {
+    "alias": "qwen3.6-27b",
+    "served_name": "nvidia/Qwen3.6-27B-NVFP4",
+    "base_url": "http://localhost:8000/v1",
+    "reasoning_effort": null,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0
+    }
+  },
+  "usage": {
+    "input_tokens": 96954,
+    "cached_input_tokens": 0,
+    "output_tokens": 40685,
+    "reasoning_tokens": 36928,
+    "llm_calls": 22,
+    "total_tokens": 137639
+  },
+  "latency_s": 221.65580129623413,
+  "info": {
+    "doc_id": "pi-c99c05240dcb4d608d00303017064b99",
+    "cached_index": false,
+    "tree_nodes": 21
+  }
+}
