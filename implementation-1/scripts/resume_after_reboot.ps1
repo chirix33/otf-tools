@@ -42,6 +42,18 @@ if ($allDone) {
     Write-Log "orchestrator: started"
 }
 
+# 1b) OTF v3 for Qwen on E1, sharing the Qwen server with the orchestrator (2026-10-23, tag otf-v3)
+$otfDone = (Test-Path $status) -and (Select-String -Path $status -Pattern '"event": "otf_alongside_done", "model": "qwen3.6-27b"' -Quiet)
+if ($otfDone) {
+    Write-Log "otf alongside (qwen): already finished, not started"
+} elseif (Test-Running "run_otf_alongside.py") {
+    Write-Log "otf alongside (qwen): already running, not started"
+} else {
+    Start-Process -FilePath $Python -WorkingDirectory $Root -ArgumentList @(
+        "scripts\run_otf_alongside.py", "--split", "e1", "--model", "qwen3.6-27b")
+    Write-Log "otf alongside (qwen): started"
+}
+
 # 2) OTF generation watcher (Gemma and Qwen tests run when their servers come up)
 # 2026-10-23: held with OTF (it would test the old OTF on Qwen and share the GPU with Qwen's runs).
 $models = @("gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b")

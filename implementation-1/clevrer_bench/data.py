@@ -27,7 +27,9 @@ class QAItem:
 
     @property
     def is_mc(self) -> bool:
-        return self.question_type in MC_TYPES or self.question_type == HIDDEN_MC
+        """Multiple choice: a question of a choice type that lists choices (every CLEVRER one does; a finance
+        counterfactual is open-ended and has none), or a stripped multiple-choice item."""
+        return (self.question_type in MC_TYPES and bool(self.choices)) or self.question_type == HIDDEN_MC
 
     def stripped(self) -> "QAItem":
         """The copy a system receives: no gold labels, and the question type reduced to
@@ -72,7 +74,7 @@ def to_items(entries: list[dict]) -> list[QAItem]:
                 question_subtype=q.get("question_subtype"),
                 question=q["question"],
             )
-            if item.is_mc:
+            if item.question_type in MC_TYPES:
                 item.choices = [{"choice_id": c["choice_id"], "choice": c["choice"]} for c in q["choices"]]
                 item.gold_choices = {c["choice_id"]: c["answer"] == "correct" for c in q["choices"]}
             else:

@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from .data import load_annotation, load_items, sample_videos, save_items, to_items
-from .prompts import ANSWER_INSTRUCTIONS, build_question_prompt, parse_prediction
+from .prompts import answer_instructions, build_question_prompt, parse_prediction
 from .render import build_pdf, build_section, save_manifest
 from .scoring import score
 from .systems import Document, QASystem
@@ -73,7 +73,13 @@ def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None 
     work = out_dir / "work"
     work.mkdir(parents=True, exist_ok=True)
 
-    doc = Document(run_dir / "document.pdf", json.loads((run_dir / "manifest.json").read_text()), work)
+    manifest = json.loads((run_dir / "manifest.json").read_text())
+    # the run's domain picks the answer contract, the prompt's first line and the scorer (None = CLEVRER)
+    domain = manifest.get("domain")
+    instructions = answer_instructions(domain)
+    gold = ({(g := json.loads(l))["uid"]: g for l in (run_dir / "gold.jsonl").read_text().splitlines()}
+            if domain == "finance" else {})
+    doc = Document(run_dir / "document.pdf", manifest, work)
     setup = system.setup(doc)
     (out_dir / "setup.json").write_text(json.dumps(
         {"system": system.name, "model": system.model, "reasoning_effort": system.reasoning_effort,
@@ -97,14 +103,14 @@ def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None 
     lock = threading.Lock()
 
     def one(item):
-        prompt = build_question_prompt(item)
+        prompt = build_question_prompt(item, domain)
         rec = {"uid": item.uid, "question_type": item.question_type, "question_subtype": item.question_subtype}
         try:
-            pred = system.answer(item.stripped(), ANSWER_INSTRUCTIONS, prompt)
-            parsed = parse_prediction(item, pred.raw_text)
+            pred = system.answer(item.stripped(), instructions, prompt)
+            parsed = parse_prediction(item, pred.raw_text, domain)
             rec.update(raw_text=pred.raw_text, parsed={**parsed, **({"choices": {str(k): v for k, v in
                        parsed["choices"].items()}} if "choices" in parsed else {})},
-                       score=score(item, parsed), usage=pred.usage.to_dict(),
+                       score=score(item, parsed, domain, gold.get(item.uid)), usage=pred.usage.to_dict(),
                        latency_s=round(pred.latency_s, 2), trace=pred.trace)
         except Exception as e:  # recorded and retried on the next invocation
             rec["error"] = f"{type(e).__name__}: {e}"

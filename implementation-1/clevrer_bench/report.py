@@ -135,9 +135,10 @@ def to_markdown(rep: dict) -> str:
     systems = rep["systems"]
     cfg = rep["build_config"]
     L = [f"# CLEVRER document-QA benchmark: {rep['run']}", "",
-         f"- Videos: {cfg['n_videos']} (validation split, seed {cfg['seed']}), questions: {cfg['n_questions']}",
+         f"- Videos: {cfg.get('n_videos', cfg.get('n_scopes'))} (validation split, seed {cfg.get('seed')}), "
+         f"questions: {cfg['n_questions']}",
          f"- Document: `{rep['pdf']}` ({rep['pages']} pages), rendered from ground-truth annotations "
-         f"(observed 128 frames only; motion log every {cfg['motion_stride']} frames + event frames)",
+         f"(observed 128 frames only; motion log every {cfg.get('motion_stride')} frames + event frames)",
          "- Descriptive: exact match. Multiple-choice: per-option accuracy, and per-question accuracy "
          "(all options of the question correct). Overall question accuracy counts each question once.",
          ""]
@@ -247,8 +248,10 @@ def make_split_report(runs_root: Path, name: str, systems: list[str] | None = No
     cfgs = [json.loads((d / "build_config.json").read_text()) for d in docs]
     pages = sum(json.loads((d / "manifest.json").read_text())["videos"][-1]["end_page"] for d in docs)
     rep = {"run": f"{name} ({len(docs)} documents)", "pdf": f"{docs[0].name} .. {docs[-1].name}", "pages": pages,
-           "build_config": {"n_videos": sum(c["n_videos"] for c in cfgs), "seed": cfgs[0].get("split_seed"),
-                            "n_questions": len(items), "motion_stride": cfgs[0]["motion_stride"]},
+           # other domains' build configs count scopes ("n_scopes") and have no motion log
+           "build_config": {"n_videos": sum(c.get("n_videos", c.get("n_scopes", 0)) for c in cfgs),
+                            "seed": cfgs[0].get("split_seed"), "n_questions": len(items),
+                            "motion_stride": cfgs[0].get("motion_stride")},
            "systems": [system_report([d / "systems" / n for d in docs], uids) for n in names]}
     add_paired(rep)
     (runs_root / f"{name}_report.json").write_text(json.dumps(rep, indent=2))

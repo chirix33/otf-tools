@@ -296,3 +296,31 @@ E1/E2 question is answered.
 | Compute tiers | Tier A (must): gpt-oss-20b, all four baselines on full E1 and on E2 (~20-25 GPU-h). Tier B (if time): Gemma and Qwen on E1-core = `e1_d03, d06, d09, d12, d15` (~720 questions; ~10 GPU-h per model). Go/no-go on Oct 25 09:00: if fewer than 40 GPU-h remain before the Oct 27 evening freeze, Tier B runs for Qwen only (superseded by the 2026-10-22 priority rule: Qwen's full E1 comes first; Tier B, then E2, are cut first if time is short) | FROZEN |
 | Reporting | Same reports as the other systems (accuracy with bootstrap CIs, paired differences vs OTF, McNemar), plus: cost-accuracy frontier, break-even curve (setup amortization), E1 to E2 degradation, counterfactual error overlap (UpSet), code-reliability table | FROZEN |
 
+
+## 12. Additional domains: manufacturing, IT operations, finance (added 2026-10-23)
+
+Specs and decisions: `docs/domains/` (README, one file per domain, each with an "As built" section). Generators,
+reference simulators, renderers and validation: `domains/manufacturing/`, `domains/it_ops/`, `domains/finance/`
+(each with VALIDATION.md, all PASS). Runs: `runs/mfg_d01-d05` + `mfg_dev`, `runs/itops_d01-d05` + `itops_dev`
+(300 questions each, 75 per type), `runs/fin_d01-d03` + `fin_dev` (300 questions: 150 counterfactual + their 150
+factual twins). The dev documents are for smoke tests only; no system is tuned on any new domain.
+
+| Paper name | Data | Real | Simulated |
+|---|---|---|---|
+| Manufacturing | SupplyGraph (LGPL-2.1) | daily production and sales orders, plants, storage | stock and dispatch policy |
+| IT operations | Google clusterdata-2011-2 (CC-BY 4.0) | task arrivals, priorities, requests, durations, failures | scheduler policy (capacity 1/8 of real machines) |
+| Finance | TAT-HQA (Apache-2.0) | tables, text, questions and gold | nothing |
+
+**Harness integration (2026-10-23, after the v3 freeze; same for every system).** A run's `manifest.json`
+"domain" selects the answer contract, the prompt's first line and the scorer; no domain = CLEVRER, unchanged:
+- prompt line 1 = the scope title (CLEVRER: "Video <n>"); answer instructions: `GENERIC_ANSWER_INSTRUCTIONS`
+  (manufacturing, IT operations: CLEVRER's JSON contract without CLEVRER wording) or
+  `FINANCE_ANSWER_INSTRUCTIONS` (`{"answer", "scale"}`, numbers / text spans / lists; domains/finance/ANSWER_CONTRACT.md);
+- a question is multiple-choice only if it lists choices (finance counterfactuals are open-ended);
+- finance is scored with TAT-QA's metric (`domains/finance/score.py`): question accuracy = exact match with the
+  right scale; em, f1 and scale_correct are stored per question.
+Verified before any live run picked it up: all 3,541 CLEVRER prompts, stripped items, the answer instructions and
+the E1 split report are byte-identical, and all 25,126 stored CLEVRER predictions parse and score identically
+under the old (91f5893) and new harness; on every new-domain document the generated prompts equal
+`questions.jsonl`, the answer format is right for every item, and gold scores 100%; an offline end-to-end run
+(stub system) wrote predictions and split reports for all three domains without errors.
