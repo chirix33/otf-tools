@@ -33,17 +33,22 @@ if ($allDone) {
 } else {
     $out = & $Python (Join-Path $Root "scripts\repair_predictions.py") 2>&1 | Out-String
     Write-Log ("repair: " + $out.Trim().Replace("`r`n", " | "))
+    # 2026-10-23: OTF and otf_oracle are held while OTF is generalised for the four domains (see
+    # docs/domains/otf_review.md); only the non-OTF systems run until the new OTF is frozen.
     Start-Process -FilePath $Python -WorkingDirectory $Root -ArgumentList @(
         "scripts\run_baselines.py", "--split", "e1",
-        "--models", "gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b",
-        "--systems", "full_context_text", "pageindex", "rag", "otf", "otf_oracle")
+        "--models", "gemma-4-31b-think", "qwen3.6-27b",
+        "--systems", "full_context_text", "pageindex", "rag")
     Write-Log "orchestrator: started"
 }
 
 # 2) OTF generation watcher (Gemma and Qwen tests run when their servers come up)
+# 2026-10-23: held with OTF (it would test the old OTF on Qwen and share the GPU with Qwen's runs).
 $models = @("gpt-oss-20b", "gemma-4-31b-think", "qwen3.6-27b")
 $pending = $models | Where-Object { -not (Test-Path (Join-Path $Root "runs\logs\otf_generation__$_.txt")) }
-if (-not $pending) {
+if ($true) {
+    Write-Log "watcher: held while OTF is generalised, not started"
+} elseif (-not $pending) {
     Write-Log "watcher: all generation tests finished, not started"
 } elseif (Test-Running "test_generation_when_up.py") {
     Write-Log "watcher: already running, not started"

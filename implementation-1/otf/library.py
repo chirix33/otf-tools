@@ -13,8 +13,13 @@ from pathlib import Path
 
 
 def signature(nav: dict) -> str:
-    shapes = sorted({(re.sub(r"\d+", "#", n["title"]), n["kind"], tuple(n.get("table", {}).get("columns", [])))
-                     for n in nav["nodes"]})
+    """Node title patterns and kinds, with the table columns of each pattern when they are the same in every
+    scope ("*" when they vary from scope to scope, e.g. tables headed by different years)."""
+    cols: dict = {}
+    for n in nav["nodes"]:
+        cols.setdefault((re.sub(r"\d+", "#", n["title"]), n["kind"]), set()).add(
+            tuple(n.get("table", {}).get("columns", [])))
+    shapes = sorted((p, k, next(iter(c)) if len(c) == 1 else ("*",)) for (p, k), c in cols.items())
     return hashlib.sha256(json.dumps(shapes).encode()).hexdigest()[:16]
 
 

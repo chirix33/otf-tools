@@ -1,6 +1,8 @@
 # Hand-written process model for the CLEVRER document (the "oracle tool" upper bound in the paper).
-# Same interface and sandbox as the model-generated code (entities / recorded_end / observed_events /
-# simulate), so the OTF engine can run it unchanged. It reads only what the document renders.
+# Same interface and sandbox as the model-generated code (OTF v3: entities / recorded_end / inputs /
+# outcomes / simulate), so the OTF engine can run it unchanged. It reads only what the document renders.
+# Inputs: each object's first two motion rows (its entrance). Outcomes: the recorded collisions.
+# The v2 version is oracle_model_v2.py.
 import math
 import re
 
@@ -25,14 +27,15 @@ def entities(doc, scope):
     return out
 
 
-def _rows(doc, scope):
+def _rows(doc, scope, with_index=False):
     n = _node(doc, scope, "Motion log")
     rows = []
-    for r in (n or {}).get("table", {}).get("rows", []):
+    for i, r in enumerate((n or {}).get("table", {}).get("rows", [])):
         try:
-            rows.append((int(r[0]), r[1].split()[0], float(r[2]), float(r[3]), float(r[4]), float(r[5])))
+            row = (int(r[0]), r[1].split()[0], float(r[2]), float(r[3]), float(r[4]), float(r[5]))
         except (ValueError, IndexError):
-            pass
+            continue
+        rows.append(row + (i,) if with_index else row)
     return rows
 
 
@@ -41,14 +44,30 @@ def recorded_end(doc, scope):
     return float(max(r[0] for r in rows)) if rows else 127.0
 
 
-def observed_events(doc, scope):
+def inputs(doc, scope):
+    n = _node(doc, scope, "Motion log")
+    seen, out = {}, []
+    for f, oid, x, y, vx, vy, i in _rows(doc, scope, with_index=True):
+        seen[oid] = seen.get(oid, 0) + 1
+        if seen[oid] <= 2:
+            out.append({"id": f"{oid}-entry-{seen[oid]}", "time": float(f), "kind": "entry", "entities": [oid],
+                        "fields": {"x": x, "y": y, "vx": vx, "vy": vy}, "src": [[n["node_id"], i]]})
+    return out
+
+
+def outcomes(doc, scope):
     n = _node(doc, scope, "Events")
     out = []
-    for line in (n or {}).get("lines", []):
+    for i, line in enumerate((n or {}).get("lines", [])):
         m = _EVT.match(line)
         if m:
-            out.append({"time": float(m.group(1)), "kind": "collision", "participants": [m.group(2), m.group(3)]})
+            out.append({"time": float(m.group(1)), "kind": "collision", "entities": [m.group(2), m.group(3)],
+                        "value": None, "src": [[n["node_id"], i]]})
     return out
+
+
+def observed_events(doc, scope):
+    return [{"time": o["time"], "kind": o["kind"], "participants": o["entities"]} for o in outcomes(doc, scope)]
 
 
 _CAL = {}
@@ -88,29 +107,29 @@ def _calibrate(doc):
     return k
 
 
-def simulate(doc, scope, removed=(), horizon=None, start=0.0):
+def simulate(doc, scope, inputs, params=None, start=None, horizon=None):
     k = _calibrate(doc)
-    removed = {str(r) for r in removed}
-    rows = _rows(doc, scope)
+    start = 0.0 if start is None else start
     first, at_start = {}, {}
-    for f, oid, x, y, vx, vy in rows:
+    for r in sorted(inputs, key=lambda r: r["time"]):  # entrances come from the given inputs only
+        oid = str(r["entities"][0])
         if oid not in first:
-            first[oid] = (f, x, y, vx, vy)
-        if f <= start:
+            fl = r["fields"]
+            first[oid] = (int(r["time"]), fl["x"], fl["y"], fl["vx"], fl["vy"])
+    for f, oid, x, y, vx, vy in _rows(doc, scope):
+        if oid in first and f <= start:
             at_start[oid] = (f, x, y, vx, vy)          # latest recorded state at or before `start`
     end = horizon if horizon is not None else recorded_end(doc, scope)
     state, events, touching = {}, [], set()
     t0 = int(start)
     for oid, (f, x, y, vx, vy) in at_start.items():
-        if oid in removed:
-            continue
         st = [x, y, vx, vy]
         for _ in range(t0 - f):                         # advance from the record's time to `start`
             st[0] += st[2] * k["spf"]; st[1] += st[3] * k["spf"]; st[2] *= k["decay"]; st[3] *= k["decay"]
         state[oid] = st
     for t in range(t0 + 1, int(end) + 1):
         for oid, (f, x, y, vx, vy) in first.items():
-            if f == t and f > t0 and oid not in removed:
+            if f == t and f > t0:
                 state[oid] = [x, y, vx, vy]
         for s in state.values():
             s[0] += s[2] * k["spf"]; s[1] += s[3] * k["spf"]
@@ -129,7 +148,8 @@ def simulate(doc, scope, removed=(), horizon=None, start=0.0):
                         if rel > 0:          # approaching: equal-mass elastic exchange of normal components
                             a[2] -= rel * nx; a[3] -= rel * ny
                             b[2] += rel * nx; b[3] += rel * ny
-                            events.append({"time": float(t), "kind": "collision", "participants": [ids[i], ids[j]]})
+                            events.append({"time": float(t), "kind": "collision", "entities": [ids[i], ids[j]],
+                                           "value": None})
                         touching.add(pair)
                 else:
                     touching.discard(pair)

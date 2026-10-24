@@ -24,11 +24,17 @@ from .base import Document, Prediction, QASystem, SetupResult, Usage
 class OTFSystem(QASystem):
     name = "otf"
 
+    VERSION = "v3"          # OTF version (SPEC sec. 5); part of the model cache key and the library folder
+
     def __init__(self, model: str, reasoning_effort=None, max_tries: int = 3, model_code: str | None = None,
-                 use_library: bool = True, **kwargs):
+                 use_library: bool = True, ablation: str | None = None, **kwargs):
         super().__init__(model, reasoning_effort)
         self.max_tries = max_tries
-        self.use_library = use_library
+        self.use_library = str(use_library).lower() not in ("false", "0", "no")
+        # ablation (SPEC sec. 11): "reading_only" or "no_replay"; None for the full system
+        self.ablation = ablation or None
+        if self.ablation:
+            self.name = f"otf_{self.ablation}"
         # model_code: path to a hand-written process model used instead of generating one (oracle upper bound)
         self.model_code = model_code
         if model_code:
@@ -55,10 +61,11 @@ class OTFSystem(QASystem):
         self._tl.usage = Usage()
         log_path = doc.work_dir / "otf_log.txt"
         self.engine = OTFEngine(self._llm, doc.work_dir, self.max_tries,
-                                log=lambda s: log_path.open("a", encoding="utf-8").write(s + "\n"))
+                                log=lambda s: log_path.open("a", encoding="utf-8").write(s + "\n"),
+                                ablation=self.ablation)
         cache = doc.work_dir / "otf_model.json"
         key = {"pdf_sha": hashlib.sha256(doc.pdf_path.read_bytes()).hexdigest()[:16], "model": self.model,
-               "max_tries": self.max_tries}
+               "max_tries": self.max_tries, "version": self.VERSION}
         cached = None
         if self.model_code:
             from pathlib import Path
@@ -73,7 +80,8 @@ class OTFSystem(QASystem):
         # tool library shared by the documents of one split (runs/<split>_dNN), per model: test-split tools are
         # generated from test-split documents only
         split = doc.work_dir.parents[2].name.rsplit("_d", 1)[0]
-        lib_dir = doc.work_dir.parents[3] / "otf_library" / split / self.model if self.use_library else None
+        lib_dir = (doc.work_dir.parents[3] / f"otf_library_{self.VERSION}" / split / self.model
+                   if self.use_library else None)
         info = self.engine.prepare(doc.pdf_path, cached, lib_dir)
         if cached is None:
             usage, latency = self._tl.usage, time.time() - t

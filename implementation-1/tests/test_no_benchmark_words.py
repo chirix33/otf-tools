@@ -5,7 +5,11 @@ from pathlib import Path
 
 PKG = Path(__file__).resolve().parent.parent / "otf"
 BANNED = ["clevrer", "video", "frame", "collision", "collide", "sphere", "cube", "cylinder", "rubber", "metal",
-          "physics", "velocity", "friction", "gray", "red", "blue", "green", "brown", "purple", "cyan", "yellow"]
+          "physics", "velocity", "friction", "gray", "red", "blue", "green", "brown", "purple", "cyan", "yellow",
+          # the new domains (2026-10-23): manufacturing, IT operations, finance
+          "stock", "inventory", "backorder", "dispatch", "shipment", "warehouse", "plant", "factory", "truck",
+          "product", "sales", "scheduler", "evict", "preempt", "cluster", "cpu", "machine", "job", "queue",
+          "priority", "revenue", "goodwill", "impairment", "fiscal", "dividend"]
 
 
 def test_no_benchmark_words():

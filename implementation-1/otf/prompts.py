@@ -36,26 +36,51 @@ doc = {{"nodes": [{{"node_id", "title", "level", "parent_id", "children": [node_
                   "lines": [line strings]                                     (kind == list)
                   "text": str }}]}}                                          (kind == text)
 Top-level nodes that have children are SCOPES (independent units of the document); a question names its scope by title.
-Helpers already defined: node_by_title(doc, title), children(doc, node), scope_nodes(doc, scope) -> child nodes of the scope.
+Helpers already defined: node_by_title(doc, title), node_by_id(doc, node_id), children(doc, node),
+scope_nodes(doc, scope) -> child nodes of the scope, table_rows(node) -> [(row_index, {{column: cell}})]
+(table_rows builds new dicts on every call, so identify a row by its row_index, never with `is`).
+A LOCATION says where a record was read from: [node_id, row_index] (a whole table row),
+[node_id, row_index, [column names]] (some cells of a row) or [node_id, line_index] (a list line).
 {schema}
 """
 
 PARSERS_USER = """{context}
-STEP 1 OF 2. WRITE THESE FUNCTIONS (all values JSON-serialisable; `scope` is a scope title string):
+STEP 1 OF 2. WRITE THESE READING FUNCTIONS (all values JSON-serialisable; `scope` is a scope title string).
+They separate what the records GIVE the process from what the process PRODUCES.
 
 def entities(doc, scope) -> list of {{"id": str, "description": str}}
-    Every distinct entity that appears in the scope, with its full human-readable description.
+    Every distinct entity the scope's records are about, with its full human-readable description.
     The ids are the identifiers every other function uses for these entities.
 
-def recorded_end(doc, scope) -> float
-    The last time point covered by the scope's records (in the document's own time unit).
+def recorded_end(doc, scope) -> float or None
+    The last time point covered by the scope's records, in the document's own time unit.
+    None if the records have no time (for example a table of figures).
 
-def observed_events(doc, scope) -> list of {{"time": float, "kind": str, "participants": [entity ids]}}
-    Every interaction event (an event involving two or more entities) recorded for the scope, in time
-    order, in the same time unit as recorded_end. Participants must be ids returned by entities().
+def inputs(doc, scope) -> list of {{"id": str, "time": float or None, "kind": str, "entities": [entity ids],
+                                   "fields": {{name: number or str}}, "src": [locations]}}
+    Everything that enters the process from outside and is not caused by it: entities arriving and the state
+    they arrive in (for an entity present from the start, its first record or records), external requests or
+    events, amounts supplied from outside, figures that are given rather than computed from other figures,
+    and records of future inputs (planned or scheduled ones). Recorded states that change because of the
+    process are NOT inputs. Give each input a unique id.
 
-HOW IT IS CHECKED: on a few scopes the three functions must run, return entities, find the recorded
-interactions, use only ids from entities(), and give times between 0 and recorded_end.
+def outcomes(doc, scope) -> list of {{"time": float or None, "kind": str, "entities": [entity ids],
+                                     "value": number or None, "src": [locations]}}
+    Everything the process produces: every recorded event that results from the process (not the arrival of
+    an input), with "value": None, and every recorded result quantity (levels, amounts done, figures computed
+    from other figures), with its number as "value". An event may involve any number of entities.
+
+def params(doc, scope) -> {{name: number}}      (optional; omit it if the document states no constants)
+    Constants the document states (limits, capacities, rates), by a short name.
+
+`src` lists every location the record was read from, including the cells that give its time and its entities
+(an input and an outcome may share such cells, for example the time cell of one row).
+HOW IT IS CHECKED: on a few scopes the functions must run, use only ids from entities(), give outcome times
+within the recorded period, and point `src` at real rows, columns and lines. Then a copy of the scope is made
+in which the outcomes are hidden (their cells and lines, and every timed row or line after the first outcome
+that no input was read from; hidden cells become empty strings "" and hidden rows and lines are removed): on
+that copy inputs() must return exactly the same records, and outcomes() must find almost none of the hidden
+ones.
 {feedback}"""
 
 SIMULATOR_USER = """{context}
@@ -63,32 +88,34 @@ These functions are ALREADY WRITTEN AND CHECKED (they will be placed above your 
 ```python
 {parsers}
 ```
-WHAT THEY RETURN on the example scope '{example_scope}' (use exactly these ids and this time unit):
+WHAT THEY RETURN on the example scope '{example_scope}' (use exactly these ids, kinds and this time unit):
 entities = {example_entities}
 recorded_end = {example_end}
-observed_events = {example_events}
+inputs = {example_inputs}
+outcomes = {example_outcomes}
+params = {example_params}
 
 STEP 2 OF 2. WRITE THIS FUNCTION (plus any helpers it needs; do not redefine the functions above):
 
-def simulate(doc, scope, removed=(), horizon=None, start=0.0) -> list of {{"time": float, "kind": str, "participants": [entity ids]}}
-    A FORWARD MODEL of the process recorded in the scope, run from time `start` to `horizon`.
-    Initialise every entity present at `start` from its latest recorded state at or before `start`
-    (advancing it to `start` if that record is earlier); an entity that first appears after `start` enters
-    at the time and in the state of its first record. Then advance all states in small time steps, detect
-    the interaction events yourself, and update the states when an interaction happens. Return only the
-    interaction events after `start`. Never read recorded events, or recorded states later than `start`
-    (other than an entity's first records): the model must run under conditions that were never recorded.
-    `removed`: ids of entities that are absent for the whole run. `horizon`: run until this time
-    (default recorded_end); times after recorded_end are predictions. Use the same ids and time unit as
-    observed_events.
-    Estimate unknown constants (sizes, thresholds, rates such as gradual slowing, how states change in an
-    interaction) from the recorded data; you may use the full records of ALL scopes for that (for example
-    the states recorded at the times of recorded interactions in other scopes).
-    HOW IT IS CHECKED: for a few scopes, `start` is set just before the scope's first recorded interaction
-    and simulate is called on a copy of the document in which that scope keeps only its records up to
-    `start` (plus each entity's first two table rows) and no list line mentioning two or more entities
-    (other scopes are untouched). The interaction events it returns must match the scope's recorded
-    interactions after `start` (same participants, close in time). Copying recorded events cannot pass.
+def simulate(doc, scope, inputs, params, start=None, horizon=None) -> list of outcome records
+    A FORWARD MODEL of the process recorded in the scope. It is given the exogenous inputs (`inputs`, a list
+    like the one inputs() returns, possibly changed by the caller to ask what-if questions: read the given
+    inputs ONLY from this argument, never from the document) and the constants (`params`, possibly changed),
+    and runs from time `start` to `horizon` (default recorded_end; later times are predictions).
+    Initialise the state at `start` from the latest records at or before `start`; where those do not fully
+    determine the state, rebuild it by running your model from an earlier point, keeping recorded values
+    where they exist. Then apply the process's rules in time order (small time steps, or event by event,
+    whichever the process needs). Implement exactly any rules the document states in its front matter, and
+    estimate the rest (sizes, thresholds, rates, how states change at an outcome) from the recorded data; you
+    may use the full records of ALL scopes for that. An entity takes part only if it has at least one input.
+    Return the outcome records (same kinds, ids, time unit and value meaning as outcomes()) after `start`.
+    If recorded_end is None (no time), `start` and `horizon` are None: compute every outcome from the inputs.
+    HOW IT IS CHECKED: for a few scopes, `start` is set just before the scope's first recorded outcome and
+    simulate is called on a copy of the document in which that scope's outcomes after `start` are hidden
+    (hidden cells are empty strings "", hidden rows and lines are removed; the inputs are kept; other scopes
+    are untouched). The outcomes it returns must match the hidden ones
+    (same kind, same entities, close in time and value). Copying recorded outcomes cannot pass, and a model
+    that ignores `inputs` fails.
 {feedback}"""
 
 AGENT_SYSTEM = """You write Python code that turns a document's recorded data into an executable model, and you \
@@ -107,11 +134,12 @@ or, when you are ready, the final answer:
 
 EXPLORE_HOWTO = """
 BEFORE WRITING simulate, INVESTIGATE THE DATA. You may run up to {n_explore} ```explore blocks; the functions
-above (and the helpers) are available inside them. Measure what the model needs, for example: how each recorded
-quantity changes between consecutive records of one entity (and how that relates to any recorded rates, which
-gives the time unit), how quickly things slow down, the states of the participants at the recorded times of
-interactions (for example the distance between them), and how states change across an interaction. Use other
-scopes than the checked ones if you like. Then reply with the final ```python block."""
+above (and the helpers) are available inside them. Measure what the model needs, for example: which rules the
+document states, and whether the records follow them (test a stated rule on a few recorded cases); how each
+recorded quantity changes between consecutive records of one entity, and how fast it changes on its own; the
+recorded states of the entities involved at the times of recorded outcomes (for example how far apart they
+are, or how much of a limit is used); and how states change at an outcome. Use other scopes than the checked
+ones if you like. Then reply with the final ```python block."""
 
 EXPLORE_OUTPUT = """OUTPUT of your explore block ({left} explore runs left):
 {output}"""
@@ -128,21 +156,57 @@ Previous code:
 {code}
 ```"""
 
-ARGS = """Which entities does this question remove, take away, or treat as absent? Use the entity list.
+PATCH = """A question supposes that something was different from what the records show. Write that change as
+patches on the recorded inputs or constants.
 ENTITIES:
 {entities}
+EXAMPLE INPUT OF EACH KIND:
+{examples}
+CONSTANTS: {params}
+TIME: {time}
 QUESTION:
 {question}
-Reply with only JSON: {{"removed": [entity ids]}}  (an empty list if none)"""
+Patch operations (S selects inputs: {{"entity": id, "kind": k, "time": t, "from": t1, "to": t2}}, every key
+except "entity" optional; selecting only an entity selects all of its inputs):
+  {{"op": "remove", "select": S}}                                   the selected inputs never happen
+  {{"op": "set", "select": S, "field": F, "value": V}}              a field of the selected inputs gets value V
+  {{"op": "scale", "select": S, "field": F, "factor": X}}           a field is multiplied by X
+  {{"op": "shift", "select": S, "by": D}}                           the selected inputs happen D time units later
+  {{"op": "add", "record": {{"time": t, "kind": k, "entities": [ids], "fields": {{...}}}}}}   an extra input
+  {{"op": "set" or "scale", "param": NAME, "value" or "factor": ..., "from": T}}   a constant changes (from time T)
+Something "removed", "absent" or "never there" removes all inputs of that entity.
+Reply with only JSON: {{"patches": [ ... ]}}  (an empty list if the question supposes no change)"""
+
+CAUSES = """A question asks what an outcome depended on, and lists candidate causes. For each candidate, write
+the change that takes that cause away, as patches on the recorded inputs, so that the outcome can be re-run
+without it.
+ENTITIES:
+{entities}
+EXAMPLE INPUT OF EACH KIND:
+{examples}
+RECORDED OUTCOMES (numbered):
+{outcomes}
+QUESTION AND CANDIDATES:
+{question}
+Patch operations as in: {{"op": "remove", "select": S}}, {{"op": "set", "select": S, "field": F, "value": V}},
+{{"op": "scale", ...}}, {{"op": "shift", ...}}; S = {{"entity": id, "kind": k, "time": t, "from": t1, "to": t2}}.
+Reply with only JSON: {{"target": <number of the outcome the question is about>,
+ "choices": {{"<choice number>": [patches] or null}}}}
+Use null when a candidate is not something that can be taken away by changing inputs (for example another
+outcome)."""
 
 ANSWER = {
     "descriptive": "Answer from the document sections below (the question's scope).",
-    "explanatory": "Answer using the recorded events and the dependency table below. In the table, removing an "
-                   "entity from the start and re-running a model of the process makes the listed events disappear. "
-                   "An event is responsible for an outcome when the outcome would not have happened without it.",
-    "predictive": "Answer using the events the model predicts after the recorded period ends (listed below), "
-                  "together with the recorded events.",
-    "counterfactual": "Answer using the counterfactual run below: a model of the process re-run with the "
-                      "removed entities absent from the start. Statements about events that appear in the "
-                      "counterfactual run are true; events that do not appear in it would not happen.",
+    "explanatory": "Answer using the recorded outcomes, the dependency table and the choice checks below. In the "
+                   "table, taking an entity's inputs away and re-running a model of the process (checked against "
+                   "the record) makes the listed outcomes disappear. A choice check re-runs the process without that "
+                   "cause. Something is responsible for an outcome when the outcome would not have happened "
+                   "without it.",
+    "predictive": "Answer using the outcomes the model predicts after the recorded period ends (listed below), run "
+                  "forward from the last recorded states and the document's own future inputs, if any, together with "
+                  "the recorded outcomes.",
+    "counterfactual": "Answer using the counterfactual run below: the record is kept until the change can first "
+                      "matter, then a model of the process, checked against the record, is re-run with the change. "
+                      "Outcomes in the counterfactual run happen; recorded outcomes that are not in it would not "
+                      "happen. DIFFERENCES lists what the change alters.",
 }

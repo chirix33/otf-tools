@@ -26,7 +26,9 @@ ap.add_argument("--model", required=True)
 ap.add_argument("--system", default="otf")
 a = ap.parse_args()
 
-lib_dir = ROOT / "runs" / "otf_library" / a.split / a.model
+from clevrer_bench.systems.otf_system import OTFSystem  # noqa: E402
+
+lib_dir = ROOT / "runs" / f"otf_library_{OTFSystem.VERSION}" / a.split / a.model
 changed = 0
 for d in sorted((ROOT / "runs").glob(f"{a.split}_d[0-9]*")):
     sys_dir = d / "systems" / f"{a.system}__{a.model}"

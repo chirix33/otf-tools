@@ -117,6 +117,76 @@ The method lives in the document-agnostic package `otf/`; the benchmark adapter 
 **Oracle upper bound**: `oracle/oracle_model.py` is a hand-written model with the same interface, run with
 `--system otf --system-arg model_code=oracle/oracle_model.py` (system name `otf_oracle`).
 
+**OTF v3 (approved 2026-10-23; FROZEN 2026-10-23 ~21:00, git tag `otf-v3`): domain-general OTF, OTF's third
+and final tuning variant.** After the freeze only logged bug fixes, as below.
+Design: `docs/domains/otf_v3_design.md`; reason: `docs/domains/otf_review.md` (v2 is shaped like CLEVRER:
+removal-only counterfactuals, events need 2+ participants, the forecast check hides future inputs, physics-shaped
+prompts). Variants: v1 = `ROUTER_V1` single pass (`otf_single`), v2 = `ROUTER` + end-of-split library re-check
+(`otf`, gpt-oss E1 75.7%), v3 = generalised. After the v3 freeze only logged bug fixes (crashes, exceptions, parse
+failures, timeouts, prompt text that contradicts the code), never changes chosen by accuracy. Gemma's and Qwen's
+OTF runs are held until the freeze; v2's gpt-oss E1 rows stay in the reports as ablations (`otf_v2`, `otf_single`).
+Gates, pre-registered before any v3 run:
+- **G1** every CLEVRER Navigation Map rebuilt by the v3 `navmap.py` is byte-identical (pilot20, e1_d01-d15, e2_d01).
+- **G2** the benchmark-word guard (extended with the new domains' vocabulary) and the toy unit tests pass.
+- **G3** the v3 oracle passes the v3 check on pilot20 (F1 reported next to v2's 0.644); end to end on all 308 pilot20
+  questions it is within 2 points of the v2 oracle.
+- **G4** gpt-oss v3 generation on pilot20 passes within the unchanged budget; on all 308 pilot20 questions v3 >= v2 - 3
+  points. If G4 fails: bug hunt from the logs only (no prompt rewording), then proceed with v3 as pre-registered.
+- **G5** on each new-domain dev document every table parses as a table and generation runs without a crash (no
+  accuracy is looked at).
+Forecast-check bar stays 0.4 for every domain (no per-domain calibration); per-domain pass rates and a post-hoc
+sensitivity table at 0.3 / 0.5 are reported. Generation budget unchanged (3 parser tries; 3 conversations x 5
+submissions; 3-8 explore runs).
+
+**v3 gate run 1 (2026-10-23 17:24-17:46, gpt-oss, all 308 pilot20 questions; kept as `otf_v3gate1__*`):**
+G1, G2 passed. G3 oracle v3 86.4% vs v2 88.3% (-1.9, inside the bar; counterfactual 55.3% vs 71.1%). G4 FAILED:
+all 3 step-1 tries failed on gpt-oss's own code (a line pattern that missed the bracketed descriptions, twice;
+then an identity test on rows), so OTF fell back to reading (85.1% vs v2 87.3%). G5: tables parse everywhere;
+generation passed on itops_dev (F1 0.81), failed on mfg_dev and fin_dev. Changes made after run 1, before freeze:
+1. **Bug fix (prompt contradicted the check):** the prompt asked `src` to include each record's time and entity
+   cells, while step 1 rejected any cell shared by an input and an outcome, which a row holding both (e.g. a
+   ledger row) cannot avoid. The overlap check is removed; the replay probe still fails any reader whose
+   outcome values stay visible through cells marked as inputs (toy test added).
+2. **Checker defect fix:** a failed step 1 now reports what each reading function returned on one scope and
+   which list lines / table rows no record was read from (previously only "no records found", so a retry could
+   not see why). Same for every model and document; no hint about answers or domain.
+3. **Helper note:** `table_rows` builds new dicts per call; the helper text says to identify rows by index.
+4. **Design cut line C5 (chosen after gate run 1, on pilot20 only):** the counterfactual replay point is the
+   first recorded outcome touching the changed entities (as in v2), or the change time for a constant; the
+   paired-simulation divergence time is dropped. In run 1 it started replay earlier than v2 on 4 pilot20
+   counterfactual questions and all 4 were lost (the simulator predicted contacts the record does not show).
+   Cost: in a queueing process, effects on other entities before the changed entity's first recorded outcome
+   are replayed from the record.
+
+**v3 gate run 2 (2026-10-23 18:04-18:25, fixes 1-4; v2 rows reused):** G3 PASSED: oracle v3 89.3% vs v2 88.3%
+(counterfactual 68.4% vs 71.1%; 4 of 38 counterfactual questions fell back because the patch call returned no usable
+patch). G4 FAILED again: generation produced no passing model on pilot20 (step 1), mfg_dev (step 1), itops_dev
+(step 2; it passed in run 1 with F1 0.81) or fin_dev (step 2, F1 0); OTF fell back to reading (pilot20 82.1%).
+Checker defects found in the logs and fixed after run 2:
+5. On the blinded copy, a reader that crashed was reported as "reads differently", hiding the error (mfg_dev: all
+   3 tries crashed on int('') of a hidden cell). The report now shows the crash and says hidden cells are "".
+6. The prompts now say how hiding works (hidden cells become "", hidden rows and lines are removed).
+
+**Qwen v3 generation probe (2026-10-23 18:30-19:50, after fixes 1-6, sharing the Qwen server; tool library off on
+the dev documents):** a passing model on 3 of 4 documents, each in the first simulator conversation: pilot20 F1 0.572
+(parsers on try 2; 262k setup tokens), mfg_dev F1 0.922 (try 3; 108k), itops_dev F1 0.749 (try 1; 285k). fin_dev failed
+step 1 (src given as a bare node id twice, then outcome values readable on the copy). The first 4 questions of each
+ran without tool errors (tools used on mfg_dev explanatory and itops_dev predictive questions). Generation success
+is model-dependent: gpt-oss passed 1 of 8 attempts over the two gate runs, Qwen 3 of 4.
+
+7. **Bug fix found in the fin_dev probe log:** a gridded table whose header spans two rows ("2019 | 2019" over
+   "Capital additions | Depreciation") got repeated column names, so a reader and the blinding could address
+   different cells by the same name (a false "outcome still readable" on fin_dev). Header rows that hold only words
+   or years are now merged into the names while the names repeat or have gaps, and names still repeated are
+   numbered. Affects gridded tables only: G1 re-run, all CLEVRER maps identical. Remaining known map limit: one
+   finance prose section (fin_d02 R-136 Text) still parses as a word table.
+
+**Finance framing (author decision 2026-10-23):** finance stays as the domain without a process. Most report tables
+list reported figures with few derived cells, so the forecast check has little to verify and both models modelled
+the years as a time axis; OTF is expected to fall back to reading there. The paper reports it as graceful
+degradation: OTF should win where a document describes a process (physics, manufacturing, IT operations) and match
+the baselines where it does not. The abstract must not claim wins in all four domains.
+
 **Status 2026-10-22, pilot smoke set (8 questions per type):**
 
 | gpt-oss-20b | cf | desc | expl | pred | Total | Input tokens per question |

@@ -36,6 +36,18 @@ def scope_nodes(doc, scope):
     """All nodes under the top-level node titled `scope` (its children), in document order."""
     root = node_by_title(doc, scope)
     return children(doc, root) if root else []
+
+def node_by_id(doc, node_id):
+    for n in doc["nodes"]:
+        if n["node_id"] == node_id:
+            return n
+    return None
+
+def table_rows(node):
+    """[(row_index, {column: cell})] of a table node; row_index is what a src location uses. The dicts are
+    new on every call: identify a row by its row_index, never with `is`."""
+    cols = node.get("table", {}).get("columns", [])
+    return [(i, dict(zip(cols, r))) for i, r in enumerate(node.get("table", {}).get("rows", []))]
 '''
 
 RUNNER = r'''
@@ -58,6 +70,18 @@ if spec["func"] == "__script__":          # exploration: run as a script with `d
     except Exception as e:
         import traceback
         out = buf.getvalue() + "\nERROR:\n" + "".join(traceback.format_exception(e)[-4:])
+elif spec["func"] == "__many__":           # several calls in one process: [[ok, result_or_error], ...]
+    exec(spec["code"], ns)
+    out = []
+    for f, a, kw in spec["args"]:
+        if not callable(ns.get(f)):
+            out.append([False, f"function {f}() is not defined"])
+            continue
+        try:
+            out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+        except Exception as e:
+            import traceback
+            out.append([False, "".join(traceback.format_exception(e)[-3:]).strip()])
 else:
     exec(spec["code"], ns)
     out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
@@ -93,6 +117,13 @@ def run_script(code: str, map_path: Path, timeout_s: int = TIMEOUT_S) -> tuple[b
     """Run an exploration snippet as a script (`doc` defined; an `explore(doc)` function is called if
     defined); returns its printed output, including the traceback if it raised."""
     return run(code, "__script__", map_path, timeout_s=timeout_s)
+
+
+def run_many(code: str, calls: list[tuple], map_path: Path, timeout_s: int = TIMEOUT_S) -> tuple[bool, list | str]:
+    """Several calls [(func, args, kwargs), ...] in one process. Returns (ok, [(ok_i, result_i), ...]) or
+    (False, error text) if the code itself does not load."""
+    ok, res = run(code, "__many__", map_path, [list(c) for c in calls], timeout_s=timeout_s)
+    return (ok, [tuple(r) for r in res]) if ok else (False, res)
 
 
 def run(code: str, func: str, map_path: Path, args: list | None = None, kwargs: dict | None = None,
