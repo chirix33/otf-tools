@@ -72,3 +72,10 @@
 {"time": "2026-10-24T14:05:48", "event": "pass_end", "model": "qwen3.6-27b", "system": "full_context_text", "pass_no": 1, "hours": 3.34, "expected": 2166, "answered": 2166, "errored": 0}
 {"time": "2026-10-24T14:05:48", "event": "system_done", "model": "qwen3.6-27b", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
 {"time": "2026-10-24T14:05:48", "event": "pass_start", "model": "qwen3.6-27b", "system": "pageindex", "pass_no": 1, "expected": 2166, "answered": 0, "errored": 0}
+{"time": "2026-10-25T13:04:18", "event": "start", "models": ["gemma-4-31b-think", "qwen3.6-27b"], "systems": ["full_context_text", "pageindex", "rag"]}
+{"time": "2026-10-25T13:04:18", "event": "model_already_complete", "model": "gemma-4-31b-think"}
+{"time": "2026-10-25T13:04:18", "event": "otf_alongside_start", "model": "qwen3.6-27b"}
+{"time": "2026-10-25T13:05:22", "event": "otf_alongside_pass_start", "model": "qwen3.6-27b", "pass_no": 1, "expected": 2166, "answered": 755, "errored": 0}
+{"time": "2026-10-25T13:05:24", "event": "server_ready", "model": "qwen3.6-27b", "seconds": 56}
+{"time": "2026-10-25T13:05:24", "event": "system_done", "model": "qwen3.6-27b", "system": "full_context_text", "expected": 2166, "answered": 2166, "errored": 0}
+{"time": "2026-10-25T13:05:24", "event": "pass_start", "model": "qwen3.6-27b", "system": "pageindex", "pass_no": 1, "expected": 2166, "answered": 1429, "errored": 49}
