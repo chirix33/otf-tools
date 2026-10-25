@@ -12,7 +12,7 @@ list order. The reading-only and no-replay ablations start from the main OTF run
 otf_model.json), so they differ from the main run only by the ablation switch; they wait for that job.
 Create runs/logs/HOSTED_RUNS_HALTED to stop starting new passes (running passes finish). `--stop` kills every hosted
 runner and its run.py children at once (a killed runner's children otherwise keep running on Windows, and a new
-runner would then answer the same questions twice); a runner refuses to start while hosted run.py processes exist.
+runner would then answer the same questions twice); a runner leaves alone any job that another process is running.
 Events: runs/logs/hosted__status.jsonl; job output: runs/logs/hosted/<split>__<model>__<system>.log.
 """
 from __future__ import annotations
@@ -104,14 +104,24 @@ def spend() -> float | None:
         return None
 
 
-def hosted_processes(kind: str) -> list[int]:
-    """PIDs of other python processes that are hosted runners ("runner") or hosted run.py jobs ("job")."""
+def hosted_processes(kind: str) -> list[tuple[int, str]]:
+    """(PID, command line) of other python processes that are hosted runners ("runner") or hosted run.py jobs
+    ("job")."""
     like = "*run_hosted.py*" if kind == "runner" else "*run.py*--model or-*"
     ps = (f"Get-CimInstance Win32_Process -Filter \"Name = 'python.exe'\" | Where-Object {{ $_.CommandLine -like "
           f"'{like}' -and $_.ProcessId -ne {os.getpid()} -and $_.ProcessId -ne {os.getppid()} }} | "
-          f"ForEach-Object {{ $_.ProcessId }}")
+          f"ForEach-Object {{ \"$($_.ProcessId)`t$($_.CommandLine)\" }}")
     out = subprocess.run(["powershell", "-NoProfile", "-Command", ps], capture_output=True, text=True)
-    return [int(x) for x in out.stdout.split() if x.strip().isdigit()]
+    return [(int(p), c) for p, _, c in (l.partition("	") for l in out.stdout.splitlines()) if p.strip().isdigit()]
+
+
+def owns(job: Job, cmdline: str) -> bool:
+    """Whether a running run.py command line is this job (same split pattern, system, model and extra arguments)."""
+    m = re.search(r"--run (\S+) --system (\S+) --model (\S+) --workers \d+(.*)$", cmdline.strip())
+    if not m:
+        return False
+    rest = m.group(4).split()
+    return (m.group(1), m.group(2), m.group(3)) == (job.pattern, job.system, job.model) and         rest == job.args + (["--limit", str(job.limit)] if job.limit else [])
 
 
 def run_dirs(job: Job) -> list[Path]:
@@ -252,7 +262,7 @@ def main() -> None:
         limits[m] = tuple(int(x) for x in v.split(","))
     if a.stop:
         for kind in ("runner", "job"):
-            for pid in hosted_processes(kind):
+            for pid, _ in hosted_processes(kind):
                 subprocess.run(["taskkill", "/F", "/PID", str(pid)], capture_output=True)
                 print(f"killed {kind} {pid}")
         return
@@ -263,8 +273,6 @@ def main() -> None:
                   + (f"  err {p['errors']}" if p["errors"] else "") + ("  done" if done(j) else ""))
         print(f"spend so far: ${spend()}")
         return
-    if (busy := hosted_processes("job")):
-        sys.exit(f"hosted run.py processes still running ({busy[:10]}); stop them first (--stop)")
     (LOGS / "hosted").mkdir(parents=True, exist_ok=True)
     status(event="hosted_start", phases=a.phase, models=a.models, systems=a.systems, exclude=a.exclude,
            limits=limits, n_jobs=len(jobs), spend_usd=spend(), pid=os.getpid())
@@ -287,6 +295,8 @@ def main() -> None:
     while pending or running:
         for k in [k for k, t in running.items() if not t.is_alive()]:
             del running[k]
+        # jobs another runner (or an orphaned run.py) is answering right now are left alone until it ends
+        elsewhere = [c for _, c in hosted_processes("job")]
         if HALT.exists() and not running:
             status(event="hosted_halted", pending=len(pending))
             return
@@ -295,6 +305,8 @@ def main() -> None:
                 break
             busy = sum(1 for k in running if k.endswith(f"|{job.model}"))
             if busy >= limits[job.model][0]:
+                continue
+            if any(owns(job, c) for c in elsewhere):
                 continue
             if job.after and (job.after not in finished if job.after in keys
                               else not done(Job("main", "e1", "otf", job.model))):
