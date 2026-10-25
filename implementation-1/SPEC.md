@@ -255,6 +255,18 @@ domains (main, dev documents and their tool libraries) are redone; the earlier h
 `runs/hosted_discarded_20261025_fix10/`. The baselines are unaffected. Collaborators' ReAct-C and ReCode share the
 map, so their manufacturing / IT-operations runs need the new map too.
 
+**OPEN finding (2026-10-25 ~17:50, author decision needed; nothing changed):** sanity check on finance, gpt-oss.
+Overall OTF 64.7% vs full context 65.3%, but counterfactual 54.0% vs 63.3%. All of the loss is on fin_d02, the one
+finance document whose generated model passed (F1 0.649): its 33 counterfactual questions answered with the tool
+scored 1/33 (full context 23/33), while the reading-fallback documents fin_d01/d03 scored at or above full context.
+Cause: for a timeless scope the counterfactual evidence is ENTITIES + RECORDED OUTCOMES + the changed input + the
+recomputed outcomes (`engine._recorded`, `_evidence`). This model reads every reported figure as an input, so on
+most reports there are no outcomes and the evidence holds none of the unchanged figures (e.g. R-104: "change from
+2018 to 2019 if 2019 were 30.1" needs 2018 = 20.9, which the evidence never shows), and the answer is null or wrong.
+This is not one of the allowed bug classes (no crash, parse failure, contradiction, or wrongly certified model), and
+"fall back to reading when the tool evidence is empty" or "list the unchanged inputs" would be a design change chosen
+by accuracy, so it is left as is pending the author. It contradicts the "graceful degradation" framing for finance.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
