@@ -343,6 +343,7 @@ class Servers:
     def __init__(self, local):
         self.local = local
         self.log = local.log
+        self.checkpoints: dict = {}            # local models actually served in this run: checkpoint + environment
 
     @property
     def max_model_len(self):
@@ -357,21 +358,23 @@ class Servers:
             except RuntimeError as e:
                 raise ServingError(f"{e}. Put the key in implementation-1\\.env, e.g. OPENROUTER_API_KEY=sk-or-...")
             info[m] = {"hosted": get_model(m).base_url}
-        local = [m for m in models if not is_hosted(m)]
-        if local:
-            info.update(self.local.preflight(local))
-        return info
+        return info                             # local serving is checked when a local model is first needed
 
-    def ensure_checkpoint(self, model: str) -> dict:
+    def describe(self, model: str) -> dict:
         if not is_hosted(model):
-            return self.local.ensure_checkpoint(model)
+            return self.checkpoints.get(model)    # None: not served in this run (keeps the earlier record)
         spec = get_model(model)
         return {"hosted": spec.base_url, "served_name": spec.served_name,
                 "provider": spec.extra_body.get("provider"), "max_model_len": spec.context_len}
 
     def ensure(self, model: str) -> None:
         if not is_hosted(model):
-            return self.local.ensure(model)
+            if model not in self.checkpoints:     # first use: WSL/GPU/vLLM preflight and the pinned checkpoint
+                env = self.local.preflight([model])
+                self.checkpoints[model] = {**env, **self.local.ensure_checkpoint(model)}
+            self.local.ensure(model)
+            self.checkpoints[model]["max_model_len"] = getattr(self.local, "max_model_len", None)
+            return
         spec = get_model(model)
         for attempt in range(6):                     # transient network trouble: wait, then give up clearly
             ids = served_models(spec.base_url)

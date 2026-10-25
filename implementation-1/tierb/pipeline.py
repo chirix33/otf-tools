@@ -34,7 +34,9 @@ from clevrer_bench.systems.tierb_common import dependency_versions, file_sha, st
 from tierb.importer import E1_CORE, import_all  # noqa: E402
 from tierb.serving import MockServer, Servers, ServingError, WSLServer, is_hosted  # noqa: E402
 
-MODELS = ["or-qwen3.6-27b", "or-gemma-4-31b-think"]   # OpenRouter (configs/models.json); local: qwen3.6-27b ...
+# Job plan, in order: "alias" runs every system, "alias:sys1,sys2" only those. Qwen's ReAct-C was completed on the
+# local GPU (qwen3.6-27b); its other systems and all of Gemma run on OpenRouter (or-* in configs/models.json).
+MODELS = ["qwen3.6-27b:react_c", "or-qwen3.6-27b:react_r,graphrag,recode", "or-gemma-4-31b-think"]
 SYSTEMS = ["react_c", "react_r", "graphrag", "recode"]          # priority order (plan sec. 3)
 CDT = timezone(timedelta(hours=-5))                              # America/Chicago on Oct 27 2026 (CDT, UTC-5)
 DEADLINE = datetime(2026, 10, 27, 18, 0, tzinfo=CDT)
@@ -114,7 +116,7 @@ class Pipeline:
                      "dependency_lock_sha256": file_sha(ROOT / "requirements-tierb.lock"),
                      "package": str(self.package), "imported": import_summary,
                      "serving": {**prov.get("serving", {}), **serving}, "deadline": self.deadline.isoformat(),
-                     "models": self.a.models, "systems": self.a.systems})
+                     "plan": self.a.plan})
         self._save("provenance.json", prov)
 
     def preflight_local(self) -> None:
@@ -131,8 +133,9 @@ class Pipeline:
         import threading
         r._embed_lock, r._embedder = threading.Lock(), None
         r._embed(["warm-up"])                         # downloads bge-small (CPU) once
-        for s in self.a.systems:                      # every adapter imports and builds
-            load_system(s, self.a.models[0], **self.candidate_kwargs(s, self.a.models[0], 1, probe=True))
+        for m, systems in self.a.plan:                # every adapter imports and builds
+            for s in systems:
+                load_system(s, m, **self.candidate_kwargs(s, m, 1, probe=True))
         self.log(f"[preflight] local checks passed ({free:.0f} GB free)")
 
     def find_package(self) -> Path:
@@ -183,8 +186,9 @@ class Pipeline:
         out_dir = run_dir / "systems" / f"{sysobj.name}__{model}"
         before = self._answered(out_dir, run_dir, limit, per_type)
         for p in range(1, PASSES + 1):
-            if self.past_deadline():
-                break
+            if self.past_deadline() or self._answered(out_dir, run_dir, limit, per_type)["answered"] == \
+                    before["expected"]:
+                break                            # finished work needs no server
             self.server.ensure(model)
             self.event(event="pass_start", model=model, system=sysobj.name, doc=doc, pass_no=p)
             run_system(sysobj, run_dir, self.workers(model), limit=limit, per_type=per_type, max_attempts=MAX_ATTEMPTS,
@@ -439,7 +443,7 @@ class Pipeline:
     def validate(self, model: str) -> dict:
         """Per system and document: setup.json present and complete, exactly one prediction per expected uid."""
         out = {}
-        for system in self.a.systems:
+        for system in self.systems_of(model):
             for doc in E1_CORE:
                 d = self.runs / doc / "systems" / f"{system}__{model}"
                 items = load_items(self.runs / doc / "items.jsonl")
@@ -461,9 +465,9 @@ class Pipeline:
     def deliver(self, partial_reason: str | None = None) -> dict:
         from clevrer_bench.report import make_report, make_split_report
         jobs, missing_jobs = [], []
-        for model in self.a.models:
+        for model, systems in self.a.plan:
             val = self.validate(model)
-            for system in self.a.systems:
+            for system in systems:
                 fz_p = self.freeze_path(system, model)
                 fz = json.loads(fz_p.read_text(encoding="utf-8")) if fz_p.exists() else None
                 for doc in E1_CORE:
@@ -491,9 +495,10 @@ class Pipeline:
                     "graphrag": graphrag_version(), "recode": {"repo": "FoundationAgents/ReCode", "commit": RECODE_COMMIT},
                     "freeze_manifests": sorted(str(p.relative_to(self.runs)) for p in (self.tb / "freeze").glob("*.json")),
                     "serving": self._load("provenance.json", {}).get("serving", {}),
+                    "plan": [{"model": m, "systems": ss, "served_by": self.served_by(m)} for m, ss in self.a.plan],
                     "failures": failures, "jobs": jobs}
         self._save("delivery_manifest.json", manifest)
-        names = [f"{s}__{m}" for m in self.a.models for s in self.a.systems]
+        names = [f"{s}__{m}" for m, systems in self.a.plan for s in systems]
         for doc in E1_CORE:
             have = [n for n in names if (self.runs / doc / "systems" / n / "setup.json").exists()
                     and (self.runs / doc / "systems" / n / "predictions.jsonl").exists()]
@@ -509,8 +514,8 @@ class Pipeline:
 
     def failure_summary(self) -> dict:
         out = {}
-        for model in self.a.models:
-            for system in self.a.systems:
+        for model, systems in self.a.plan:
+            for system in systems:
                 c = {"answered": 0, "parse_errors": 0, "truncated": 0, "call_cap_exhausted": 0,
                      "usage_unknown_calls": 0, "errored_attempts": 0}
                 for doc in E1_CORE:
@@ -539,7 +544,9 @@ class Pipeline:
             lines += [f"| {j['model']} | {j['system']} | {j['document']} | {j['answered']}/{j['expected']} |"
                       for j in m["missing_jobs"]]
             lines.append("")
-        lines += ["| System | Answered | Parse errors | Truncated | Call cap | Unknown-usage calls | Errored attempts |",
+        lines += ["Where each job ran (the same model can come from two servings; compare within one serving):", ""]
+        lines += [f"- `{p['model']}` ({p['served_by']}): {', '.join(p['systems'])}" for p in m["plan"]]
+        lines += ["", "| System | Answered | Parse errors | Truncated | Call cap | Unknown-usage calls | Errored attempts |",
                   "|---|---|---|---|---|---|---|"]
         lines += [f"| {k} | {v['answered']} | {v['parse_errors']} | {v['truncated']} | {v['call_cap_exhausted']} | "
                   f"{v['usage_unknown_calls']} | {v['errored_attempts']} |" for k, v in m["failures"].items()]
@@ -548,20 +555,41 @@ class Pipeline:
         (self.tb / "DELIVERY.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     # ------------------------------------------------------------------ main flow
-    def gemma_admitted(self, first: str, model: str) -> bool:
-        val = self.validate(first)
-        if not all(v["ok"] for v in val.values()):
-            self.log(f"[schedule] {model} not started: {first} outputs are not complete")
-            self.event(event="model_not_admitted", model=model, reason="previous model incomplete")
-            return False
-        est = SERVER_STARTUP_S
+    def served_by(self, model: str) -> str:
+        spec = get_model(model)
+        if is_hosted(model):
+            prov = (spec.extra_body.get("provider") or {}).get("order")
+            return f"hosted: {spec.base_url} {spec.served_name}" + (f", provider {', '.join(prov)}" if prov else "")
+        return f"local vLLM: {spec.served_name}"
+
+    def systems_of(self, model: str) -> list[str]:
+        return dict(self.a.plan)[model]
+
+    def admitted(self, i: int) -> bool:
+        """Plan entry i starts only when every earlier entry validates complete. When it is a new model (the
+        Qwen -> Gemma step), its estimated workload + 20% must also fit before the deadline; speeds come from the
+        nearest earlier entry served the same way (hosted or local) that measured the same system."""
+        model, systems = self.a.plan[i]
+        for prev, _ in self.a.plan[:i]:
+            if not all(v["ok"] for v in self.validate(prev).values()):
+                self.log(f"[schedule] {model} not started: {prev} outputs are not complete")
+                self.event(event="model_not_admitted", model=model, reason=f"{prev} incomplete")
+                return False
+        family = lambda m: m.removeprefix("or-")
+        if any(family(p) == family(model) for p, _ in self.a.plan[:i]):
+            return True                          # same model, other systems (e.g. Qwen local -> Qwen hosted)
+        est = 0.0 if is_hosted(model) else SERVER_STARTUP_S
         n_e1 = sum(len(load_items(self.runs / d / "items.jsonl")) for d in E1_CORE)
         n_pilot = len(load_items(self.runs / "pilot20" / "items.jsonl"))
-        for s in self.a.systems:
-            fz = json.loads(self.freeze_path(s, first).read_text(encoding="utf-8"))
-            spq = self.spq(first, s) or 60.0
-            setup = self.timing.get(f"{first}/{s}", {}).get("setup_s", 0.0)
-            est += (len(fz["candidates"]) * n_pilot + 8 + n_e1) * spq + (len(fz["candidates"]) + len(E1_CORE)) * setup
+        prevs = [p for p, _ in reversed(self.a.plan[:i])]
+        prevs.sort(key=lambda p: is_hosted(p) != is_hosted(model))   # same serving kind first (stable)
+        for s in systems:
+            src = next((p for p in prevs if self.spq(p, s)), None)
+            fzp = self.freeze_path(s, src) if src else None
+            n_cand = len(json.loads(fzp.read_text(encoding="utf-8"))["candidates"]) if fzp and fzp.exists() else 1
+            spq = self.spq(src, s) if src else 60.0
+            setup = self.timing.get(f"{src}/{s}", {}).get("setup_s", 0.0) if src else 0.0
+            est += (n_cand * n_pilot + 8 + n_e1) * spq + (n_cand + len(E1_CORE)) * setup
         need = est * MARGIN
         ok = need <= self.seconds_left()
         self.event(event="model_admission", model=model, admitted=ok, estimated_s=round(est),
@@ -580,27 +608,26 @@ class Pipeline:
         serving = self.server.preflight(self.a.models)
         self.provenance(summary, {"environment": serving})
         partial_reason = None
-        for i, model in enumerate(self.a.models):
+        for i, (model, systems) in enumerate(self.a.plan):
             if self.past_deadline():
                 partial_reason = "deadline reached"
                 break
-            if i > 0 and not self.gemma_admitted(self.a.models[i - 1], model):
-                partial_reason = f"{model} not admitted (previous model incomplete or not enough time)"
+            if i > 0 and not self.admitted(i):
+                partial_reason = f"{model} not admitted (earlier jobs incomplete or not enough time)"
                 break
-            ckpt = self.server.ensure_checkpoint(model)
-            self.server.ensure(model)
-            self.provenance(summary, {model: {**ckpt, "max_model_len": getattr(self.server, "max_model_len", None)}})
-            for j, system in enumerate(self.a.systems):
+            for j, system in enumerate(systems):
                 if self.past_deadline():
                     partial_reason = "deadline reached"
                     break
                 self.event(event="stage", model=model, system=system, stage="dev")
-                self.dev(model, system, self.a.systems[j + 1:])
+                self.dev(model, system, systems[j + 1:])
                 if not self.freeze_path(system, model).exists():
                     partial_reason = "deadline reached during development selection"
                     break
                 self.event(event="stage", model=model, system=system, stage="e1")
                 self.e1(model, system)
+            if self.server.describe(model):
+                self.provenance(summary, {model: self.server.describe(model)})
             self.server.stop()
             if partial_reason:
                 break
@@ -651,8 +678,9 @@ def main(argv=None) -> int:
     ap.add_argument("--package", help="path to clevrer_docqa_package (found automatically next to the repo)")
     ap.add_argument("--deadline", help=f"ISO time with offset (default {DEADLINE.isoformat()})")
     ap.add_argument("--workers", type=int, default=None, help="question workers (default 4 local, 12 hosted)")
-    ap.add_argument("--models", nargs="+", default=MODELS)
-    ap.add_argument("--systems", nargs="+", default=SYSTEMS)
+    ap.add_argument("--models", nargs="+", default=MODELS,
+                    help="job plan in order: alias (all --systems) or alias:sys1,sys2")
+    ap.add_argument("--systems", nargs="+", default=SYSTEMS, help="systems for plan entries without a list")
     ap.add_argument("--status", action="store_true", help="print the current status and exit")
     ap.add_argument("--runs", default=str(ROOT / "runs"), help=argparse.SUPPRESS)
     ap.add_argument("--mock-server", action="store_true", help=argparse.SUPPRESS)      # tests: no GPU
@@ -660,6 +688,11 @@ def main(argv=None) -> int:
     ap.add_argument("--e1-limit", type=int, default=None, help=argparse.SUPPRESS)      # tests: fewer E1 questions
     ap.add_argument("--smoke-per-type", type=int, default=SMOKE_PER_TYPE, help=argparse.SUPPRESS)
     a = ap.parse_args(argv)
+    a.plan = [(m.partition(":")[0], m.partition(":")[2].split(",") if ":" in m else list(a.systems)) for m in a.models]
+    a.models = [m for m, _ in a.plan]
+    bad = [s for _, ss in a.plan for s in ss if s not in SYSTEMS]
+    if bad:
+        ap.error(f"unknown systems {bad}; choose from {SYSTEMS}")
     if a.status:
         p = Path(a.runs) / "tier_b" / "status.json"
         print(p.read_text(encoding="utf-8") if p.exists() else "no run yet")

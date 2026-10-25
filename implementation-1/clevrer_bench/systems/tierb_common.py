@@ -58,8 +58,11 @@ class TierBSystem(QASystem):
         return {}
 
     def config_hash(self) -> str:
+        # api_key_env (added with the OpenRouter aliases) is left out when unset, so local freezes made before it
+        # existed still match
+        spec = {k: v for k, v in self.spec.to_dict().items() if not (k == "api_key_env" and v is None)}
         return stable_hash({"system": self.base_name, "slot": self.slot, "method": self.method_config(),
-                            "model_spec": self.spec.to_dict(), "reasoning_effort": self.reasoning_effort,
+                            "model_spec": spec, "reasoning_effort": self.reasoning_effort,
                             "call_cap": MAX_CALLS_PER_QUESTION, "dependencies": dependency_versions(),
                             "upstream": self.upstream()})
 

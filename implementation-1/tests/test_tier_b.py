@@ -394,6 +394,7 @@ def _pipe(runs, *extra):
                            mock_server=True, dev_limit=None, e1_limit=None, smoke_per_type=1, status=False)
     for k, v in zip(extra[::2], extra[1::2]):
         setattr(a, k, v)
+    a.plan = [(m, list(a.systems)) for m in a.models]
     return Pipeline(a)
 
 
@@ -415,7 +416,23 @@ def test_e1_requires_matching_freeze(runs):
 
 def test_gemma_gated_on_complete_qwen(runs):
     pipe = _pipe(runs)
-    assert pipe.gemma_admitted("qwen3.6-27b", "gemma-4-31b-think") is False      # Qwen has no E1 outputs here
+    assert pipe.admitted(1) is False                                 # Qwen has no E1 outputs here
+
+
+def test_plan_parsing():
+    import tierb.pipeline as P
+    seen = {}
+    orig = P.Pipeline
+    P.Pipeline = lambda a: seen.setdefault("a", a) and (_ for _ in ()).throw(SystemExit(0))
+    try:
+        with pytest.raises(SystemExit):
+            P.main(["--models", "qwen3.6-27b:react_c", "or-qwen3.6-27b:react_r,graphrag", "gemma-4-31b-think"])
+    finally:
+        P.Pipeline = orig
+    assert seen["a"].plan == [("qwen3.6-27b", ["react_c"]), ("or-qwen3.6-27b", ["react_r", "graphrag"]),
+                              ("gemma-4-31b-think", P.SYSTEMS)]
+    with pytest.raises(SystemExit):
+        P.main(["--models", "qwen3.6-27b:nope"])
 
 
 def test_deadline_gives_explicit_partial_delivery(tmp_path):
