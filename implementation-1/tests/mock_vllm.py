@@ -124,10 +124,15 @@ def graphrag_reply(body, prompt: str) -> str:
     rf = body.get("response_format")
     if rf:   # structured output (community reports, prompt-tuning): satisfy the requested schema
         schema = (rf.get("json_schema") or {}).get("schema") or {}
-        return json.dumps(_instance(schema, schema.get("$defs", {})) if schema else {"result": "ok"})
+        out = _instance(schema, schema.get("$defs", {})) if schema else {"result": "ok"}
+        if os.environ.get("MOCK_REPORT_EXTRA") and isinstance(out, dict):
+            out["date_range"] = ["0", "127"]          # an extra key a hosted model may add
+        return json.dumps(out)
     if "<|COMPLETE|>" in prompt or "<|>" in prompt and "entity" in prompt.lower():
         if os.environ.get("MOCK_EXTRACT_FAIL"):
             return "I cannot do that."
+        if os.environ.get("MOCK_EXTRACT_EMPTY") and sum(map(ord, prompt[-400:])) % 2 == 0:
+            return "No entities of the requested types are present in this text.\n<|COMPLETE|>"
         text = prompt.rsplit("Text:", 1)[-1] if "Text:" in prompt else prompt
         names = list(dict.fromkeys(re.findall(r"Video \d+|Object \d+", text)))[:8] or ["DOCUMENT"]
         recs = [f'("entity"<|>{n.upper()}<|>THING<|>{n} appears in the text)' for n in names]

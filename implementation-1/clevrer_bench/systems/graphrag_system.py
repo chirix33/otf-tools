@@ -103,26 +103,59 @@ class _EmbedServer:
 
 # ------------------------------------------------------------------ extraction-failure meter
 _EXTRACT = {"lock": threading.Lock(), "active": None}
+METER_VERSION = 2     # 2: a chunk with no entities but a properly completed reply is a valid empty extraction
+_RAW: "contextvars.ContextVar[dict | None]"
 
 
 def _install_extraction_meter() -> None:
-    """Count, per chunk, whether standard extraction produced any entity (an exception or no parseable record
-    counts as a failed chunk). Active only while an index build records into _EXTRACT['active']."""
+    """Per chunk, record whether standard extraction failed: it raised, or its reply has no parseable entity record
+    and does not end with GraphRAG's completion delimiter (a malformed reply). A reply that completes properly but
+    lists no entity ("none of the requested types here") is a valid empty extraction, not a failure. Active only
+    while an index build records into _EXTRACT['active']."""
+    import contextvars
+    global _RAW
     from graphrag.index.operations.extract_graph import graph_extractor as ge
     if getattr(ge.GraphExtractor, "_tierb_metered", False):
         return
-    orig = ge.GraphExtractor.__call__
+    _RAW = contextvars.ContextVar("tierb_extract_raw", default=None)
+    orig_call, orig_pd = ge.GraphExtractor.__call__, ge.GraphExtractor._process_document
+
+    async def _process_document(self, text, entity_types):
+        out = await orig_pd(self, text, entity_types)
+        holder = _RAW.get()
+        if holder is not None:
+            holder["raw"] = out
+        return out
 
     async def __call__(self, text, entity_types, source_id):
-        ents, rels = await orig(self, text, entity_types, source_id)
+        holder: dict = {}
+        token = _RAW.set(holder)
+        try:
+            ents, rels = await orig_call(self, text, entity_types, source_id)
+        finally:
+            _RAW.reset(token)
+        raw = holder.get("raw")
+        completed = raw is not None and ge.COMPLETION_DELIMITER in raw
         with _EXTRACT["lock"]:
             if _EXTRACT["active"] is not None:
                 _EXTRACT["active"].append({"source_id": str(source_id), "entities": int(len(ents)),
-                                           "relationships": int(len(rels))})
+                                           "relationships": int(len(rels)), "completed": completed,
+                                           "failed": raw is None or (len(ents) == 0 and not completed)})
         return ents, rels
+
+    ge.GraphExtractor._process_document = _process_document
 
     ge.GraphExtractor.__call__ = __call__
     ge.GraphExtractor._tierb_metered = True
+
+
+def _lenient_structured_output() -> None:
+    """graphrag_llm turns on LiteLLM's client-side JSON-schema check, which rejects a whole community report
+    for one extra key. Local vLLM enforces the schema while decoding; hosted endpoints may not. GraphRAG's own
+    parsing (pydantic, unknown keys ignored, missing required keys still rejected) remains the check."""
+    import graphrag_llm.completion.lite_llm_completion  # noqa: F401  (sets the flag at import)
+    import litellm
+    litellm.enable_json_schema_validation = False
 
 
 def _settings(spec, embed_url: str, prompts_dir: Path, local_prompt: Path) -> dict:
@@ -206,6 +239,7 @@ class GraphRAGSystem(TierBSystem):
         self.index_method = index_method
         self.tuned = Path(tuned_prompts_dir) if tuned_prompts_dir and self.slot == 3 else None
         install_litellm_meter()
+        _lenient_structured_output()
         _install_extraction_meter()
 
     def _tuned_hashes(self) -> dict:
@@ -214,7 +248,9 @@ class GraphRAGSystem(TierBSystem):
     def method_config(self) -> dict:
         return {"index_method": self.index_method, "community_level": COMMUNITY_LEVEL, "search": "local",
                 "local_prompt_extra": P.GRAPHRAG_LOCAL_EXTRA[self.slot], "response_type": P.GRAPHRAG_RESPONSE_TYPE,
-                "tuned_prompts": self._tuned_hashes(), "embed_model": EMBED_MODEL, "defaults": "graphrag 3.x"}
+                "tuned_prompts": self._tuned_hashes(), "embed_model": EMBED_MODEL, "defaults": "graphrag 3.x",
+                "structured_output_check": "graphrag pydantic parse (litellm schema check off)",
+                "extraction_meter": METER_VERSION}
 
     def upstream(self) -> dict:
         return graphrag_version()
@@ -254,7 +290,8 @@ class GraphRAGSystem(TierBSystem):
                                                                       local_prompt), indent=1), encoding="utf-8")
         self.config = _load_config(self.root)
         stats = json.loads(marker.read_text(encoding="utf-8")) if marker.exists() else None
-        if stats is None or stats.get("key") != key:
+        if stats is None or stats.get("key") != key or \
+                (stats.get("extraction") or {}).get("meter_version") != METER_VERSION:
             stats = self._build(key)
             marker.write_text(json.dumps(stats, indent=1), encoding="utf-8")
         self.tables = _read_outputs(self.config)
@@ -279,9 +316,11 @@ class GraphRAGSystem(TierBSystem):
         finally:
             with _EXTRACT["lock"]:
                 _EXTRACT["active"] = None
-        failed = sum(1 for r in records if r["entities"] == 0)
+        failed = sum(1 for r in records if r["failed"])
         extraction = {"chunks": len(records), "failed_chunks": failed,
-                      "failed_fraction": round(failed / len(records), 4) if records else None}
+                      "failed_fraction": round(failed / len(records), 4) if records else None,
+                      "empty_but_completed_chunks": sum(1 for r in records if r["entities"] == 0 and not r["failed"]),
+                      "meter_version": METER_VERSION}
         errors = [f"{r.workflow}: {r.error}" for r in results if r.error is not None]
         if errors:
             raise IndexBuildError("GraphRAG indexing failed: " + "; ".join(map(str, errors))[:2000], extraction)

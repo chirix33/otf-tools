@@ -312,9 +312,14 @@ class Pipeline:
     def graphrag_reliability(self, model: str) -> None:
         """Pre-registered rule: standard indexing on pilot20; if >10% of chunks fail extraction, this model uses
         GraphRAG's documented fast indexing. Decided once per model, on pilot20 only, before any candidate."""
+        from clevrer_bench.systems.graphrag_system import METER_VERSION
         name = f"graphrag_decision__{model}.json"
-        if (self.tb / name).exists():
+        old = self._load(name, None)
+        if old and (old.get("standard_extraction") or {}).get("meter_version") == METER_VERSION:
             return
+        if old:                                    # decided with the old meter (empty extractions counted as failed)
+            self._save(f"graphrag_decision__{model}.v1.json", old)
+            self.log(f"[dev] graphrag/{model}: re-deciding the indexing method with the corrected failure count")
         from clevrer_bench.systems.base import Document
         self.server.ensure(model)
         probe = load_system("graphrag", model, slot=1, out_name="graphrag_c1", index_method="standard")

@@ -340,6 +340,20 @@ def test_graphrag_metering(graphrag_index):
     assert ex["chunks"] > 0 and ex["failed_chunks"] == 0
 
 
+def test_graphrag_empty_extractions_and_extra_report_keys(runs, env):
+    """A properly completed reply listing no entity is a valid empty extraction (not a failure), and a community
+    report with an extra key is still accepted (hosted endpoints do not enforce the JSON schema)."""
+    env.setenv("MOCK_EXTRACT_EMPTY", "1")
+    env.setenv("MOCK_REPORT_EXTRA", "1")
+    s = _sys("graphrag", runs, out_name="graphrag_t1")
+    p, _ = _ask(s, runs, doc="e1_d09")
+    ex = json.loads((s.root / "index_complete.json").read_text())["extraction"]
+    assert ex["failed_chunks"] == 0 and ex["empty_but_completed_chunks"] > 0 and ex["meter_version"] == 2
+    import pandas as pd
+    assert len(pd.read_parquet(s.root / "output" / "community_reports.parquet")) > 0
+    assert p.usage.llm_calls == 1
+
+
 def test_graphrag_never_switches_method_itself(runs, env, graphrag_index):
     from clevrer_bench.systems.graphrag_system import IndexBuildError
     env.setenv("MOCK_EXTRACT_FAIL", "1")
