@@ -80,7 +80,9 @@ within the recorded period, and point `src` at real rows, columns and lines. The
 in which the outcomes are hidden (their cells and lines, and every timed row or line after the first outcome
 that no input was read from; hidden cells become empty strings "" and hidden rows and lines are removed): on
 that copy inputs() must return exactly the same records, and outcomes() must find almost none of the hidden
-ones.
+ones. Value-less records that only occur at regularly spaced times (for example one record per entity at every
+sample time) mark that a row exists, not something the process produces: the check ignores them, so return the
+events the process produces and the result quantities with their values.
 {feedback}"""
 
 SIMULATOR_USER = """{context}

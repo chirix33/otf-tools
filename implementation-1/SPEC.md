@@ -200,6 +200,28 @@ is model-dependent: gpt-oss passed 1 of 8 attempts over the two gate runs, Qwen 
    numbered. Affects gridded tables only: G1 re-run, all CLEVRER maps identical. Remaining known map limit: one
    finance prose section (fin_d02 R-136 Text) still parses as a word table.
 
+**Post-freeze bug fix 8 (2026-10-25, found in the local Qwen E1 run; logged under the bug-fix rule):** the forecast
+check certified a vacuous model. Qwen's reading code labelled every motion-log row as a value-less outcome
+(`state_update`) and no collision; value-less records are matched by kind, entities and time only, so forecasting
+"each object has a row every 8 frames" scored F1 0.76 and passed (e1_d02, reused by d03-d07), and Qwen's pilot20
+gate-probe model passed the same way (`motion` rows, F1 0.57). In use the evidence buried the real collisions:
+predictive accuracy was 16/16 on e1_d01 (reading fallback) and 9/77 on d02-d07. Fix: `records.schedule_kinds` marks a
+value-less outcome kind as a recording schedule when it has one record for at least 80% of the rows of the table(s)
+it is read from AND its times lie on a regular grid (>= 5 distinct times, >= 80% of grid points present); such kinds
+are not scored by the step-1 replay probe or the forecast check, the sensitivity guard ignores them, the engine
+leaves them out of the evidence, and the parser prompt says so (the prompt would otherwise contradict the check).
+Re-check of existing models offline: oracle unchanged (F1 0.644, passes); Qwen e1_d02 model rejected at step 1; Qwen
+pilot20 model F1 0.0 (fails); Qwen e1_d01 0.362, mfg_dev 0.922, itops_dev 0.749 and gpt-oss itops_dev 0.807 unchanged.
+Toy test added (`test_schedule_rows_are_not_outcomes`); guard test passes. Same kind of loophole as copying the
+record: a check must reward forecasting what happens, not when rows exist (a paper point).
+
+**Move to OpenRouter (author decision 2026-10-25).** All remaining runs, and re-runs of everything reported, use the
+hosted `or-*` aliases (sec. 2): full context, RAG, PageIndex and OTF-Tools (+ oracle and the ablations: reading only,
+no replay, no library) on E1, E2 and the three new domains; the pilot20 dev checks run first. Collaborators run the
+other baselines (GraphRAG, ReAct-R, ReAct-C, ReCode). The local GPU runs were halted at 14:50 (marker
+`runs/logs/LOCAL_RUNS_HALTED` blocks auto-resume); local results stay on disk as an archive and are not used in the
+paper. No spending cap. Latency is not compared with the local runs.
+
 **Finance framing (author decision 2026-10-23):** finance stays as the domain without a process. Most report tables
 list reported figures with few derived cells, so the forecast check has little to verify and both models modelled
 the years as a time axis; OTF is expected to fall back to reading there. The paper reports it as graceful

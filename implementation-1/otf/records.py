@@ -120,6 +120,56 @@ def diff(before: list[dict], after: list[dict], tol_t: float, vtol: dict, rel: f
     return {"gone": gone, "new": new, "changed": changed}
 
 
+def _on_grid(ts: list[float], coverage: float) -> bool:
+    """Do the sorted distinct times lie on a regular grid (start = first time, step = most common gap) that has
+    `coverage` of its points present?"""
+    gaps = [round(b - a, 6) for a, b in zip(ts, ts[1:]) if b > a]
+    if not gaps:
+        return False
+    step = max(set(gaps), key=gaps.count)
+    grid = [ts[0] + i * step for i in range(int(round((ts[-1] - ts[0]) / step)) + 1)]
+    present = sum(any(abs(g - t) <= 1e-6 * max(1.0, abs(g)) for t in ts) for g in grid)
+    return bool(grid) and present / len(grid) >= coverage
+
+
+def schedule_kinds(outcomes: list[dict], nav_idx: dict, min_times: int = 5, coverage: float = 0.8) -> set:
+    """Kinds of value-less outcomes that are a recording schedule, not something the process produces: one record
+    for (nearly) every row of the table(s) they are read from (`coverage` of the rows), at times on a regular grid
+    (at least `min_times` distinct times, `coverage` of the grid points present). Example: one record per entity at
+    every sample time of a table of states. A forecast of such records says nothing about the process. Events read
+    from lists, events that occur on only some rows, and quantities with values are never schedules."""
+    by: dict = {}
+    for o in outcomes:
+        if num(o.get("value")) is None and rtime(o) is not None:
+            by.setdefault(kind(o), []).append(o)
+    out = set()
+    for k, recs in by.items():
+        ts = sorted({round(rtime(o), 6) for o in recs})
+        if len(ts) < min_times or not _on_grid(ts, coverage):
+            continue
+        rows, tables = set(), set()
+        for o in recs:
+            for loc in o.get("src") or []:
+                n = nav_idx.get(str(loc[0])) if isinstance(loc, (list, tuple)) and loc else None
+                if n is None or n.get("kind") != "table" or len(loc) < 2:
+                    rows = None
+                    break
+                rows.add((n["node_id"], loc[1]))
+                tables.add(n["node_id"])
+            if rows is None:
+                break
+        if rows is None or not tables:
+            continue
+        total = sum(len(nav_idx[t]["table"]["rows"]) for t in tables)
+        if total and len(rows) / total >= coverage:
+            out.add(k)
+    return out
+
+
+def drop_kinds(recs: list[dict], kinds: set) -> list[dict]:
+    return [r for r in recs if kind(r) not in kinds] if kinds else recs
+
+
 # ---------- provenance ----------
 def _node_index(nav: dict) -> dict:
     return {n["node_id"]: n for n in nav["nodes"]}

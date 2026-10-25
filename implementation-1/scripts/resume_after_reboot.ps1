@@ -20,6 +20,13 @@ function Test-Running($pattern) {
     return [bool]$procs
 }
 
+# 2026-10-25: the local GPU runs are halted (the work moves to OpenRouter). While this marker file exists, a logon
+# restarts nothing; delete it to resume the local jobs.
+if (Test-Path (Join-Path $Root "runs\logs\LOCAL_RUNS_HALTED")) {
+    Write-Log "logon: local runs halted (runs\logs\LOCAL_RUNS_HALTED present), nothing started"
+    exit 0
+}
+
 Start-Sleep -Seconds 90            # give WSL and the GPU driver time to come up after logon
 Write-Log "logon: checking E1 jobs"
 

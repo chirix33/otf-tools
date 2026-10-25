@@ -196,6 +196,28 @@ def test_step1_probes_catch_mislabelled_readers():
         assert not rep["passed"], rep
 
 
+def test_schedule_rows_are_not_outcomes():
+    """Value-less records, one per row of a table at regular times, only mark that a row exists: a reader whose
+    only outcomes are such rows is rejected, and a model forecasting them cannot pass. Sparse events stay."""
+    nav = timed_nav()
+    idx = {n["node_id"]: n for n in nav["nodes"]}
+    log = next(n for n in nav["nodes"] if n["title"] == "Unit A: Log")["node_id"]
+    rows = [{"time": float(t), "kind": "row", "entities": ["A"], "value": None, "src": [[log, t - 1]]} for t in range(1, 9)]
+    assert records.schedule_kinds(rows, idx) == {"row"}
+    events = [{"time": 3.0, "kind": "peak", "entities": ["A"], "value": None, "src": [[log, 2]]},
+              {"time": 7.0, "kind": "peak", "entities": ["A"], "value": None, "src": [[log, 6]]}]
+    assert records.schedule_kinds(events + rows[:3], idx) == set()           # sparse, and too few rows
+    ticks = READERS_T.split("def outcomes")[0] + r'''
+def outcomes(doc, scope):
+    n = _log(doc, scope)
+    return [{"time": float(r["t"]), "kind": "row", "entities": [r["who"]], "value": None,
+             "src": [[n["node_id"], i, ["t", "who", "level"]]]} for i, r in table_rows(n)]
+'''
+    with tempfile.TemporaryDirectory() as d:
+        rep = toolgen.check_parsers(ticks, nav, _map(nav, d))
+        assert not rep["passed"] and "regularly spaced times" in rep["error"], rep
+
+
 def test_timeless_check():
     nav = timeless_nav()
     with tempfile.TemporaryDirectory() as d:

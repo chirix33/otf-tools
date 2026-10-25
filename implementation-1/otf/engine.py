@@ -77,11 +77,15 @@ class OTFEngine:
         return res
 
     def _records(self, scope: str) -> dict:
+        """The scope's records; outcome kinds that only follow a fixed recording schedule are left out, as in
+        the check (records.schedule_kinds)."""
         def read():
             try:
-                return read_scope(self.model["code"], self.map_path, scope)
+                r = read_scope(self.model["code"], self.map_path, scope)
             except ReadError as e:
                 return e
+            r["outcomes"] = r["informative"]
+            return r
         r = self._cached(("read", scope), read)
         if isinstance(r, Exception):
             raise ToolError(str(r))
@@ -95,7 +99,7 @@ class OTFEngine:
             raise ToolError(f"simulate failed: {res}"[:500])
         for x in res:
             x["entities"] = [str(e) for e in x.get("entities") or []]
-        return res
+        return records.drop_kinds(res, self._records(scope)["schedule_kinds"])
 
     # ---------- helpers ----------
     def _scope_of(self, question: str) -> str | None:
