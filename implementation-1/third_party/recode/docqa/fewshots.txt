@@ -1,0 +1,110 @@
+INPUT:
+The current function to expand is:
+solve(instruction, observation)
+The variables you can use is:
+- instruction (str): Video 10331
+Question: How many moving green objects are there?
+Answer with the open-ended JSON format.
+- observation (str): DOCUMENT DESCRIPTION (the document's own front matter):
+This document describes short physics videos ... Every video has its own chapter titled 'Video <number>'. ...
+
+CHAPTERS:
+CLEVRER Video Annotations (front matter)
+Video 10331 (3 sections)
+Video 10776 (3 sections)
+...
+
+OUTPUT:
+<think>
+The question is about the chapter "Video 10331". I need the sections of that chapter that describe the objects and what happens to them, then I can count the green objects that move, and then I give the answer.
+</think>
+
+<execute>
+sections = read_question_chapter(instruction, observation)
+answer_json = work_out_answer(instruction, sections)
+submit_answer(answer_json)
+</execute>
+
+
+
+
+INPUT:
+The current function to expand is:
+sections = read_question_chapter(instruction, observation)
+The variables you can use is:
+- instruction (str): Video 10331
+Question: How many moving green objects are there?
+Answer with the open-ended JSON format.
+- observation (str): DOCUMENT DESCRIPTION (the document's own front matter):
+...
+
+OUTPUT:
+<think>
+The chapter title is "Video 10331". Reading the whole chapter gives all its sections in one action.
+</think>
+
+<execute>
+sections = run("read_section[Video 10331]")
+</execute>
+
+
+
+
+INPUT:
+The current function to expand is:
+answer_json = work_out_answer(instruction, sections)
+The variables you can use is:
+- instruction (str): Video 10331
+Question: How many moving green objects are there?
+Answer with the open-ended JSON format.
+- sections (str): ## Video 10331 (pages 2-4)
+## Video 10331: Objects (pages 2-2)
+Object 0: brown metal sphere (color=brown, material=metal, shape=sphere)
+Object 1: cyan rubber sphere (color=cyan, material=rubber, shape=sphere)
+Object 2: green rubber cube (color=green, material=rubber, shape=cube)
+Object 3: purple metal sphere (color=purple, material=metal, shape=sphere)
+## Video 10331: Events (pages 2-2)
+Frame 0: Object 1 (cyan rubber sphere) is in view when the video begins.
+Frame 0: Object 2 (green rubber cube) is in view when the video begins.
+Frame 14: Object 0 (brown metal sphere) enters the scene.
+Frame 24: Object 0 (brown metal sphere) collides with Object 1 (cyan rubber sphere).
+Frame 42: Object 0 (brown metal sphere) exits the scene.
+Frame 50: Object 1 (cyan rubber sphere) collides with Object 2 (green rubber cube).
+Frame 95: Object 3 (purple metal sphere) enters the scene.
+Frame 127: The video ends.
+## Video 10331: Motion log (pages 3-4)
+frame	object	x	y	vx	vy	speed
+0	1 cyan rubber sphere	1.35	0.30	-1.51	-2.57	2.98
+0	2 green rubber cube	0.57	-0.01	0.00	0.00	0.00
+...
+
+OUTPUT:
+<think>
+The only green object is Object 2, the green rubber cube. It is still at frame 0, but the cyan sphere collides with it at frame 50, so it moves after that. To be sure, I check its speed in the motion log with code before I answer.
+</think>
+
+<execute>
+speeds = run('''python[
+rows = [r for _, r in table_rows(node_by_title(doc, "Video 10331: Motion log")) if "green" in r["object"]]
+print(max(float(r["speed"]) for r in rows))
+]''')
+answer_json = decide_answer_from_speeds(instruction, sections, speeds)
+</execute>
+
+
+
+
+INPUT:
+The current function to expand is:
+submit_answer(answer_json)
+The variables you can use is:
+- answer_json (str): {"answer": "1"}
+
+OUTPUT:
+<think>
+The answer is ready, so I submit it.
+</think>
+
+<execute>
+run(f"answer[{answer_json}]")
+</execute>
