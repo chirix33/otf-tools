@@ -304,6 +304,22 @@ def test_torn_line_and_resume(runs, env):
     assert len((out / "calls.jsonl").read_text().splitlines()) == calls
 
 
+def test_out_of_credits_stops_without_using_attempts(runs, env):
+    from clevrer_bench.runner import run_system
+    from clevrer_bench.systems.metered import OutOfCredits
+    env.setenv("MOCK_CREDITS", "1")
+    s = _sys("react_r", runs, out_name="react_r_credits")
+    with pytest.raises(OutOfCredits):
+        run_system(s, runs / "e1_d12", 2, limit=3, max_attempts=4)
+    out = runs / "e1_d12" / "systems" / "react_r_credits__qwen3.6-27b"
+    assert not (out / "attempts.jsonl").exists()
+    assert not [l for l in (out / "predictions.jsonl").read_text().splitlines() if l.strip()] \
+        if (out / "predictions.jsonl").exists() else True
+    env.delenv("MOCK_CREDITS")
+    run_system(s, runs / "e1_d12", 2, limit=3, max_attempts=4)        # credits back: everything is answered
+    assert json.loads((out / "setup.json").read_text())["completion"]["complete"]
+
+
 def test_errored_attempts_kept_and_bounded(runs, env):
     from clevrer_bench.runner import run_system
     from clevrer_bench.systems import metered

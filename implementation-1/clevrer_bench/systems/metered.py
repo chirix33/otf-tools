@@ -42,6 +42,17 @@ def is_context_overflow(err: BaseException) -> bool:
     return "maximum context length" in m or "context length" in m and "exceed" in m or "context window" in m
 
 
+class OutOfCredits(BaseException):
+    """The hosted account has no credit left. Derives from BaseException so per-question error handling does not
+    record it as a failed attempt: the whole run stops, and resumes once credits are added."""
+
+
+def is_out_of_credits(err: BaseException) -> bool:
+    m = str(err).lower()
+    return getattr(err, "status_code", None) == 402 or "exceed your available credits" in m or \
+        "insufficient credits" in m or "add credits" in m
+
+
 class InfraError(RuntimeError):
     """The server could not be reached after bounded retries; the question is retried on a later pass."""
 
@@ -207,6 +218,10 @@ class MeteredChat:
                 if is_context_overflow(e):
                     raise ContextOverflow(str(e)[:500]) from e
                 raise
+            except openai.APIStatusError as e:
+                if is_out_of_credits(e):
+                    raise OutOfCredits(str(e)[:300]) from e
+                raise
             if not resp.choices:                  # hosted endpoints may return 200 with only an error body
                 err = RuntimeError(f"no choices in response: {str(getattr(resp, 'error', None) or resp)[:300]}")
                 record_failure(err, source, attempt)
@@ -243,6 +258,8 @@ def install_litellm_meter() -> None:
                 r = orig_c(*a, **k)
             except Exception as e:
                 record_failure(e, "litellm", 0)
+                if is_out_of_credits(e):
+                    raise OutOfCredits(str(e)[:300]) from e
                 raise
             _record_litellm(r, time.time() - t)
             return r
@@ -252,39 +269,33 @@ def install_litellm_meter() -> None:
                 return await orig_a(*a, **k)
             check_cap()
             t = time.time()
-            if k.get("stream"):
-                k["stream_options"] = {**(k.get("stream_options") or {}), "include_usage": True}
+            # A streamed request is sent as one ordinary request and handed back as a one-chunk stream: LiteLLM
+            # rebuilds streamed usage from the visible text and drops reasoning tokens (seen with OpenRouter:
+            # output 6, reasoning 1,332), while the non-streamed usage is the provider's own count. Same request
+            # otherwise, so the model's answer is unaffected.
+            stream = bool(k.pop("stream", False))
+            k.pop("stream_options", None)
             try:
                 r = await orig_a(*a, **k)
             except Exception as e:
                 record_failure(e, "litellm", 0)
+                if is_out_of_credits(e):
+                    raise OutOfCredits(str(e)[:300]) from e
                 raise
-            if k.get("stream"):
-                return _metered_stream(r, t)
             _record_litellm(r, time.time() - t)
-            return r
+            return _as_stream(r) if stream else r
 
         litellm.completion, litellm.acompletion = completion, acompletion
         _litellm_installed = True
 
 
-async def _metered_stream(stream, t0: float):
-    """Pass a streamed reply through, recording it once it ends with the usage from its final chunk
-    (requested via stream_options.include_usage). Usage-only chunks (no choices) are not passed on."""
-    usage, finish = None, None
-    try:
-        async for chunk in stream:
-            if getattr(chunk, "usage", None) is not None:
-                usage = chunk.usage
-            choices = getattr(chunk, "choices", None) or []
-            if choices and getattr(choices[0], "finish_reason", None):
-                finish = choices[0].finish_reason
-            if choices:
-                yield chunk
-    except Exception as e:
-        record_failure(e, "litellm_stream", 0)
-        raise
-    record(usage_or_none(usage), finish, time.time() - t0, "litellm_stream")
+async def _as_stream(resp):
+    """A complete ModelResponse as a single streaming chunk (what GraphRAG's local search iterates over)."""
+    from litellm.types.utils import Delta, ModelResponseStream, StreamingChoices
+    ch = resp.choices[0] if resp.choices else None
+    yield ModelResponseStream(id=resp.id, created=resp.created, model=resp.model, choices=[StreamingChoices(
+        index=0, delta=Delta(role="assistant", content=(ch.message.content if ch else "") or ""),
+        finish_reason=ch.finish_reason if ch else "stop")])
 
 
 def _record_litellm(resp, latency: float) -> None:

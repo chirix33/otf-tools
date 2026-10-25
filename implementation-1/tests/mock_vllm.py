@@ -179,6 +179,9 @@ class H(BaseHTTPRequestHandler):
                 f.write(json.dumps({k: body.get(k) for k in ("model", "temperature", "top_p", "max_tokens",
                                                               "top_k", "chat_template_kwargs", "tools")
                                     if k != "tools"} | {"has_tools": bool(body.get("tools"))}) + "\n")
+        if os.environ.get("MOCK_CREDITS"):
+            return self._send(402, {"error": {"code": 402, "message": "This request would exceed your available "
+                                              "credits given your current in-flight requests. Add credits."}})
         if n <= int(os.environ.get("MOCK_FAIL_FIRST", "0")):
             return self._send(500, {"error": {"message": "mock failure"}})
         if not self.path.rstrip("/").endswith("/chat/completions"):

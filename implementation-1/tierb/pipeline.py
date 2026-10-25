@@ -30,6 +30,7 @@ from clevrer_bench.data import load_items  # noqa: E402
 from clevrer_bench.llm import get_model  # noqa: E402
 from clevrer_bench.runner import load_predictions, run_system  # noqa: E402
 from clevrer_bench.systems import load_system  # noqa: E402
+from clevrer_bench.systems.metered import OutOfCredits, is_out_of_credits  # noqa: E402
 from clevrer_bench.systems.tierb_common import dependency_versions, file_sha, stable_hash  # noqa: E402
 from tierb.importer import E1_CORE, import_all  # noqa: E402
 from tierb.serving import MockServer, Servers, ServingError, WSLServer, is_hosted  # noqa: E402
@@ -721,7 +722,14 @@ def main(argv=None) -> int:
             pipe.event(event="stopped", error=str(e))
             pipe.server.stop()
             return 2
-        except Exception as e:
+        except (OutOfCredits, Exception) as e:
+            if isinstance(e, OutOfCredits) or is_out_of_credits(e):
+                pipe.log("[stop] the OpenRouter account is out of credits (or a request would exceed them). Add "
+                         "credits at https://openrouter.ai/settings/credits, then run the same command again: "
+                         "finished work is kept and the run resumes.")
+                pipe.event(event="stopped", error="out of credits: " + str(e)[:300])
+                pipe.server.stop()
+                return 3
             pipe.log(f"[stop] unexpected error: {type(e).__name__}: {e}\n{traceback.format_exc()}")
             pipe.event(event="crashed", error=f"{type(e).__name__}: {e}")
             pipe.server.stop()
