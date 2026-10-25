@@ -165,6 +165,9 @@ class GraphRAGSystem(QASystem):
         u = json.loads(usage_p.read_text())
         info = {"method": self.method, "search": self.search, "graphrag": GRAPHRAG_VERSION, "cached_index": cached,
                 **{k: v for k, v in u.items() if k not in ("usage", "latency_s")}}
+        if self._pool is not None:   # one run covers several documents: stop the workers of the previous document
+            while not self._pool.empty():
+                self._pool.get().close()
         env = self._env()
         self._pool = queue.Queue()
         for _ in range(self.n_workers):

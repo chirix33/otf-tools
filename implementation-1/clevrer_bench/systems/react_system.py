@@ -120,6 +120,16 @@ def _node_lines(n: dict) -> list[str]:
     return out
 
 
+def _json_args(raw: str | None, args: dict) -> str:
+    """The tool call's arguments as the history sends them back. Some servers (Crusoe) refuse a request when an
+    earlier assistant tool call has arguments that are not JSON; then the parsed (or raw) arguments go as JSON."""
+    try:
+        json.loads(raw or "{}")
+        return raw or "{}"
+    except json.JSONDecodeError:
+        return json.dumps(args or {"raw_arguments": raw})
+
+
 class ReActSystem(QASystem):
     name = "react"
 
@@ -284,8 +294,8 @@ class ReActSystem(QASystem):
             parsed = [(c, *self._parse_call(c)) for c in calls]
             messages.append({"role": "assistant", "content": msg.content or "", "tool_calls": [
                 {"id": c.id, "type": "function", "function": {"name": name or (c.function.name or ""),
-                                                              "arguments": c.function.arguments or "{}"}}
-                for c, name, _, _ in parsed]})
+                                                              "arguments": _json_args(c.function.arguments, args)}}
+                for c, name, args, _ in parsed]})
             for c, name, args, valid in parsed:
                 step = {"tool": name}
                 if name != c.function.name:

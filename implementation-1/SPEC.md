@@ -361,6 +361,14 @@ variant per system.
   calls are metered (streamed answers ask for usage in the last chunk); indexing is setup cost, including failed
   attempts (GraphRAG's reply cache would hide them otherwise). Extraction check: share of text units with no
   entity is recorded in `setup.json` (`mfg_dev`, gpt-oss: 2 of 20).
+- Transport fixes during the test runs (2026-10-25; no change to prompts, tools, caps or scoring):
+  (1) ReAct-R/C: when a tool call's arguments are not JSON, the history sends them back as JSON (the parsed
+  arguments, else `{"raw_arguments": ...}`); Crusoe (Gemma) refused the whole request otherwise ("Assistant tool
+  call function.arguments must be valid JSON"). The gpt-oss runs finished before this fix; on CoreWeave the raw
+  form was accepted. (2) GraphRAG: a run over several documents now stops the serve workers of the previous
+  document. (3) Cost: in GraphRAG's streamed answers LiteLLM reports `output_tokens` without the reasoning
+  tokens (`reasoning_tokens` > `output_tokens` in every row); billed output for those rows = output + reasoning.
+  Indexing usage is not streamed and needs no change.
 
 
 ## 12. Additional domains: manufacturing, IT operations, finance (added 2026-10-23)
