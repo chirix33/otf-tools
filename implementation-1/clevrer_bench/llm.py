@@ -91,7 +91,7 @@ def chat_usage(u) -> Usage:
 # turn into a degraded answer (e.g. a reading fallback) instead of a retried question. Same for every system.
 TRANSIENT_NAMES = {"RateLimitError", "APIConnectionError", "APITimeoutError", "InternalServerError",
                    "ServiceUnavailableError", "Timeout", "LLMRetriesExhausted"}
-TRANSIENT_STATUS = {408, 429, 500, 502, 503, 504, 529}
+TRANSIENT_STATUS = {402, 408, 429, 500, 502, 503, 504, 529}   # 402: OpenRouter credits held by in-flight requests
 PATIENCE_S = 1800
 
 

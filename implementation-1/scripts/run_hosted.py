@@ -157,7 +157,7 @@ def done(job: Job) -> bool:
     return p["expected"] > 0 and p["answered"] == p["expected"]
 
 
-TRANSIENT = re.compile(r"RateLimitError|APIConnectionError|APITimeoutError|InternalServerError|Error code: (429|5\d\d)")
+TRANSIENT = re.compile(r"RateLimitError|APIConnectionError|APITimeoutError|InternalServerError|Error code: (402|429|5\d\d)")
 
 
 def drop_transient_tool_errors(job: Job) -> int:

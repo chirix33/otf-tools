@@ -262,6 +262,23 @@ moved to `runs/hosted_discarded_20261025/` and generated again.
 - *Spend.* The OpenRouter key had used $59.19 before the hosted runs started (smoke tests); spend is reported
   from that baseline.
 
+**Hosted dev checks (2026-10-25, otf-v3.2, after fix 9; `scripts/hosted_dev_summary.py`).** Token metering works on
+OpenRouter: input, cached, output and reasoning tokens are all reported (and per-call cost); reasoning tokens > 0 for
+Qwen (~1.6k per question) and Gemma (~0.8k), so thinking is on. pilot20, all 308 questions (cf / desc / expl / pred):
+
+| Model | OTF generation on pilot20 | OTF (pilot20) | Oracle (pilot20) |
+|---|---|---|---|
+| or-gpt-oss-20b | failed at step 1 (3 tries: no entities, then `src` given as a bare node id); 25k setup tokens; reading fallback | 17/38, 211/220, 18/36, 8/14 = 254/308 (82.5%) | 21/38, 211/220, 26/36, 14/14 = 272/308 (88.3%) |
+| or-qwen3.6-27b | passed, F1 0.589 (parsers try 1, simulator conversation 1); 166k setup tokens (36k reasoning), 13 min | 22/38, 216/220, 21/36, 14/14 = 273/308 (88.6%) | 21/38, 216/220, 20/36, 14/14 = 271/308 (88.0%) |
+| or-gemma-4-31b-think | failed at step 1 (3 tries: a crash, then `src` as a bare node id); 22k setup tokens; reading fallback | 151/163 so far (92.6%) | 242/266 so far (91.0%) |
+
+Dev documents (library off, first 4 questions; generation only, accuracy not looked at): gpt-oss failed on mfg_dev
+(step 1, 24k), itops_dev (step 2, F1 0 over 23 submissions, crashes in its own code, 663k) and fin_dev (step 1, 29k);
+Qwen failed mfg_dev (step 1, 53k) and passed itops_dev (F1 0.941, 174k); Gemma passed mfg_dev (F1 0.784, 137k) and
+failed itops_dev (step 1, 30k) and fin_dev (step 1, 37k). Every failure is in the model's own code (bad `src` shape,
+crashes, reading outcomes from input cells), not a harness error; no tool errors on any answered question. Generation
+reliability stays model-dependent, as in the local gate runs (gpt-oss passed 1 of 8 attempts there).
+
 **Finance framing (author decision 2026-10-23):** finance stays as the domain without a process. Most report tables
 list reported figures with few derived cells, so the forecast check has little to verify and both models modelled
 the years as a time axis; OTF is expected to fall back to reading there. The paper reports it as graceful
