@@ -261,6 +261,16 @@ moved to `runs/hosted_discarded_20261025/` and generated again.
   twice; the cached index and its token count are one build's.
 - *Spend.* The OpenRouter key had used $59.19 before the hosted runs started (smoke tests); spend is reported
   from that baseline.
+- *Incident (16:20-16:48): network choke and credits.* With ~150 requests in flight (all three models at once), new
+  outbound connections from this PC timed out (any site; DNS fine) and OpenRouter began returning 402 ("would exceed
+  your available credits given your current in-flight requests"). Stopping every run restored the network within a
+  minute. The account holds $200 of credits, $147.45 used at 16:50 ($88.26 by the hosted runs). 402 is now treated as
+  transient (wait and retry, never an answer or a fallback). Only gpt-oss resumed (16:55, ~60 requests in flight);
+  Qwen and Gemma wait for a credit top-up. Throughput measured before the stop: gpt-oss ~46, Qwen ~20-27, Gemma ~6-8
+  answers per minute (Crusoe throttles Gemma; Novita bf16 timed out on E1- and E2-sized prompts, so Crusoe is the
+  only usable bf16 provider).
+- *Library re-check bookkeeping.* An OTF job counts as finished only once its library re-check is logged, so a stop
+  between the last answer and the re-check cannot skip it.
 
 **Hosted dev checks (2026-10-25, otf-v3.2, after fix 9; `scripts/hosted_dev_summary.py`).** Token metering works on
 OpenRouter: input, cached, output and reasoning tokens are all reported (and per-call cost); reasoning tokens > 0 for

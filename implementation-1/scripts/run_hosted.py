@@ -157,6 +157,15 @@ def done(job: Job) -> bool:
     return p["expected"] > 0 and p["answered"] == p["expected"]
 
 
+def needs_library_pass(job: Job) -> bool:
+    return job.system == "otf" and job.folder == "otf" and job.phase != "dev"
+
+
+def library_pass_logged(job: Job) -> bool:
+    log = LOGS / "hosted__status.jsonl"
+    return log.exists() and f'"event": "otf_library_pass", "job": "{job.name}"' in log.read_text()
+
+
 TRANSIENT = re.compile(r"RateLimitError|APIConnectionError|APITimeoutError|InternalServerError|Error code: (402|429|5\d\d)")
 
 
@@ -223,7 +232,7 @@ def run_job(job: Job, workers: int, passes: int = 3) -> None:
     if job.copy_models_from:
         copy_models(job)
     one_round()
-    if job.system == "otf" and job.folder == "otf" and job.phase != "dev":
+    if needs_library_pass(job):
         out = subprocess.run([sys.executable, str(ROOT / "scripts" / "otf_library_pass.py"), "--split", job.split,
                               "--model", job.model], cwd=ROOT, capture_output=True, text=True)
         with (LOGS / "hosted" / f"{job.name}__library_pass.log").open("a", encoding="utf-8") as log:
@@ -279,7 +288,8 @@ def main() -> None:
     for j in jobs:
         if j.system.startswith("otf") and (n := drop_transient_tool_errors(j)):
             status(event="dropped_transient_tool_errors", job=j.name, n=n)
-    finished: set[str] = {j.key for j in jobs if done(j)}
+    # an OTF job counts as finished only once its end-of-split library re-check ran (a stop can fall in between)
+    finished: set[str] = {j.key for j in jobs if done(j) and (not needs_library_pass(j) or library_pass_logged(j))}
     running: dict[str, threading.Thread] = {}
     pending = [j for j in jobs if j.key not in finished]
     keys = {j.key for j in jobs}
