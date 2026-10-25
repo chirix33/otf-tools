@@ -60,7 +60,7 @@ for fz_path in sorted((RUNS / "tier_b" / "freeze").glob("graphrag__*.json")):
     fz = json.loads(fz_path.read_text(encoding="utf-8"))
     changed = False
     for c in fz["candidates"]:
-        pred = RUNS / c["out_dir"] / "predictions.jsonl"
+        pred = RUNS / c["out_dir"].replace("\\", "/") / "predictions.jsonl"   # recorded on Windows or Linux
         if not pred.exists():
             continue
         rows = {}
