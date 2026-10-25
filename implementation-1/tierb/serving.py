@@ -329,3 +329,58 @@ class MockServer:
             self.proc.terminate()
             self.proc.wait(timeout=10)
         self.proc, self.model = None, None
+
+
+def is_hosted(model: str) -> bool:
+    """Hosted OpenAI-compatible endpoint (e.g. OpenRouter): the model entry names an API-key env var."""
+    return bool(get_model(model).api_key_env)
+
+
+class Servers:
+    """Routes each model to its serving: hosted aliases (or-*) need no local server; everything else goes to
+    the local vLLM server (WSL, or the mock in tests)."""
+
+    def __init__(self, local):
+        self.local = local
+        self.log = local.log
+
+    @property
+    def max_model_len(self):
+        return getattr(self.local, "max_model_len", None)
+
+    def preflight(self, models: list[str]) -> dict:
+        from clevrer_bench.llm import endpoint_key
+        info = {}
+        for m in [m for m in models if is_hosted(m)]:
+            try:
+                endpoint_key(get_model(m))
+            except RuntimeError as e:
+                raise ServingError(f"{e}. Put the key in implementation-1\\.env, e.g. OPENROUTER_API_KEY=sk-or-...")
+            info[m] = {"hosted": get_model(m).base_url}
+        local = [m for m in models if not is_hosted(m)]
+        if local:
+            info.update(self.local.preflight(local))
+        return info
+
+    def ensure_checkpoint(self, model: str) -> dict:
+        if not is_hosted(model):
+            return self.local.ensure_checkpoint(model)
+        spec = get_model(model)
+        return {"hosted": spec.base_url, "served_name": spec.served_name,
+                "provider": spec.extra_body.get("provider"), "max_model_len": spec.context_len}
+
+    def ensure(self, model: str) -> None:
+        if not is_hosted(model):
+            return self.local.ensure(model)
+        spec = get_model(model)
+        for attempt in range(6):                     # transient network trouble: wait, then give up clearly
+            ids = served_models(spec.base_url)
+            if ids is not None:
+                if spec.served_name not in ids:
+                    raise ServingError(f"{spec.base_url} does not list {spec.served_name}")
+                return
+            time.sleep(30)
+        raise ServingError(f"cannot reach {spec.base_url} (checked for 3 minutes); check the internet connection")
+
+    def stop(self) -> None:
+        self.local.stop()

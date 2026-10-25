@@ -19,11 +19,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-from ..llm import LOCAL_API_KEY, ModelSpec, chat_sampling, chat_usage
+from ..llm import ModelSpec, chat_sampling, chat_usage, endpoint_key
 from .base import Usage
 
 MAX_CALLS_PER_QUESTION = 12
-INFRA_RETRIES = 3            # extra attempts per call after a connection/timeout/5xx failure
+INFRA_RETRIES = 6            # extra attempts per call after a connection/timeout/429/5xx failure (~3 min of backoff)
 FROZEN_KEYS = ("model", "temperature", "top_p", "max_tokens", "reasoning_effort")
 USAGE_FIELDS = ("input_tokens", "cached_input_tokens", "output_tokens", "reasoning_tokens", "llm_calls")
 
@@ -173,7 +173,7 @@ class MeteredChat:
             raise ValueError(f"model {spec.alias}: max_tokens must be 16384 (got {spec.max_tokens})")
         self.spec = spec
         self.sampling = chat_sampling(spec, reasoning_effort)
-        self.client = OpenAI(base_url=spec.base_url, api_key=LOCAL_API_KEY, max_retries=0, timeout=timeout_s)
+        self.client = OpenAI(base_url=spec.base_url, api_key=endpoint_key(spec), max_retries=0, timeout=timeout_s)
 
     def request_kwargs(self, **kw) -> dict:
         """Frozen sampling + per-call extras (tools, response_format). Frozen keys cannot be overridden."""
@@ -207,6 +207,13 @@ class MeteredChat:
                 if is_context_overflow(e):
                     raise ContextOverflow(str(e)[:500]) from e
                 raise
+            if not resp.choices:                  # hosted endpoints may return 200 with only an error body
+                err = RuntimeError(f"no choices in response: {str(getattr(resp, 'error', None) or resp)[:300]}")
+                record_failure(err, source, attempt)
+                if attempt == INFRA_RETRIES:
+                    raise InfraError(str(err))
+                time.sleep(min(60, 5 * 2 ** attempt))
+                continue
             record(usage_or_none(resp.usage), resp.choices[0].finish_reason if resp.choices else None,
                    time.time() - t, source, attempt)
             return resp

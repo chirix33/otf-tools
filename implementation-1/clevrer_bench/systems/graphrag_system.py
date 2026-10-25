@@ -26,6 +26,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from ..data import QAItem
+from ..llm import endpoint_key
 from ..prompts import ANSWER_INSTRUCTIONS
 from ..render import extract_pdf_pages
 from . import baseline_prompts as P
@@ -137,7 +138,9 @@ def _settings(spec, embed_url: str, prompts_dir: Path, local_prompt: Path) -> di
     p = lambda name: str((prompts_dir / name).as_posix())
     return {
         "completion_models": {"default_completion_model": {
-            "model_provider": "openai", "model": spec.served_name, "api_base": spec.base_url, "api_key": "EMPTY",
+            "model_provider": "openai", "model": spec.served_name, "api_base": spec.base_url,
+            # hosted: GraphRAG substitutes ${VAR} from the environment, so the key never lands in settings.yaml
+            "api_key": f"${{{spec.api_key_env}}}" if spec.api_key_env and endpoint_key(spec) else "EMPTY",
             "call_args": call_args, "retry": {"type": "exponential_backoff"}}},
         "embedding_models": {"default_embedding_model": {
             "model_provider": "openai", "model": EMBED_MODEL, "api_base": embed_url, "api_key": "EMPTY",

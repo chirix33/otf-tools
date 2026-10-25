@@ -422,6 +422,7 @@ def test_deadline_gives_explicit_partial_delivery(tmp_path):
     from tierb.pipeline import main
     runs = tmp_path / "runs"
     rc = main(["--package", str(PKG), "--runs", str(runs), "--mock-server", "--systems", "react_r",
+               "--models", "qwen3.6-27b", "gemma-4-31b-think",
                "--deadline", "2000-01-01T00:00:00+00:00"])
     assert rc == 0
     m = json.loads((runs / "tier_b" / "delivery_manifest.json").read_text())
