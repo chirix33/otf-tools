@@ -99,7 +99,8 @@ def after(recs: list[dict], cut: float | None) -> list[dict]:
 
 def blinded_map(nav: dict, map_path: Path, scope: str, r: dict, cut: float | None) -> Path:
     p = map_path.with_name(f"blind_{abs(hash(scope)) % 10**8}.json")
-    p.write_text(json.dumps(records.blind(nav, scope, r["inputs"], r["outcomes"], cut)))
+    span = (r["t0"], r["end"]) if r.get("end") is not None and r.get("t0") is not None else None
+    p.write_text(json.dumps(records.blind(nav, scope, r["inputs"], r["outcomes"], cut, span)))
     return p
 
 

@@ -39,13 +39,15 @@ class _LiteLLMUsageMeter:
         self._orig = (litellm.completion, litellm.acompletion)
         orig_c, orig_a = self._orig
 
+        from ..llm import awith_backoff, with_backoff
+
         def completion(*a, **k):
-            r = orig_c(*a, **k)
+            r = with_backoff(orig_c, *a, **k)
             self._record(r)
             return r
 
         async def acompletion(*a, **k):
-            r = await orig_a(*a, **k)
+            r = await awith_backoff(orig_a, *a, **k)
             self._record(r)
             return r
 
@@ -138,7 +140,8 @@ class PageIndexSystem(QASystem):
             kwargs["extra_body"] = body
         if self.protocol == "chat_completions":
             return self._answer_chat(instructions, prompt, kwargs, t)
-        env = self.client.chat(prompt, doc_id=self.doc_id, protocol="responses",
+        from ..llm import with_backoff
+        env = with_backoff(self.client.chat, prompt, doc_id=self.doc_id, protocol="responses",
                                instructions=instructions, **kwargs)
         items = env.get("items") or env.get("output") or []
         # A model turn = one batch of (possibly parallel) function_calls; +1 for the final answer turn.
@@ -160,7 +163,9 @@ class PageIndexSystem(QASystem):
         return Prediction(text, usage, time.time() - t, trace={"tool_calls": tool_calls})
 
     def _answer_chat(self, instructions: str, prompt: str, kwargs: dict, t: float) -> Prediction:
-        env =self.client.chat([{"role": "system", "content": instructions}, {"role": "user", "content": prompt}],
+        from ..llm import with_backoff
+        env = with_backoff(self.client.chat, [{"role": "system", "content": instructions},
+                                              {"role": "user", "content": prompt}],
                                doc_id=self.doc_id, protocol="chat_completions", **kwargs)
         choice = env["choices"][0]
         u = env.get("usage") or {}

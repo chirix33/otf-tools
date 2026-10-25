@@ -218,6 +218,39 @@ def outcomes(doc, scope):
         assert not rep["passed"] and "regularly spaced times" in rep["error"], rep
 
 
+def test_unread_trajectory_is_blinded():
+    """Post-freeze bug fix 9: a timed table no record is read from (here a track mirroring the levels) is hidden
+    after the cut too, so a simulator cannot forecast by reading it; tables without a time axis stay."""
+    nav = timed_nav()
+    for n in list(nav["nodes"]):
+        if n["kind"] == "table":
+            k = len(nav["nodes"])
+            track = {"node_id": f"t{k:04d}", "title": n["title"].replace("Log", "Track"), "level": 1,
+                     "parent_id": n["parent_id"], "kind": "table", "pages": [1, 1], "children": [],
+                     "table": {"columns": ["step", "reading"], "rows": [[r[0], r[3]] for r in n["table"]["rows"]]}}
+            static = {"node_id": f"s{k:04d}", "title": n["title"].replace("Log", "Spec"), "level": 1,
+                      "parent_id": n["parent_id"], "kind": "table", "pages": [1, 1], "children": [],
+                      "table": {"columns": ["part", "size"], "rows": [["p", "4"], ["q", "2"], ["r", "9"]]}}
+            nav["nodes"] += [track, static]
+            next(m for m in nav["nodes"] if m["node_id"] == n["parent_id"])["children"] += [track["node_id"],
+                                                                                          static["node_id"]]
+    peek = r'''
+def simulate(doc, scope, inputs, params, start=None, horizon=None):
+    return [{"time": float(r["step"]), "kind": "level", "entities": [scope[-1]], "value": float(r["reading"])}
+            for _, r in table_rows(node_by_title(doc, scope + ": Track")) if float(r["step"]) > (start or 0)]
+'''
+    with tempfile.TemporaryDirectory() as d:
+        mp = _map(nav, d)
+        r = toolgen.read_scope(READERS_T + SIM_HONEST, mp, "Unit A")
+        cut = toolgen._cut(r)
+        b = records.blind(nav, "Unit A", r["inputs"], r["outcomes"], cut, (r["t0"], r["end"]))
+        track = next(n for n in b["nodes"] if n["title"] == "Unit A: Track")["table"]["rows"]
+        assert len(track) < 8 and all(float(row[0]) <= cut for row in track)
+        assert next(n for n in b["nodes"] if n["title"] == "Unit A: Spec")["table"]["rows"] == [["p", "4"], ["q", "2"], ["r", "9"]]
+        assert toolgen.check_model(READERS_T + SIM_HONEST, nav, mp)["passed"]
+        assert toolgen.check_model(READERS_T + peek, nav, mp)["mean_f1"] == 0.0
+
+
 def test_timeless_check():
     nav = timeless_nav()
     with tempfile.TemporaryDirectory() as d:

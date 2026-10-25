@@ -222,6 +222,46 @@ other baselines (GraphRAG, ReAct-R, ReAct-C, ReCode). The local GPU runs were ha
 `runs/logs/LOCAL_RUNS_HALTED` blocks auto-resume); local results stay on disk as an archive and are not used in the
 paper. No spending cap. Latency is not compared with the local runs.
 
+**Post-freeze bug fix 9 (2026-10-25, found in the first hosted pilot20 dev check; a checker defect that certified a
+wrong model; git tag `otf-v3.2`):** the blinded copy hid later rows only in tables that the model's reading code
+took records from. gpt-oss (`or-gpt-oss-20b`) read every input and outcome from the Events list and never cited the
+Motion log, so the Motion log stayed whole on the blinded copy; its `simulate` scanned the recorded positions for
+frames where two objects are within 0.5 units and passed with F1 0.911 (the hand-written oracle scores 0.644).
+That is replay of a recorded trajectory, which the check exists to reject. Fix (`records.blind`, `_time_column`): a
+table in the scope that no record was read from is also hidden after the cut when it has a time column, i.e. a
+column that is numeric, non-decreasing down the rows, has >= 3 distinct values and ends inside the scope's recorded
+span. It can only hide more; timeless scopes (finance) are unchanged. Toy test `test_unread_trajectory_is_blinded`
+added; the guard test passes. Offline re-check (`scripts/recheck_models.py`): oracle unchanged (F1 0.644, passes);
+mfg_dev Qwen 0.922, itops_dev Qwen 0.749 and gpt-oss 0.807 / 0.663 unchanged. The archived local Qwen E1 models
+were passing the same way: d03 0.707 -> 0.362, d04 0.668 -> 0.167, d05 0.723 -> 0.364, d07 0.634 -> 0.203 (now
+fail); d02 0.763 -> 0.400 and d06 0.549 -> 0.478 still pass. The hosted dev outputs made under the old checker were
+moved to `runs/hosted_discarded_20261025/` and generated again.
+
+**Hosted harness (2026-10-25, same for every system; no method change):**
+- *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
+  connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
+  of full context, RAG, OTF and PageIndex (indexing calls and the per-question agent). Reason: Crusoe (Gemma)
+  returned 429 at 4 parallel jobs, and OTF's answer step catches every exception while building tool evidence, so
+  a 429 there silently became a reading fallback (seen on Gemma's pilot20 oracle, question 12052-14); in generation
+  a 429 crashed setup and restarted generation, which would give more tries than the budget.
+- *Transient tool errors are not answers.* `scripts/run_hosted.py` drops any OTF answer whose `tool_error` is a
+  transient endpoint error before each pass, so the question is asked again instead of being scored as a fallback.
+- *No-library ablation folder.* `use_library=false` now writes to `otf_no_library__<model>` (bookkeeping), so it
+  never mixes with the main `otf` run. The dev-document checks therefore sit in `otf_no_library__or-*`.
+- *Ablations start from the main run's models.* Reading-only and no-replay copy the main E1 run's final
+  `otf_model.json` per document (after the library re-check), so they differ from `otf` only by the switch and
+  report the same setup cost. No-library generates afresh on every document.
+- *Runner.* `scripts/run_hosted.py` (jobs = split x system x model, up to 3 passes, OTF library re-check and
+  re-answer as in `run_queue.py`; events in `runs/logs/hosted__status.jsonl`, output in `runs/logs/hosted/`).
+  Concurrency per model: gpt-oss 6 jobs x 8 questions, Qwen 6 x 6, Gemma 3 x 4.
+- *Incident (15:05-15:25):* killing the first runners left their `run.py` children running, so for ~15 min two
+  processes answered the same questions. Fixed by de-duplication (first valid answer per question kept; 190 rows
+  dropped in 6 baseline files, no torn lines) and a runner guard (`--stop` kills runners and children; a runner will
+  not start while hosted `run.py` processes exist). PageIndex indexes of e1_d01/d02 and mfg_d01 may have been built
+  twice; the cached index and its token count are one build's.
+- *Spend.* The OpenRouter key had used $59.19 before the hosted runs started (smoke tests); spend is reported
+  from that baseline.
+
 **Finance framing (author decision 2026-10-23):** finance stays as the domain without a process. Most report tables
 list reported figures with few derived cells, so the forecast check has little to verify and both models modelled
 the years as a time axis; OTF is expected to fall back to reading there. The paper reports it as graceful

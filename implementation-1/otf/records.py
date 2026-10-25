@@ -239,11 +239,29 @@ def first_outcome_cut(outcomes: list[dict], t0: float, end: float | None) -> flo
     return min(times) - 0.01 * max(end - t0, 1e-9)
 
 
-def blind(nav: dict, scope: str, inputs: list[dict], outcomes: list[dict], cut: float | None) -> dict:
+def _time_column(rows: list[list[str]], span: tuple[float, float]) -> int | None:
+    """A column that reads as the scope's time axis: numeric in every non-empty cell, non-decreasing down the
+    rows, at least 3 distinct values, ending inside the scope's recorded span [t0, end] (a table may start
+    up to one period before the first record)."""
+    t0, end = span
+    tol = 1e-6 * max(abs(end - t0), 1.0)
+    t0 -= abs(end - t0)
+    for j in range(max((len(r) for r in rows), default=0)):
+        vals = [num(r[j]) for r in rows if j < len(r) and str(r[j]).strip() != ""]
+        if (vals and None not in vals and len(set(vals)) >= 3 and all(a <= b for a, b in zip(vals, vals[1:]))
+                and t0 - tol <= vals[0] and vals[-1] <= end + tol):
+            return j
+    return None
+
+
+def blind(nav: dict, scope: str, inputs: list[dict], outcomes: list[dict], cut: float | None,
+          span: tuple[float, float] | None = None) -> dict:
     """A copy of the map in which `scope` keeps what a forward model may use. Kept: every cell or line an
     input was read from. Hidden: cells and lines of outcomes after `cut` (all outcomes if timeless), and, in
-    tables or lists that timed records were read from, rows and lines whose time is after `cut`. Text nodes
-    are emptied. Other scopes and the front matter are untouched."""
+    tables or lists that timed records were read from, rows and lines whose time is after `cut`. A table no
+    record was read from is hidden after `cut` too when it has a time column over the scope's recorded `span`
+    (t0, end): otherwise a model could forecast by reading a recorded trajectory its readers never cite
+    (post-freeze bug fix 9). Text nodes are emptied. Other scopes and the front matter are untouched."""
     blinded = copy.deepcopy(nav)
     idx = _node_index(blinded)
     keep = units(inputs, idx)
@@ -279,12 +297,16 @@ def blind(nav: dict, scope: str, inputs: list[dict], outcomes: list[dict], cut: 
                                 and abs(num(rows[k][j]) - t) < 1e-6 for k, t in refs):
                     tcol = j
                     break
+        elif cut is not None and span is not None:      # not read from: hidden after the cut if it is timed
+            tcol = _time_column(rows, span)
         new_rows = []
         for k, row in enumerate(rows):
             t = row_t.get((nid, k))
             if t is None and nid in timed_nodes:
                 t = num(row[tcol]) if tcol is not None and tcol < len(row) else next(
                     (num(c) for c in row if num(c) is not None), None)
+            elif t is None and tcol is not None:
+                t = num(row[tcol]) if tcol < len(row) else None
             late = cut is not None and t is not None and t > cut
             out = [c if (nid, k, j) in keep or not ((nid, k, j) in hide or late) else "" for j, c in enumerate(row)]
             if any((nid, k, j) in keep or not ((nid, k, j) in hide or late) for j in range(len(row))):

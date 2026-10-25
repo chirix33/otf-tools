@@ -19,7 +19,7 @@ import numpy as np
 from openai import OpenAI
 
 from ..data import QAItem
-from ..llm import chat_sampling, chat_usage, endpoint_key
+from ..llm import chat_sampling, chat_usage, endpoint_key, with_backoff
 from .base import Document, Prediction, QASystem, SetupResult, Usage
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
@@ -116,7 +116,7 @@ class RAGSystem(QASystem):
         messages = [{"role": "system", "content": instructions},
                     {"role": "user", "content": f"RETRIEVED PASSAGES FROM THE DOCUMENT:\n{ctx}\n\n{prompt}"}]
         if self.spec.is_local:
-            resp = self.client.chat.completions.create(model=self.spec.served_name, messages=messages,
+            resp = with_backoff(self.client.chat.completions.create, model=self.spec.served_name, messages=messages,
                                                        **chat_sampling(self.spec, self.reasoning_effort))
             choice = resp.choices[0]
             text, usage, finish = choice.message.content or "", chat_usage(resp.usage), choice.finish_reason
