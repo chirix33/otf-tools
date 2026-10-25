@@ -120,6 +120,12 @@ class PageIndexSystem(QASystem):
         return SetupResult(u, latency, {"doc_id": self.doc_id, "cached_index": False, "tree_nodes": n_nodes})
 
     def answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
+        try:
+            return self._answer(item, instructions, prompt)
+        finally:
+            _release_connections()
+
+    def _answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
         t = time.time()
         kwargs = {}
         if self.reasoning_effort:
@@ -175,6 +181,19 @@ class PageIndexSystem(QASystem):
                       (u.get("completion_tokens_details") or {}).get("reasoning_tokens", 0), 0)
         return Prediction(choice["message"]["content"] or "", usage, time.time() - t,
                           trace={"finish_reason": choice.get("finish_reason")})
+
+
+def _release_connections() -> None:
+    """PageIndex runs each question's agent in a fresh event loop, and LiteLLM caches one HTTP client per loop for
+    up to an hour, so every question left an open connection behind; thousands of them choked this PC's network
+    (2026-10-25). Dropping the cache and collecting the clients closes them. Requests and answers are unchanged."""
+    import gc
+    try:
+        import litellm
+        litellm.in_memory_llm_clients_cache.flush_cache()
+    except Exception:
+        pass
+    gc.collect()
 
 
 def _count_nodes(tree) -> int:
