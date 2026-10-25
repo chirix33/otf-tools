@@ -299,6 +299,13 @@ by accuracy, so it is left as is pending the author. It contradicts the "gracefu
   Qwen and Gemma wait for a credit top-up. Throughput measured before the stop: gpt-oss ~46, Qwen ~20-27, Gemma ~6-8
   answers per minute (Crusoe throttles Gemma; Novita bf16 timed out on E1- and E2-sized prompts, so Crusoe is the
   only usable bf16 provider).
+- *Root cause of the network choke (found 17:40-18:15):* the PageIndex adapter leaked one open connection per
+  question (PageIndex runs each question's agent in a fresh event loop and LiteLLM caches one HTTP client per loop for
+  up to an hour), so the PC's connections climbed by ~20 per minute until new ones were refused (seen a second time at
+  17:40 with only gpt-oss running; 85 -> 249 connections in 8 min with 2 PageIndex jobs). `pageindex_system.py` now
+  drops LiteLLM's client cache and collects the clients after each question (a test process: 8 questions left 8
+  connections open before, 0 after); requests and answers are unchanged. Since then connections stay ~45 and every
+  probe passes (`scripts/net_watch.py`, `runs/logs/hosted__net.jsonl`).
 - *Library re-check bookkeeping.* An OTF job counts as finished only once its library re-check is logged, so a stop
   between the last answer and the re-check cannot skip it.
 
