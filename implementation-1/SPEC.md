@@ -267,6 +267,16 @@ This is not one of the allowed bug classes (no crash, parse failure, contradicti
 "fall back to reading when the tool evidence is empty" or "list the unchanged inputs" would be a design change chosen
 by accuracy, so it is left as is pending the author. It contradicts the "graceful degradation" framing for finance.
 
+**OPEN finding 2 (2026-10-25 ~18:25, author decision needed; nothing changed):** manufacturing, gpt-oss, after fix
+10: OTF 57.7% vs full context 54.3% overall (counterfactual +25.3, predictive -2.7, explanatory 41.3% vs 56.0%,
+-14.7 [-29.3, +1.3]). The explanatory ("which conditions are responsible for the shortfall") choice checks compare
+each "without it" re-run with the *recorded* outcome. In the example inspected (mfg-2103-03-02) every choice,
+including the one the gold marks as not responsible, turned a recorded backlog of 10,781 into 0, i.e. the model's
+re-run from mid-period (day 37) does not carry the accumulated backlog, so every candidate cause looks responsible.
+The forecast check cuts just before a period's first recorded outcome (small state), so it does not test restarts
+from a large mid-period state. Comparing against an unpatched re-run, or checking restarts mid-period, would be design
+changes chosen by accuracy; left as is pending the author.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
