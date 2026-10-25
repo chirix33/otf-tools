@@ -237,6 +237,24 @@ were passing the same way: d03 0.707 -> 0.362, d04 0.668 -> 0.167, d05 0.723 -> 
 fail); d02 0.763 -> 0.400 and d06 0.549 -> 0.478 still pass. The hosted dev outputs made under the old checker were
 moved to `runs/hosted_discarded_20261025/` and generated again.
 
+**Post-freeze bug fix 10 (2026-10-25 ~17:30, a Navigation Map parse failure; git tag `otf-v3.3`), found by the
+sanity check against full context** (gpt-oss manufacturing: OTF predictive 18.7% vs full context 30.7%). A leaf with
+several ruled tables of different widths kept only its first table; the later tables and the captions fell into the
+node's `text`, which neither the generated readers nor the reading fallback use. Lost: the manufacturing "Order book"
+table of orders and planned production for the forecast days in every period with open backorders (11-12 of 15
+periods per document; those periods' first table is the open-order list), and the IT-operations waiting queue in
+"Queue at window end" (e.g. 51 waiting tasks in itops_d01 window 04). The questions state that this table holds
+what then happened, so OTF's predictive tool ran without the future inputs (it used 1.5x the recorded period
+instead) while full context, RAG and PageIndex, which read the PDF text, had them. Fix (`navmap.build_map`,
+`_captioned_tables`): a leaf holding ruled tables and its own caption lines is split; each ruled table (with its
+continuations) becomes a sibling node titled "<leaf title>: <the line just before it>" and the leaf keeps the caption
+lines. Titles are then the same in every period (e.g. "...: Order book: Orders received and production planned for
+days # to #"). G1 re-run: every CLEVRER map (pilot20, e1_d01-d15, e2_d01) byte-identical; finance maps identical;
+toy tests and guard pass. Only manufacturing and IT-operations maps change. Consequence: all OTF runs on those two
+domains (main, dev documents and their tool libraries) are redone; the earlier hosted ones were moved to
+`runs/hosted_discarded_20261025_fix10/`. The baselines are unaffected. Collaborators' ReAct-C and ReCode share the
+map, so their manufacturing / IT-operations runs need the new map too.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call

@@ -236,8 +236,8 @@ def make_report(run_dir: Path, systems: list[str] | None = None) -> dict:
     return rep
 
 
-def make_split_report(runs_root: Path, name: str, systems: list[str] | None = None) -> dict:
-    """Pool every document of a split (runs/<name>_dNN) into runs/<name>_report.{json,md}.
+def make_split_report(runs_root: Path, name: str, systems: list[str] | None = None, out: str | None = None) -> dict:
+    """Pool every document of a split (runs/<name>_dNN) into runs/<out or name>_report.{json,md}.
     A system is reported only once it has a setup.json in every document."""
     docs = sorted(p for p in runs_root.glob(f"{name}_d[0-9]*") if p.is_dir())
     items = [it for d in docs for it in load_items(d / "items.jsonl")]
@@ -254,6 +254,6 @@ def make_split_report(runs_root: Path, name: str, systems: list[str] | None = No
                             "motion_stride": cfgs[0].get("motion_stride")},
            "systems": [system_report([d / "systems" / n for d in docs], uids) for n in names]}
     add_paired(rep)
-    (runs_root / f"{name}_report.json").write_text(json.dumps(rep, indent=2))
-    (runs_root / f"{name}_report.md").write_text(to_markdown(rep), encoding="utf-8")
+    (runs_root / f"{out or name}_report.json").write_text(json.dumps(rep, indent=2))
+    (runs_root / f"{out or name}_report.md").write_text(to_markdown(rep), encoding="utf-8")
     return rep

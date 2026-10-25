@@ -72,6 +72,7 @@ def main():
     q = sub.add_parser("report-split", help="pool all documents of a split into runs/<name>_report.md")
     q.add_argument("--name", required=True)
     q.add_argument("--systems", nargs="*", default=None)
+    q.add_argument("--out", default=None, help="report name (runs/<out>_report.md); default: the split name")
 
     a = ap.parse_args()
     run_dir = ROOT / "runs" / getattr(a, "run", "")
@@ -93,8 +94,8 @@ def main():
             run_system(system, d, a.workers, a.limit, a.types, a.per_type)
     elif a.cmd == "report-split":
         from clevrer_bench.report import make_split_report
-        make_split_report(ROOT / "runs", a.name, a.systems)
-        print((ROOT / "runs" / f"{a.name}_report.md").read_text(encoding="utf-8"))
+        make_split_report(ROOT / "runs", a.name, a.systems, a.out)
+        print((ROOT / "runs" / f"{a.out or a.name}_report.md").read_text(encoding="utf-8"))
     else:
         from clevrer_bench.report import make_report
         make_report(run_dir, a.systems)
