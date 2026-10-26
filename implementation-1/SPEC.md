@@ -330,6 +330,12 @@ passing generated model (5 failed at step 1, 10 at step 2: crashes, a 20 s sandb
 to keep the generation budget unchanged and report gpt-oss E1 as the case where generation fails and OTF falls back
 gracefully; the oracle row shows what working tools add.
 
+**Incident 2026-10-25/26 (hosted runs):** unexpected shutdown at 23:01:59 (event 41/6008, hard reset; no GPU load,
+all runs hosted), reboot at 07:56, logon at 11:07; runs resumed at 11:10 (~12 hours lost). 2 torn prediction lines
+dropped (`repair_predictions.py`), re-asked. OTF generation in progress (Qwen/Gemma documents) restarted from scratch
+(not resumable; the interrupted attempts' tokens are not in setup cost). `scripts/resume_after_reboot.ps1` now restarts
+the hosted runners at logon (unless `runs/logs/HOSTED_RUNS_HALTED` exists or a runner is running).
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call

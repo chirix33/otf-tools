@@ -20,8 +20,35 @@ function Test-Running($pattern) {
     return [bool]$procs
 }
 
+# 2026-10-26: hosted (OpenRouter) runs. A logon restarts the hosted runners unless runs\logs\HOSTED_RUNS_HALTED exists
+# or a runner is already running; the runners skip finished jobs and resume answered questions.
+if (Test-Path (Join-Path $Root "runs\logs\HOSTED_RUNS_HALTED")) {
+    Write-Log "logon: hosted runs halted (runs\logs\HOSTED_RUNS_HALTED present), not started"
+} elseif (Test-Running "run_hosted.py") {
+    Write-Log "logon: hosted runner already running, not started"
+} else {
+    $out = & $Python (Join-Path $Root "scripts\repair_predictions.py") 2>&1 | Out-String
+    Write-Log ("hosted repair: " + $out.Trim().Replace("`r`n", " | "))
+    if (-not (Test-Running "net_watch.py")) {
+        Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden -ArgumentList @("-u", "scripts\net_watch.py")
+    }
+    $stamp = Get-Date -Format "yyyyMMdd_HHmm"
+    Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden `
+        -RedirectStandardOutput (Join-Path $Root "runs\logs\hosted__runner_resume_main_$stamp.out") `
+        -RedirectStandardError (Join-Path $Root "runs\logs\hosted__runner_resume_main_$stamp.err") -ArgumentList @(
+        "-u", "scripts\run_hosted.py", "--phase", "dev", "main", "e2", "ablations",
+        "--models", "or-gpt-oss-20b", "or-qwen3.6-27b", "or-gemma-4-31b-think", "--exclude", "pageindex",
+        "--model-limits", "or-gpt-oss-20b=8,6", "or-qwen3.6-27b=8,6", "or-gemma-4-31b-think=6,4")
+    Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden `
+        -RedirectStandardOutput (Join-Path $Root "runs\logs\hosted__runner_resume_pi_$stamp.out") `
+        -RedirectStandardError (Join-Path $Root "runs\logs\hosted__runner_resume_pi_$stamp.err") -ArgumentList @(
+        "-u", "scripts\run_hosted.py", "--phase", "main", "e2", "--systems", "pageindex",
+        "--model-limits", "or-gpt-oss-20b=2,1", "or-qwen3.6-27b=8,1", "or-gemma-4-31b-think=4,1")
+    Write-Log "logon: hosted runners started (main + PageIndex)"
+}
+
 # 2026-10-25: the local GPU runs are halted (the work moves to OpenRouter). While this marker file exists, a logon
-# restarts nothing; delete it to resume the local jobs.
+# restarts nothing else; delete it to resume the local jobs.
 if (Test-Path (Join-Path $Root "runs\logs\LOCAL_RUNS_HALTED")) {
     Write-Log "logon: local runs halted (runs\logs\LOCAL_RUNS_HALTED present), nothing started"
     exit 0
