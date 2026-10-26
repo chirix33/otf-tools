@@ -1,0 +1,42 @@
+
+=== 2026-10-25T20:52:20 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d04 --system pageindex --model or-gpt-oss-20b --workers 1
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001E55B4FAE40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E55B5E2120>, 36248.3789872)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55B4FA900>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E55B5E3700>, 36263.0682172)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55B48E710>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E55B2DAED0>, 36312.5278706)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55B48FD90>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E55B2DAED0>, 36338.1997812)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55955B9D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E559805470>, 36355.6422611)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55955B9D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E559805470>, 36383.9543751)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55955B610>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E55538A6D0>, 36395.9938401)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55955B890>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001E55538A6D0>, 36433.5835946)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001E55955B750>
+[pageindex] setup: 95332 tokens, 47.6s {'doc_id': 'pi-3c23635856d24401858ccb717e172e67', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 52 already answered, 8 to go
+[pageindex] 8/8  correct=1  errors=1  206s
+[pageindex] error on itops-w26-10: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+
+=== 2026-10-25T20:55:48 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d04 --system pageindex --model or-gpt-oss-20b --workers 1
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000023FFE916E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000023FFE9FDF90>, 36470.4613623)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000023FFE916900>
+[pageindex] setup: 95332 tokens, 47.6s {'doc_id': 'pi-3c23635856d24401858ccb717e172e67', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 59 already answered, 1 to go
+[pageindex] 1/1  correct=0  errors=0  36s

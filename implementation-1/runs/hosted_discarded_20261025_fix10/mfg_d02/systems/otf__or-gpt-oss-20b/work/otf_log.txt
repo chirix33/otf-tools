@@ -1,0 +1,12 @@
+parsers attempt 1: 'Plant 2103, Period 02': inputs() fails on the copy in which the outcomes are hidden (hidden cells are empty strings '', hidden rows and lines are removed); read only the cells your src lists. Error: File "C:\Users\aashraf\AppData\Local\Temp\tmpf3jud7a0\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 126, in inputs
+ValueError: invalid literal for int() with base 10: ''
+WHAT YOUR FUNCTIONS RETURNED on scope 'Plant 2103, Period 02': 13 entities (first: [{"id": "POP001L12P-A", "description": "POP001L12P-A: group P, sub-group POP, storage 330, 10.92 kg, opening stock 2849"}]), recorded_end = 28.0, 461 inputs (first: [{"id": "POP001L12P-A-opening-stock", "time": null, "kind": "initial_state", "entities": ["POP001L12P-A"], "fields": {"opening_stock": 2849}}]), 576 outcomes (first: [{"time": 15, "kind": "shipped", "entities": ["POP001L12P-A"], "value": 2126}]), params = {"dispatch_capacity": 407700}
+parsers attempt 2: inputs('Plant 2103, Period 05') failed: File "<string>", line 172, in inputs
+  File "<string>", line 64, in _parse_order_book_row
+KeyError: 'day'
+parsers attempt 3: 'Plant 2103, Period 02': inputs() reads differently once the outcomes are hidden (cells after time 14.87 not listed in any input's src are hidden). Include in `src` every cell your inputs() reads, also its time and entity cells
+WHAT YOUR FUNCTIONS RETURNED on scope 'Plant 2103, Period 02': 13 entities (first: [{"id": "POP001L12P-A", "description": "POP001L12P-A: group P, sub-group POP, storage 330, 10.92 kg, opening stock 2849"}]), recorded_end = 28.0, 414 inputs (first: [{"id": "POP001L12P-A-opening-stock", "time": null, "kind": "initial_state", "entities": ["POP001L12P-A"], "fields": {"opening_stock": 2849}}]), 576 outcomes (first: [{"time": 15, "kind": "shipped", "entities": ["POP001L12P-A"], "value": 2126}]), params = {"dispatch_capacity": 407700}
+- 4 of 91 rows of table 'Plant 2103, Period 02: Order book' are not the src of any input or outcome

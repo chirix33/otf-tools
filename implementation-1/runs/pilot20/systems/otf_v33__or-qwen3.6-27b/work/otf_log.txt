@@ -1,0 +1,17 @@
+parsers attempt 1: passed
+explore 1: ok, 1618 chars
+explore 2: ok, 2725 chars
+explore 3: ok, 3000 chars
+explore 4: ok, 1740 chars
+explore 5: ok, 403 chars
+explore 6: ok, 1253 chars
+explore 7: ok, 152 chars
+explore 8: ok, 230 chars
+simulate attempt 1 (after 8 explore runs): mean record-match F1 = 0.589 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.333, 3 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 42.0, "kind": "exit", "entities": ["Object 0"], "value": null}, {"time": 50.0, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}]; extra (produced but not hidden): [{"time": 38.7, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}, {"time": 126.7, "kind": "collision", "entities": ["Object 2", "Object 3"], "value": null}]
+- scope 'Video 10776' (start 15.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 65.0, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11140' (start 40.73): F1 0.8, 3 hidden outcomes, model produced 2; missed (hidden but not produced): [{"time": 82.0, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11144' (start 33.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 85.0, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11789' (start 16.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 62.0, "kind": "exit", "entities": ["Object 1"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12052' (start 39.73): F1 0.4, 2 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 64.0, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): [{"time": 52.7, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}, {"time": 124.7, "kind": "collision", "entities": ["Object 0", "Object 2"], "value": null}]
+simulator conversation 1: best F1 0.589

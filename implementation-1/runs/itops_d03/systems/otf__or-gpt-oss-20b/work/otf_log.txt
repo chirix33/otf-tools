@@ -1,0 +1,20 @@
+library model 1 (from itops_d02): inputs('Cell window 01') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpdg3_l6tu\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 218, in inputs
+ValueError: could not convert string to float: 'never'
+parsers attempt 1: inputs('Cell window 01') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpmqzr2lc8\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 131, in inputs
+ValueError: invalid literal for int() with base 10: 'never'
+parsers attempt 2: entities('Cell window 01') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmp9hve2hl0\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 37, in entities
+TypeError: 'NoneType' object is not subscriptable
+parsers attempt 3: entities('Cell window 01') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpxq44axz1\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 36, in entities
+TypeError: 'NoneType' object is not subscriptable

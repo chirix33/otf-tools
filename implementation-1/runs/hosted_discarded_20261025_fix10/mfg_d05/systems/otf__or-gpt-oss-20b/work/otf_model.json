@@ -1,0 +1,460 @@
+{
+ "key": {
+  "pdf_sha": "0aa39e868e05e4eb",
+  "model": "or-gpt-oss-20b",
+  "max_tries": 3,
+  "version": "v3"
+ },
+ "model": {
+  "code": "import re\nfrom typing import List, Dict, Any, Tuple, Set\n\n# ------------------------------------------------------------------\n#  SURVIVAL IN CLIENT CODE  (helpers available in the test harness)\n# ------------------------------------------------------------------\ndef node_by_title(doc, title):\n    for node in doc.get(\"nodes\", []):\n        if node.get(\"title\") == title:\n            return node\n    return None\n\ndef node_by_id(doc, node_id):\n    for node in doc.get(\"nodes\", []):\n        if node.get(\"node_id\") == node_id:\n            return node\n    return None\n\ndef children(doc, node):\n    for child_id in node.get(\"children\", []):\n        child = node_by_id(doc, child_id)\n        if child:\n            yield child\n\ndef scope_nodes(doc, scope_title):\n    scope_node = node_by_title(doc, scope_title)\n    if not scope_node:\n        return []\n    return [_ for _ in children(doc, scope_node)]\n\ndef table_rows(node):\n    rows = []\n    tbl = node.get(\"table\", {})\n    cols = tbl.get(\"columns\", [])\n    for idx, row in enumerate(tbl.get(\"rows\", [])):\n        rows.append((idx, dict(zip(cols, row))))\n    return rows\n\n# ------------------------------------------------------------------\n#  HELPERS FOR PARSING / SRC CREATION\n# ------------------------------------------------------------------\ndef numeric_cell(cell):\n    if cell is None:\n        return None\n    cell = cell.strip()\n    if not cell:\n        return None\n    try:\n        return int(cell.replace(\",\", \"\"))\n    except ValueError:\n        return None\n\ndef make_input_id(kind: str, prod: str, day: int, suffix: str = \"\") -> str:\n    return f\"{kind}_{prod}_{day}_{suffix}\".replace(\" \", \"_\")\n\ndef node_col_src(node_id: str, row_idx: int, cols: List[str]) -> List[Tuple[str, int, List[str]]]:\n    \"\"\"Return src list for chosen columns in a table row.\"\"\"\n    return [[node_id, row_idx, cols]] if cols else []\n\n# ------------------------------------------------------------------\n#  MAIN PUBLIC API\n# ------------------------------------------------------------------\ndef entities(doc: dict, scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Return all entities that appear in the scope.\"\"\"\n    ents: List[Dict[str, Any]] = []\n\n    # Plant itself\n    m = re.search(r\"Plant\\s+(\\d+)\", scope)\n    if m:\n        plant_id = m.group(1)\n        ents.append({\"id\": plant_id, \"description\": f\"Plant {plant_id}\"})\n\n    # Products\n    prod_node = node_by_title(doc, f\"{scope}: Products\")\n    if prod_node and prod_node.get(\"kind\") == \"table\":\n        for _, row in table_rows(prod_node):\n            prod_code = row.get(\"product\")\n            if prod_code:\n                group = row.get(\"group\", \"\")\n                sub = row.get(\"sub-group\", \"\")\n                desc = f\"{prod_code} ({group}{sub})\"\n                ents.append({\"id\": prod_code, \"description\": desc})\n\n    return ents\n\n\ndef recorded_end(doc: dict, scope: str) -> float or None:\n    \"\"\"Return the last day number recorded in the Daily ledger table.\"\"\"\n    ledger_node = node_by_title(doc, f\"{scope}: Daily ledger\")\n    if ledger_node and ledger_node.get(\"kind\") == \"table\":\n        last_day = 0\n        for _, row in table_rows(ledger_node):\n            day = numeric_cell(row.get(\"day\"))\n            if day and day > last_day:\n                last_day = day\n        return float(last_day) if last_day else None\n    return None\n\n\ndef inputs(doc: dict, scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Collect all external inputs that feed the process in this scope.\"\"\"\n    out: List[Dict[str, Any]] = []\n\n    prod_node = node_by_title(doc, f\"{scope}: Products\")\n    ledger_node = node_by_title(doc, f\"{scope}: Daily ledger\")\n    ob_node = node_by_title(doc, f\"{scope}: Order book\")\n\n    prod_id = None\n    prod_node_id = prod_node.get(\"node_id\") if prod_node else \"\"\n\n    # === Opening stock for each product (day 1) ===\n    if prod_node and prod_node.get(\"kind\") == \"table\":\n        for row_idx, row in table_rows(prod_node):\n            prod_code = row.get(\"product\")\n            if not prod_code:\n                continue\n            qty = numeric_cell(row.get(\"opening stock\"))\n            if qty is None:\n                continue\n            out.append({\n                \"id\": make_input_id(\"opening\", prod_code, 1),\n                \"time\": 1.0,\n                \"kind\": \"opening stock\",\n                \"entities\": [prod_code],\n                \"fields\": {\"quantity\": qty},\n                \"src\": node_col_src(prod_node_id, row_idx, [\"product\", \"opening stock\"])\n            })\n\n    # === Daily Production & Orders from ledger ===\n    if ledger_node and ledger_node.get(\"kind\") == \"table\":\n        for row_idx, row in table_rows(ledger_node):\n            day = numeric_cell(row.get(\"day\"))\n            if day is None:\n                continue\n            prod_code = row.get(\"product\")\n            if not prod_code:\n                continue\n\n            # Production\n            prod_qty = numeric_cell(row.get(\"produced\"))\n            if prod_qty is not None:\n                out.append({\n                    \"id\": make_input_id(\"production\", prod_code, day),\n                    \"time\": float(day),\n                    \"kind\": \"production\",\n                    \"entities\": [prod_code],\n                    \"fields\": {\"quantity\": prod_qty},\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"produced\"]\n                    ),\n                })\n\n            # Order placed that day\n            ord_qty = numeric_cell(row.get(\"ordered\"))\n            if ord_qty is not None:\n                out.append({\n                    \"id\": make_input_id(\"order\", prod_code, day),\n                    \"time\": float(day),\n                    \"kind\": \"order\",\n                    \"entities\": [prod_code],\n                    \"fields\": {\"quantity\": ord_qty},\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"ordered\"]\n                    ),\n                })\n\n    # === Order book (future events, planned production & orders) ===\n    if ob_node and ob_node.get(\"kind\") == \"table\":\n        ob_tbl = ob_node.get(\"table\", {})\n        cols = ob_tbl.get(\"columns\", [])\n        is_bulk_format = \"units still open\" in cols  # second format\n        for row_idx, row in table_rows(ob_node):\n            if is_bulk_format:\n                # Columns: product, day placed, units still open\n                prod_code = row.get(\"product\")\n                day_val = numeric_cell(row.get(\"day placed\"))\n                qty = numeric_cell(row.get(\"units still open\"))\n                if prod_code and day_val is not None and qty is not None:\n                    out.append({\n                        \"id\": make_input_id(\"future_open\", prod_code, day_val),\n                        \"time\": float(day_val),\n                        \"kind\": \"future open\",\n                        \"entities\": [prod_code],\n                        \"fields\": {\"quantity\": qty},\n                        \"src\": node_col_src(\n                            ob_node.get(\"node_id\", \"\"), row_idx, [\"product\", \"day placed\", \"units still open\"]\n                        ),\n                    })\n            else:\n                # Columns: day, date, product, planned production, ordered\n                prod_code = row.get(\"product\")\n                day_val = numeric_cell(row.get(\"day\"))\n                if prod_code and day_val is not None:\n                    # Planned production\n                    plan_qty = numeric_cell(row.get(\"planned production\"))\n                    if plan_qty is not None:\n                        out.append({\n                            \"id\": make_input_id(\"planned_prod\", prod_code, day_val),\n                            \"time\": float(day_val),\n                            \"kind\": \"planned production\",\n                            \"entities\": [prod_code],\n                            \"fields\": {\"quantity\": plan_qty},\n                            \"src\": node_col_src(\n                                ob_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"planned production\"]\n                            ),\n                        })\n                    # Order (future)\n                    ord_qty = numeric_cell(row.get(\"ordered\"))\n                    if ord_qty is not None:\n                        out.append({\n                            \"id\": make_input_id(\"future_order\", prod_code, day_val),\n                            \"time\": float(day_val),\n                            \"kind\": \"future order\",\n                            \"entities\": [prod_code],\n                            \"fields\": {\"quantity\": ord_qty},\n                            \"src\": node_col_src(\n                                ob_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"ordered\"]\n                            ),\n                        })\n\n    return out\n\n\ndef outcomes(doc: dict, scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Collect all outcomes recorded in this scope.\"\"\"\n    out: List[Dict[str, Any]] = []\n\n    ledger_node = node_by_title(doc, f\"{scope}: Daily ledger\")\n    events_node = node_by_title(doc, f\"{scope}: Events\")\n\n    # === Ledger values (shipped, backordered, stock) ===\n    if ledger_node and ledger_node.get(\"kind\") == \"table\":\n        for row_idx, row in table_rows(ledger_node):\n            day = numeric_cell(row.get(\"day\"))\n            if day is None:\n                continue\n            prod_code = row.get(\"product\")\n            if not prod_code:\n                continue\n\n            # shipped\n            shipped = numeric_cell(row.get(\"shipped\"))\n            if shipped is not None:\n                out.append({\n                    \"time\": float(day),\n                    \"kind\": \"recorded shipped\",\n                    \"entities\": [prod_code],\n                    \"value\": shipped,\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"shipped\"]\n                    ),\n                })\n            # backordered\n            back = numeric_cell(row.get(\"backordered\"))\n            if back is not None:\n                out.append({\n                    \"time\": float(day),\n                    \"kind\": \"recorded backordered\",\n                    \"entities\": [prod_code],\n                    \"value\": back,\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"backordered\"]\n                    ),\n                })\n            # stock\n            stk = numeric_cell(row.get(\"stock\"))\n            if stk is not None:\n                out.append({\n                    \"time\": float(day),\n                    \"kind\": \"recorded stock\",\n                    \"entities\": [prod_code],\n                    \"value\": stk,\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"stock\"]\n                    ),\n                })\n\n    # === Events list ===\n    if events_node and events_node.get(\"kind\") == \"list\":\n        for line_idx, line in enumerate(events_node.get(\"lines\", [])):\n            m = re.search(r\"Day\\s+(\\d+)\", line)\n            day_num = float(m.group(1)) if m else None\n            out.append({\n                \"time\": day_num,\n                \"kind\": \"event\",\n                \"entities\": [],\n                \"value\": None,\n                \"src\": [[events_node.get(\"node_id\", \"\"), line_idx]]\n            })\n\n    return out\n\n\ndef params(doc: dict, scope: str) -> Dict[str, Any]:\n    \"\"\"Return constants declared in the scope's heading text.\"\"\"\n    txt_node = node_by_title(doc, scope)\n    if not txt_node or txt_node.get(\"kind\") != \"text\":\n        return {}\n\n    txt = txt_node.get(\"text\", \"\")\n\n    cap_match = re.search(r\"Daily dispatch capacity:\\s*([\\d,]+)\\s*kg\", txt)\n    dispatch_capacity = int(cap_match.group(1).replace(\",\", \"\")) if cap_match else None\n\n    res: Dict[str, Any] = {}\n    if dispatch_capacity is not None:\n        res[\"dispatch_capacity\"] = dispatch_capacity\n    return res\n\n\n# ---- step 2: forward model ----\nimport math\nimport re\nfrom collections import defaultdict\nfrom typing import List, Dict, Any\n\n# ------------------------------------------------------------------\n# Existing helpers (already provided by the framework):\n# ------------------------------------------------------------------\n# node_by_title, node_by_id, children, scope_nodes, table_rows, numeric_cell,\n# make_input_id, node_col_src, entities, recorded_end, inputs,\n# outcomes, params\n\n# ------------------------------------------------------------------\n# Local helper functions\n# ------------------------------------------------------------------\ndef product_weight_map(doc: dict) -> Dict[str, int]:\n    \"\"\"\n    Returns a mapping from product code to its weight (kg per unit)\n    by scanning all :Products tables in the document.\n    \"\"\"\n    prod_map: Dict[str, int] = {}\n    for node in doc.get(\"nodes\", []):\n        if node.get(\"title\", \"\").endswith(\": Products\"):\n            for _, row in table_rows(node):\n                code = row.get(\"product\")\n                kg = numeric_cell(row.get(\"kg per unit\"))\n                if code and kg is not None:\n                    prod_map[code] = kg\n    return prod_map\n\n\ndef scope_products(doc: dict, scope: str) -> set:\n    \"\"\"\n    Return the set of product codes that belong to the requested scope.\n    \"\"\"\n    prod_set = set()\n    node = node_by_title(doc, f\"{scope}: Products\")\n    if node:\n        for _, row in table_rows(node):\n            if row.get(\"product\"):\n                prod_set.add(row.get(\"product\"))\n    return prod_set\n\n\n# ------------------------------------------------------------------\n# Main simulation function\n# ------------------------------------------------------------------\ndef simulate(doc: dict,\n             scope: str,\n             inputs: List[Dict[str, Any]],\n             params: Dict[str, Any],\n             start: float = None,\n             horizon: float = None) -> List[Dict[str, Any]]:\n\n    \"\"\"\n    Forward model of the plant dispatch process described in the\n    document.\n\n    Parameters\n    ----------\n    doc : dict\n        Full document (used only to read product weights).\n    scope : str\n        Scope title, e.g. \"Plant 1912, Period 15\".\n    inputs : List[Dict]\n        External inputs produced by the `inputs()` function.\n    params : Dict\n        Constant values extracted from the heading (at least\n        `dispatch_capacity`).\n    start : float, optional\n        Day on which to start writing outcomes (inclusive).  If None,\n        simulation starts at the first input day.\n    horizon : float, optional\n        Final day of simulation (inclusive).  If None, equals the last\n        input day.\n\n    Returns\n    -------\n    List[Dict]\n        Outcome records with kinds:\n        * `recorded shipped`\n        * `recorded backordered`\n        * `recorded stock`\n    \"\"\"\n    # ------------------------------------------------------------------\n    # 1.  Gather constants\n    # ------------------------------------------------------------------\n    weight_map = product_weight_map(doc)\n    scope_prods = scope_products(doc, scope)\n\n    # ------------------------------------------------------------------\n    # 2.  Parse the input list\n    # ------------------------------------------------------------------\n    min_day = max_day = None\n    # Maps: day -> product -> quantity\n    production_by_day = defaultdict(lambda: defaultdict(int))\n    order_by_day = defaultdict(lambda: defaultdict(int))\n    opening_stock: Dict[str, int] = {}\n\n    for inp in inputs:\n        kind = inp[\"kind\"]\n        prod = inp[\"entities\"][0]\n        day = int(inp[\"time\"])\n        qty = inp[\"fields\"][\"quantity\"]\n\n        if kind == \"opening stock\":\n            opening_stock[prod] = qty\n        elif kind == \"production\":\n            production_by_day[day][prod] = qty\n        elif kind == \"order\":\n            order_by_day[day][prod] = qty\n\n        if min_day is None or day < min_day:\n            min_day = day\n        if max_day is None or day > max_day:\n            max_day = day\n\n    if min_day is None:           # nothing to simulate\n        return []\n\n    if start is None:\n        start = min_day\n    if horizon is None:\n        horizon = max_day\n\n    # ------------------------------------------------------------------\n    # 3.  Initialise state\n    # ------------------------------------------------------------------\n    stock: Dict[str, int] = {p: opening_stock.get(p, 0) for p in scope_prods}\n    # Active orders queue\n    # Each entry: {'product', 'remaining', 'day', 'shipped_today'}\n    orders_queue: List[Dict[str, Any]] = []\n\n    dispatch_capacity = params.get(\"dispatch_capacity\", 0)\n\n    # ------------------------------------------------------------------\n    # 4.  Helper: add new orders for a day\n    # ------------------------------------------------------------------\n    def add_orders(day: int) -> None:\n        for prod, qty in order_by_day.get(day, {}).items():\n            if prod not in scope_prods:\n                continue\n            orders_queue.append({\n                \"product\": prod,\n                \"remaining\": qty,\n                \"day\": day,\n                \"shipped_today\": 0,\n            })\n\n    # ------------------------------------------------------------------\n    # 5.  Simulation loop\n    # ------------------------------------------------------------------\n    outcomes: List[Dict[str, Any]] = []\n\n    for day in range(min_day, int(horizon) + 1):\n        # 5.1 production arrives\n        for prod, qty in production_by_day.get(day, {}).items():\n            if prod not in scope_prods:\n                continue\n            stock[prod] += qty\n\n        # 5.2 orders placed today\n        add_orders(day)\n\n        # 5.3 dispatch logic\n        orders_queue.sort(key=lambda o: (o[\"day\"], o[\"remaining\"], o[\"product\"]))\n        cap_remaining = dispatch_capacity\n        for order in orders_queue:\n            prod = order[\"product\"]\n            if prod not in scope_prods:\n                continue\n            if order[\"remaining\"] <= 0 or stock[prod] <= 0:\n                continue\n\n            unit_wt = weight_map.get(prod, 1)\n            max_by_cap = cap_remaining // unit_wt\n            if max_by_cap <= 0:\n                break   # capacity exhausted\n\n            ship_qty = min(order[\"remaining\"],\n                           stock[prod],\n                           max_by_cap)\n\n            # apply shipment\n            order[\"remaining\"] -= ship_qty\n            order[\"shipped_today\"] += ship_qty\n            stock[prod] -= ship_qty\n            cap_remaining -= ship_qty * unit_wt\n\n            if cap_remaining <= 0:\n                break   # no more capacity today\n\n        # 5.4 record outcomes for each product\n        for prod in scope_prods:\n            shipped = sum(o[\"shipped_today\"]\n                          for o in orders_queue if o[\"product\"] == prod)\n            backordered = sum(o[\"remaining\"]\n                              for o in orders_queue if o[\"product\"] == prod)\n            stash = stock[prod]\n\n            outcomes.append({\n                \"time\": float(day),\n                \"kind\": \"recorded shipped\",\n                \"entities\": [prod],\n                \"value\": shipped,\n                \"src\": [],\n            })\n            outcomes.append({\n                \"time\": float(day),\n                \"kind\": \"recorded backordered\",\n                \"entities\": [prod],\n                \"value\": backordered,\n                \"src\": [],\n            })\n            outcomes.append({\n                \"time\": float(day),\n                \"kind\": \"recorded stock\",\n                \"entities\": [prod],\n                \"value\": stash,\n                \"src\": [],\n            })\n\n        # 5.5 purge completed orders\n        orders_queue = [o for o in orders_queue if o[\"remaining\"] > 0]\n\n    # ------------------------------------------------------------------\n    # 6.  Return outcomes from the specified start day onward\n    # ------------------------------------------------------------------\n    return [o for o in outcomes if o[\"time\"] >= start]\n",
+  "passed": true,
+  "mean_f1": 0.886,
+  "tries": 0,
+  "attempts": [
+   {
+    "step": "library",
+    "report": {
+     "scopes": [
+      {
+       "scope": "Plant 2114, Period 03",
+       "start": 28.59,
+       "f1": 0.742,
+       "hidden": 251,
+       "predicted": 210,
+       "missed": [
+        {
+         "time": 29.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 30.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 31.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 32.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 9850
+        }
+       ],
+       "extra": [
+        {
+         "time": 32.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 18027
+        },
+        {
+         "time": 32.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 32.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 8314
+        },
+        {
+         "time": 33.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 12920
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1914, Period 05",
+       "start": 56.31,
+       "f1": 0.893,
+       "hidden": 331,
+       "predicted": 294,
+       "missed": [
+        {
+         "time": 57.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 58.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 58.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 59.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 4263
+        }
+       ],
+       "extra": [
+        {
+         "time": 59.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 9939
+        },
+        {
+         "time": 62.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 3826
+        },
+        {
+         "time": 62.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "MAR01K24P"
+         ],
+         "value": 1847
+        },
+        {
+         "time": 65.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SE500G24P"
+         ],
+         "value": 2393
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1912, Period 06",
+       "start": 70.17,
+       "f1": 0.927,
+       "hidden": 133,
+       "predicted": 126,
+       "missed": [
+        {
+         "time": 77.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 78.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "MASR025K"
+         ],
+         "value": 2
+        },
+        {
+         "time": 78.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 79.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 79.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "MASR025K"
+         ],
+         "value": 230
+        },
+        {
+         "time": 80.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 1351
+        },
+        {
+         "time": 81.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "MASR025K"
+         ],
+         "value": 240
+        },
+        {
+         "time": 82.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "MASR025K"
+         ],
+         "value": 240
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2103, Period 07",
+       "start": 84.03,
+       "f1": 0.913,
+       "hidden": 604,
+       "predicted": 546,
+       "missed": [
+        {
+         "time": 86.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 2336
+        },
+        {
+         "time": 86.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 13594
+        },
+        {
+         "time": 86.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 86.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 86.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 15930
+        },
+        {
+         "time": 86.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 86.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 34267
+        },
+        {
+         "time": 87.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS002L09P"
+         ],
+         "value": 11504
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2114, Period 07",
+       "start": 84.03,
+       "f1": 0.929,
+       "hidden": 227,
+       "predicted": 210,
+       "missed": [
+        {
+         "time": 86.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 9978
+        },
+        {
+         "time": 86.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 5573
+        },
+        {
+         "time": 86.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 87.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 11933
+        }
+       ],
+       "extra": [
+        {
+         "time": 86.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 15551
+        },
+        {
+         "time": 86.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 86.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 22392
+        },
+        {
+         "time": 87.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 0
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1914, Period 08",
+       "start": 97.89,
+       "f1": 0.909,
+       "hidden": 319,
+       "predicted": 315,
+       "missed": [
+        {
+         "time": 99.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 100.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 2671
+        },
+        {
+         "time": 100.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 101.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 98.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 98.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 98.0,
+         "kind": "recorded stock",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 12647
+        },
+        {
+         "time": 98.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "AT5X5K"
+         ],
+         "value": 0
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.886,
+     "passed": true,
+     "error": null,
+     "sensitive": true,
+     "schedule_kinds": []
+    },
+    "source": "mfg_d03"
+   }
+  ],
+  "failed_step": null,
+  "reused_from": "mfg_d03"
+ },
+ "latency_s": 3.4287381172180176,
+ "usage": {
+  "input_tokens": 0,
+  "cached_input_tokens": 0,
+  "output_tokens": 0,
+  "reasoning_tokens": 0,
+  "llm_calls": 0,
+  "total_tokens": 0
+ }
+}

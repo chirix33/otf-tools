@@ -1,0 +1,11 @@
+parsers attempt 1: outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10320': 5 entities (first: [{"id": "0", "description": "green metal sphere"}]), recorded_end = 127.0, 5 inputs (first: [{"id": "inp-0", "time": 0, "kind": "initial-state", "entities": ["0"], "fields": {"x": -2.99, "y": -2.62, "vx": 2.23, "vy": 1.91, "speed": 2.93}}]), 0 outcomes (first: []), params = {}
+- 5 of 5 lines of 'Video 10320: Objects' are not the src of any input or outcome, e.g.: 'Object 0: green metal sphere (color=green, material=metal, shape=sphere)' | 'Object 1: cyan rubber cylinder (color=cyan, material=rubber, shape=cylinder)' | 'Object 2: yellow metal sphere (color=yellow, material=metal, shape=sphere)' | 'Object 3: red metal cylinder (color=red, material=metal, shape=cylinder)'
+- 9 of 9 lines of 'Video 10320: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 0 (green metal sphere) is in view when the video begins.' | 'Frame 0: Object 1 (cyan rubber cylinder) is in view when the video begins.' | 'Frame 0: Object 2 (yellow metal sphere) is in view when the video begins.' | 'Frame 0: Object 3 (red metal cylinder) is in view when the video begins.'
+- 95 of 100 rows of table 'Video 10320: Motion log' are not the src of any input or outcome
+parsers attempt 2: entities('Video 10320') failed: File "<string>", line 50, in entities
+  File "<string>", line 13, in _extract_entity_map
+NameError: name 'doc' is not defined
+parsers attempt 3: entities('Video 10320') failed: File "<string>", line 19, in _extract_entity_map
+  File "<string>", line 10, in children
+KeyError: 'nodes'

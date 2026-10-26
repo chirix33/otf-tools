@@ -1,0 +1,33 @@
+parsers attempt 1: passed
+explore 1: ok, 1240 chars
+explore 2: ok, 2104 chars
+explore 3: ok, 3000 chars
+explore 4: ok, 266 chars
+explore 5: ok, 1140 chars
+parsers attempt 1: outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10017': 5 entities (first: [{"id": "Object 0", "description": "Object 0: purple metal sphere (color=purple, material=metal, shape=sphere)"}]), recorded_end = 127.0, 10 inputs (first: [{"id": "prop_Object 0", "time": null, "kind": "Object Properties", "entities": ["Object 0"], "fields": {"color": "purple", "material": "metal", "shape": "sphere"}}]), 0 outcomes (first: []), params = {}
+- 6 of 9 lines of 'Video 10017: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 1 (brown rubber cube) is in view when the video begins.' | 'Frame 0: Object 4 (purple rubber sphere) is in view when the video begins.' | 'Frame 40: Object 0 (purple metal sphere) collides with Object 1 (brown rubber cube).' | 'Frame 56: Object 0 (purple metal sphere) collides with Object 2 (yellow metal sphere).'
+- 91 of 93 rows of table 'Video 10017: Motion log' are not the src of any input or outcome
+parsers attempt 2: passed
+explore 1: ok, 3000 chars
+explore 2: ok, 3000 chars
+explore 3: ok, 1525 chars
+explore 4: ok, 3000 chars
+explore 5: ok, 3000 chars
+explore 6: ok, 466 chars
+simulate attempt 1 (after 6 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 10017' (start 38.73): F1 0.0, 3 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 40.0, "kind": "Collision", "entities": ["Object 0", "Object 1"], "value": null}, {"time": 56.0, "kind": "Collision", "entities": ["Object 0", "Object 2"], "value": null}, {"time": 86.0, "kind": "Collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10232' (start 12.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 14.0, "kind": "Collision", "entities": ["Object 0", "Object 1"], "value": null}, {"time": 75.0, "kind": "Collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10517' (start 52.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 54.0, "kind": "Collision", "entities": ["Object 0", "Object 1"], "value": null}, {"time": 101.0, "kind": "Collision", "entities": ["Object 1", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10769' (start 59.73): F1 0.0, 3 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 61.0, "kind": "Collision", "entities": ["Object 0", "Object 1"], "value": null}, {"time": 76.0, "kind": "Collision", "entities": ["Object 1", "Object 2"], "value": null}, {"time": 93.0, "kind": "Collision", "entities": ["Object 0", "Object 3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10967' (start 49.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 51.0, "kind": "Collision", "entities": ["Object 0", "Object 1"], "value": null}, {"time": 100.0, "kind": "Collision", "entities": ["Object 0", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11102' (start 15.73): F1 0.0, 5 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 17.0, "kind": "Collision", "entities": ["Object 0", "Object 1"], "value": null}, {"time": 29.0, "kind": "Collision", "entities": ["Object 1", "Object 2"], "value": null}, {"time": 40.0, "kind": "Collision", "entities": ["Object 0", "Object 2"], "value": null}, {"time": 60.0, "kind": "Collision", "entities": ["Object 0", "Object 3"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 2 (after 6 explore runs): mean record-match F1 = 0.736 (need 0.4)
+- scope 'Video 10017' (start 38.73): F1 0.667, 3 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 86.0, "kind": "Collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): [{"time": 113.0, "kind": "Collision", "entities": ["Object 3", "Object 2"], "value": null}]
+- scope 'Video 10232' (start 12.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 75.0, "kind": "Collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10517' (start 52.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 101.0, "kind": "Collision", "entities": ["Object 1", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10769' (start 59.73): F1 0.667, 3 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 93.0, "kind": "Collision", "entities": ["Object 0", "Object 3"], "value": null}]; extra (produced but not hidden): [{"time": 102.0, "kind": "Collision", "entities": ["Object 3", "Object 1"], "value": null}]
+- scope 'Video 10967' (start 49.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 11102' (start 15.73): F1 0.75, 5 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 60.0, "kind": "Collision", "entities": ["Object 0", "Object 3"], "value": null}, {"time": 78.0, "kind": "Exit", "entities": ["Object 2"], "value": null}]; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.736

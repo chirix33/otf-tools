@@ -1,0 +1,233 @@
+
+=== 2026-10-25T15:20:51 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 8
+[otf] setup: 27832 tokens, 91.1s {'nodes': 61, 'scopes': 12, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=5  errors=0  35s
+[otf] 20/60  correct=9  errors=0  51s
+[otf] 30/60  correct=16  errors=0  81s
+[otf] 40/60  correct=23  errors=0  98s
+[otf] 50/60  correct=25  errors=0  125s
+[otf] 60/60  correct=32  errors=0  273s
+[otf] setup: 24522 tokens, 78.9s {'nodes': 56, 'scopes': 11, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  37s
+[otf] 20/60  correct=11  errors=0  61s
+[otf] 30/60  correct=19  errors=0  80s
+[otf] 40/60  correct=25  errors=0  108s
+[otf] 50/60  correct=29  errors=0  135s
+[otf] 60/60  correct=34  errors=0  258s
+[otf] setup: 138304 tokens, 189.1s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.891, 'model_tries': 7, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  119s
+[otf] 20/60  correct=11  errors=0  302s
+[otf] 30/60  correct=16  errors=0  411s
+[otf] 40/60  correct=21  errors=0  519s
+[otf] 50/60  correct=24  errors=0  616s
+[otf] 60/60  correct=29  errors=0  1486s
+[otf] setup: 0 tokens, 4.0s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.905, 'model_tries': 0, 'model_reused_from': 'mfg_d03'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  28s
+[otf] 20/60  correct=12  errors=0  48s
+[otf] 30/60  correct=16  errors=0  74s
+[otf] 40/60  correct=22  errors=0  95s
+[otf] 50/60  correct=28  errors=0  115s
+[otf] 60/60  correct=32  errors=0  172s
+[otf] setup: 0 tokens, 3.4s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.886, 'model_tries': 0, 'model_reused_from': 'mfg_d03'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  41s
+[otf] 20/60  correct=12  errors=0  65s
+[otf] 30/60  correct=16  errors=0  94s
+[otf] 40/60  correct=23  errors=0  127s
+[otf] 50/60  correct=29  errors=0  163s
+[otf] 60/60  correct=38  errors=0  1667s
+
+=== 2026-10-25T16:32:00 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 8
+[otf] setup: 27832 tokens, 91.1s {'nodes': 61, 'scopes': 12, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 24522 tokens, 80.6s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.884, 'model_tries': 3, 'model_reused_from': 'mfg_d03', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=4  errors=0  230s
+[otf] 20/60  correct=9  errors=0  255s
+[otf] 30/60  correct=18  errors=0  272s
+[otf] 40/60  correct=24  errors=0  295s
+[otf] 50/60  correct=31  errors=0  330s
+[otf] 60/60  correct=34  errors=1  553s
+[otf] error on mfg-2114-02-01: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] setup: 138304 tokens, 189.1s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.891, 'model_tries': 7, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 0 tokens, 4.0s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.905, 'model_tries': 0, 'model_reused_from': 'mfg_d03', 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 0 tokens, 3.4s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.886, 'model_tries': 0, 'model_reused_from': 'mfg_d03', 'cached_model': True}
+[otf] 60 already answered, 0 to go
+
+=== 2026-10-25T16:42:10 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 8
+[otf] setup: 27832 tokens, 91.1s {'nodes': 61, 'scopes': 12, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 24522 tokens, 80.6s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.884, 'model_tries': 3, 'model_reused_from': 'mfg_d03', 'cached_model': True}
+[otf] 59 already answered, 1 to go
+[otf] 1/1  correct=1  errors=0  19s
+[otf] setup: 138304 tokens, 189.1s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.891, 'model_tries': 7, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 0 tokens, 4.0s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.905, 'model_tries': 0, 'model_reused_from': 'mfg_d03', 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 0 tokens, 3.4s {'nodes': 56, 'scopes': 11, 'model_passed': True, 'model_f1': 0.886, 'model_tries': 0, 'model_reused_from': 'mfg_d03', 'cached_model': True}
+[otf] 60 already answered, 0 to go
+
+=== 2026-10-25T17:36:45 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+
+=== 2026-10-25T17:43:31 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 151529 tokens, 262.0s {'nodes': 82, 'scopes': 12, 'model_passed': True, 'model_f1': 0.849, 'model_tries': 8, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=5  errors=0  53s
+[otf] 20/60  correct=10  errors=0  94s
+[otf] 30/60  correct=15  errors=0  137s
+[otf] 40/60  correct=19  errors=0  182s
+[otf] 50/60  correct=25  errors=0  226s
+[otf] 60/60  correct=29  errors=0  298s
+[otf] setup: 140257 tokens, 212.6s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.951, 'model_tries': 8, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  38s
+[otf] 20/60  correct=13  errors=0  77s
+[otf] 30/60  correct=19  errors=0  123s
+[otf] 40/60  correct=25  errors=0  151s
+[otf] 50/60  correct=32  errors=0  199s
+[otf] 60/60  correct=35  errors=0  239s
+[otf] setup: 0 tokens, 4.6s {'nodes': 73, 'scopes': 11, 'model_passed': True, 'model_f1': 0.945, 'model_tries': 0, 'model_reused_from': 'mfg_d02'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  47s
+[otf] 20/60  correct=13  errors=0  74s
+[otf] 30/60  correct=19  errors=0  110s
+[otf] 40/60  correct=24  errors=0  143s
+[otf] 50/60  correct=28  errors=0  172s
+[otf] 60/60  correct=36  errors=0  232s
+[otf] setup: 0 tokens, 3.9s {'nodes': 72, 'scopes': 11, 'model_passed': True, 'model_f1': 0.958, 'model_tries': 0, 'model_reused_from': 'mfg_d02'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  33s
+[otf] 20/60  correct=13  errors=0  56s
+[otf] 30/60  correct=18  errors=0  100s
+[otf] 40/60  correct=24  errors=0  133s
+[otf] 50/60  correct=31  errors=0  162s
+[otf] 60/60  correct=35  errors=0  206s
+[otf] setup: 0 tokens, 3.8s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.949, 'model_tries': 0, 'model_reused_from': 'mfg_d02'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  62s
+[otf] 20/60  correct=14  errors=0  97s
+[otf] 30/60  correct=20  errors=0  137s
+[otf] 40/60  correct=27  errors=0  174s
+[otf] 50/60  correct=31  errors=0  202s
+[otf] 60/60  correct=38  errors=0  240s
+
+=== 2026-10-25T19:14:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 151529 tokens, 262.0s {'nodes': 82, 'scopes': 12, 'model_passed': True, 'model_f1': 0.849, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  65s
+[otf] 20/60  correct=14  errors=0  98s
+[otf] 30/60  correct=17  errors=0  134s
+[otf] 40/60  correct=24  errors=0  161s
+[otf] 50/60  correct=29  errors=0  194s
+[otf] 60/60  correct=34  errors=0  248s
+[otf] setup: 140257 tokens, 212.6s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.951, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  21s
+[otf] 20/60  correct=13  errors=0  51s
+[otf] 30/60  correct=17  errors=0  85s
+[otf] 40/60  correct=22  errors=0  118s
+[otf] 50/60  correct=26  errors=0  155s
+[otf] 60/60  correct=30  errors=0  220s
+[otf] setup: 0 tokens, 4.6s {'nodes': 73, 'scopes': 11, 'model_passed': True, 'model_f1': 0.945, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  41s
+[otf] 20/60  correct=9  errors=0  78s
+[otf] 30/60  correct=11  errors=0  118s
+[otf] 40/60  correct=14  errors=0  160s
+[otf] 50/60  correct=18  errors=0  201s
+[otf] 60/60  correct=23  errors=0  248s
+[otf] setup: 0 tokens, 3.9s {'nodes': 72, 'scopes': 11, 'model_passed': True, 'model_f1': 0.958, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=5  errors=0  40s
+[otf] 20/60  correct=10  errors=0  79s
+[otf] 30/60  correct=15  errors=0  119s
+[otf] 40/60  correct=20  errors=0  148s
+[otf] 50/60  correct=26  errors=0  186s
+[otf] 60/60  correct=30  errors=0  240s
+[otf] setup: 0 tokens, 3.8s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.949, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  24s
+[otf] 20/60  correct=13  errors=0  49s
+[otf] 30/60  correct=17  errors=0  88s
+[otf] 40/60  correct=26  errors=0  117s
+[otf] 50/60  correct=31  errors=0  147s
+[otf] 60/60  correct=37  errors=0  194s
+
+=== 2026-10-25T19:46:31 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 151529 tokens, 262.0s {'nodes': 82, 'scopes': 12, 'model_passed': True, 'model_f1': 0.849, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=4  errors=0  44s
+[otf] 20/60  correct=12  errors=0  65s
+[otf] 30/60  correct=16  errors=0  113s
+[otf] 40/60  correct=22  errors=0  151s
+[otf] 50/60  correct=27  errors=0  201s
+[otf] 60/60  correct=33  errors=0  238s
+[otf] setup: 140257 tokens, 212.6s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.951, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=8  errors=0  39s
+[otf] 20/60  correct=14  errors=0  70s
+[otf] 30/60  correct=20  errors=0  104s
+[otf] 40/60  correct=26  errors=0  130s
+[otf] 50/60  correct=30  errors=0  170s
+[otf] 60/60  correct=36  errors=0  228s
+[otf] setup: 0 tokens, 4.6s {'nodes': 73, 'scopes': 11, 'model_passed': True, 'model_f1': 0.945, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  44s
+[otf] 20/60  correct=11  errors=0  78s
+[otf] 30/60  correct=16  errors=0  104s
+[otf] 40/60  correct=20  errors=0  126s
+[otf] 50/60  correct=25  errors=0  170s
+
+=== 2026-10-25T19:58:11 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 151529 tokens, 262.0s {'nodes': 82, 'scopes': 12, 'model_passed': True, 'model_f1': 0.849, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=8  errors=0  49s
+[otf] 20/60  correct=15  errors=0  67s
+[otf] 30/60  correct=22  errors=0  115s
+[otf] 40/60  correct=28  errors=0  166s
+[otf] 50/60  correct=33  errors=0  201s
+[otf] 60/60  correct=36  errors=0  239s
+[otf] setup: 140257 tokens, 212.6s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.951, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  42s
+[otf] 20/60  correct=14  errors=0  78s
+[otf] 30/60  correct=19  errors=0  125s
+[otf] 40/60  correct=26  errors=0  161s
+[otf] 50/60  correct=30  errors=0  203s
+
+=== 2026-10-25T20:31:19 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 151529 tokens, 262.0s {'nodes': 82, 'scopes': 12, 'model_passed': True, 'model_f1': 0.849, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 140257 tokens, 212.6s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.951, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 59 already answered, 1 to go
+[otf] 1/1  correct=1  errors=0  51s
+[otf] setup: 0 tokens, 4.6s {'nodes': 73, 'scopes': 11, 'model_passed': True, 'model_f1': 0.945, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  56s
+[otf] 20/60  correct=13  errors=0  97s
+[otf] 30/60  correct=18  errors=0  126s
+[otf] 40/60  correct=24  errors=0  150s
+[otf] 50/60  correct=28  errors=0  191s
+[otf] 60/60  correct=32  errors=0  267s
+[otf] setup: 0 tokens, 3.9s {'nodes': 72, 'scopes': 11, 'model_passed': True, 'model_f1': 0.958, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  30s
+[otf] 20/60  correct=13  errors=0  68s
+[otf] 30/60  correct=17  errors=0  107s
+[otf] 40/60  correct=25  errors=0  143s
+[otf] 50/60  correct=32  errors=0  171s
+[otf] 60/60  correct=36  errors=0  209s
+[otf] setup: 0 tokens, 3.8s {'nodes': 74, 'scopes': 11, 'model_passed': True, 'model_f1': 0.949, 'model_tries': 0, 'model_reused_from': 'mfg_d02', 'cached_model': True}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=5  errors=0  29s
+[otf] 20/60  correct=13  errors=0  66s
+[otf] 30/60  correct=20  errors=0  104s
+[otf] 40/60  correct=25  errors=0  148s
+[otf] 50/60  correct=33  errors=0  188s
+[otf] 60/60  correct=41  errors=0  239s

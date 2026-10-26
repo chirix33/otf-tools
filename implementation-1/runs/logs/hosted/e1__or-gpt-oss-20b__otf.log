@@ -1,0 +1,456 @@
+
+=== 2026-10-25T15:20:51 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 8
+[otf] setup: 21226 tokens, 72.5s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 148 to go
+[otf] 10/148  correct=7  errors=0  15s
+[otf] 20/148  correct=14  errors=0  27s
+[otf] 30/148  correct=20  errors=0  37s
+[otf] 40/148  correct=26  errors=0  44s
+[otf] 50/148  correct=33  errors=0  52s
+[otf] 60/148  correct=41  errors=0  60s
+[otf] 70/148  correct=47  errors=0  71s
+[otf] 80/148  correct=55  errors=0  77s
+[otf] 90/148  correct=60  errors=0  91s
+[otf] 100/148  correct=65  errors=0  98s
+[otf] 110/148  correct=73  errors=0  105s
+[otf] 120/148  correct=79  errors=0  112s
+[otf] 130/148  correct=85  errors=0  122s
+[otf] 140/148  correct=94  errors=0  132s
+[otf] 148/148  correct=100  errors=0  146s
+[otf] setup: 1161012 tokens, 1096.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.17, 'model_tries': 32, 'model_reused_from': None}
+[otf] 0 already answered, 141 to go
+[otf] 10/141  correct=6  errors=0  74s
+[otf] 20/141  correct=12  errors=0  146s
+[otf] 30/141  correct=18  errors=0  219s
+[otf] 40/141  correct=24  errors=0  279s
+[otf] 50/141  correct=30  errors=0  315s
+[otf] 60/141  correct=37  errors=0  359s
+[otf] 70/141  correct=44  errors=0  381s
+[otf] 80/141  correct=51  errors=0  410s
+[otf] 90/141  correct=58  errors=0  432s
+[otf] 100/141  correct=66  errors=0  451s
+[otf] 110/141  correct=72  errors=0  478s
+[otf] 120/141  correct=79  errors=0  501s
+[otf] 130/141  correct=87  errors=0  517s
+[otf] 140/141  correct=95  errors=0  551s
+[otf] 141/141  correct=96  errors=0  1007s
+[otf] setup: 904395 tokens, 1207.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 23, 'model_reused_from': None}
+[otf] 0 already answered, 132 to go
+[otf] 10/132  correct=7  errors=0  92s
+[otf] 20/132  correct=15  errors=0  149s
+[otf] 30/132  correct=23  errors=0  197s
+[otf] 40/132  correct=31  errors=0  247s
+[otf] 50/132  correct=37  errors=0  274s
+[otf] 60/132  correct=44  errors=0  288s
+[otf] 70/132  correct=54  errors=0  301s
+[otf] 80/132  correct=61  errors=0  312s
+[otf] 90/132  correct=67  errors=0  327s
+[otf] 100/132  correct=76  errors=0  338s
+[otf] 110/132  correct=79  errors=0  355s
+[otf] 120/132  correct=80  errors=0  372s
+[otf] 130/132  correct=86  errors=0  937s
+[otf] 132/132  correct=88  errors=0  989s
+Traceback (most recent call last):
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 105, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 93, in main
+    run_system(system, d, a.workers, a.limit, a.types, a.per_type)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\runner.py", line 83, in run_system
+    setup = system.setup(doc)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 88, in setup
+    info = self.engine.prepare(doc.pdf_path, cached, lib_dir)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\engine.py", line 61, in prepare
+    self.model = cached_model or generate_model(self.llm, self.nav, self.map_path, log=self.log,
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                library=library.load(library_dir, self.nav))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\toolgen.py", line 423, in generate_model
+    got = _simulator_agent(llm, nav, map_path, context, parsers, ex_fields, attempts, log, sim_tries, n_explore)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\toolgen.py", line 338, in _simulator_agent
+    reply = llm(messages)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 53, in _llm
+    resp = with_backoff(self.client.chat.completions.create, model=self.spec.served_name, messages=messages,
+                                               **chat_sampling(self.spec, self.reasoning_effort))
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\llm.py", line 114, in with_backoff
+    return fn(*args, **kwargs)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1296, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1148, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+
+=== 2026-10-25T16:41:55 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 8
+
+=== 2026-10-25T16:52:28 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 21226 tokens, 72.5s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 148 already answered, 0 to go
+[otf] setup: 1161012 tokens, 1096.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.17, 'model_tries': 32, 'model_reused_from': None, 'cached_model': True}
+[otf] 141 already answered, 0 to go
+[otf] setup: 904395 tokens, 1207.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 23, 'model_reused_from': None, 'cached_model': True}
+[otf] 132 already answered, 0 to go
+[otf] setup: 897551 tokens, 830.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.006, 'model_tries': 28, 'model_reused_from': None}
+[otf] 0 already answered, 139 to go
+[otf] 10/139  correct=5  errors=0  94s
+[otf] 20/139  correct=14  errors=0  118s
+[otf] 30/139  correct=18  errors=0  178s
+[otf] 40/139  correct=24  errors=0  261s
+[otf] 50/139  correct=29  errors=0  340s
+[otf] 60/139  correct=37  errors=0  385s
+[otf] 70/139  correct=44  errors=0  402s
+[otf] 80/139  correct=50  errors=0  439s
+[otf] 90/139  correct=57  errors=0  467s
+[otf] 100/139  correct=63  errors=0  491s
+[otf] 110/139  correct=70  errors=0  512s
+[otf] 120/139  correct=76  errors=0  534s
+[otf] 130/139  correct=82  errors=0  558s
+[otf] 139/139  correct=86  errors=0  1376s
+[otf] setup: 18253 tokens, 57.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 134 to go
+[otf] 10/134  correct=4  errors=0  77s
+[otf] 20/134  correct=11  errors=0  143s
+[otf] 30/134  correct=19  errors=0  190s
+[otf] 40/134  correct=26  errors=0  285s
+[otf] 50/134  correct=33  errors=0  355s
+[otf] 60/134  correct=39  errors=0  430s
+[otf] 70/134  correct=44  errors=0  496s
+[otf] 80/134  correct=53  errors=0  572s
+[otf] 90/134  correct=58  errors=0  637s
+
+=== 2026-10-25T17:43:31 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 21226 tokens, 72.5s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 148 already answered, 0 to go
+[otf] setup: 1161012 tokens, 1096.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.17, 'model_tries': 32, 'model_reused_from': None, 'cached_model': True}
+[otf] 141 already answered, 0 to go
+[otf] setup: 904395 tokens, 1207.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 23, 'model_reused_from': None, 'cached_model': True}
+[otf] 132 already answered, 0 to go
+[otf] setup: 897551 tokens, 830.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.006, 'model_tries': 28, 'model_reused_from': None, 'cached_model': True}
+[otf] 139 already answered, 0 to go
+[otf] setup: 18253 tokens, 57.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 94 already answered, 40 to go
+[otf] 10/40  correct=9  errors=0  17s
+[otf] 20/40  correct=14  errors=0  28s
+[otf] 30/40  correct=23  errors=0  37s
+[otf] 40/40  correct=29  errors=0  59s
+[otf] setup: 22048 tokens, 88.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 149 to go
+[otf] 10/149  correct=7  errors=0  10s
+[otf] 20/149  correct=12  errors=0  30s
+[otf] 30/149  correct=18  errors=0  41s
+[otf] 40/149  correct=26  errors=0  55s
+[otf] 50/149  correct=34  errors=0  77s
+[otf] 60/149  correct=39  errors=0  88s
+[otf] 70/149  correct=43  errors=0  96s
+[otf] 80/149  correct=50  errors=0  109s
+[otf] 90/149  correct=57  errors=0  122s
+[otf] 100/149  correct=65  errors=0  138s
+[otf] 110/149  correct=72  errors=0  149s
+[otf] 120/149  correct=79  errors=0  158s
+[otf] 130/149  correct=84  errors=0  177s
+[otf] 140/149  correct=92  errors=0  191s
+[otf] 149/149  correct=97  errors=0  213s
+[otf] setup: 1055502 tokens, 885.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.439, 'model_tries': 27, 'model_reused_from': None}
+[otf] 0 already answered, 155 to go
+[otf] 10/155  correct=10  errors=0  11s
+[otf] 20/155  correct=16  errors=0  24s
+[otf] 30/155  correct=22  errors=0  31s
+[otf] 40/155  correct=28  errors=0  45s
+[otf] 50/155  correct=37  errors=0  64s
+[otf] 60/155  correct=43  errors=0  74s
+[otf] 70/155  correct=49  errors=0  82s
+[otf] 80/155  correct=56  errors=0  93s
+[otf] 90/155  correct=65  errors=0  100s
+[otf] 100/155  correct=72  errors=0  109s
+[otf] 110/155  correct=78  errors=0  120s
+[otf] 120/155  correct=85  errors=0  129s
+[otf] 130/155  correct=93  errors=0  139s
+[otf] 140/155  correct=97  errors=0  151s
+[otf] 150/155  correct=104  errors=0  163s
+[otf] 155/155  correct=105  errors=0  180s
+[otf] setup: 1029824 tokens, 766.8s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.372, 'model_tries': 29, 'model_reused_from': None}
+[otf] 0 already answered, 160 to go
+[otf] 10/160  correct=7  errors=0  8s
+[otf] 20/160  correct=15  errors=0  24s
+[otf] 30/160  correct=22  errors=0  33s
+[otf] 40/160  correct=27  errors=0  51s
+[otf] 50/160  correct=34  errors=0  61s
+[otf] 60/160  correct=39  errors=0  72s
+[otf] 70/160  correct=46  errors=0  85s
+[otf] 80/160  correct=52  errors=0  95s
+[otf] 90/160  correct=59  errors=0  109s
+[otf] 100/160  correct=67  errors=0  120s
+[otf] 110/160  correct=74  errors=0  134s
+[otf] 120/160  correct=83  errors=0  150s
+[otf] 130/160  correct=90  errors=0  156s
+[otf] 140/160  correct=100  errors=0  173s
+[otf] 150/160  correct=108  errors=0  185s
+[otf] 160/160  correct=113  errors=0  1878s
+
+=== 2026-10-25T19:14:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6
+[otf] setup: 21226 tokens, 72.5s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 148 to go
+[otf] 10/148  correct=7  errors=0  19s
+[otf] 20/148  correct=15  errors=0  29s
+[otf] 30/148  correct=21  errors=0  38s
+[otf] 40/148  correct=28  errors=0  48s
+[otf] 50/148  correct=38  errors=0  56s
+[otf] 60/148  correct=44  errors=0  77s
+[otf] 70/148  correct=50  errors=0  86s
+[otf] 80/148  correct=57  errors=0  105s
+[otf] 90/148  correct=63  errors=0  123s
+[otf] 100/148  correct=69  errors=0  139s
+[otf] 110/148  correct=78  errors=0  150s
+[otf] 120/148  correct=83  errors=0  160s
+[otf] 130/148  correct=88  errors=0  173s
+[otf] 140/148  correct=96  errors=0  184s
+[otf] 148/148  correct=103  errors=0  199s
+[otf] setup: 1161012 tokens, 1096.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.17, 'model_tries': 32, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 141 to go
+[otf] 10/141  correct=8  errors=0  16s
+[otf] 20/141  correct=16  errors=0  28s
+[otf] 30/141  correct=21  errors=0  42s
+[otf] 40/141  correct=26  errors=0  54s
+[otf] 50/141  correct=36  errors=0  63s
+[otf] 60/141  correct=41  errors=0  83s
+[otf] 70/141  correct=47  errors=0  93s
+[otf] 80/141  correct=55  errors=0  103s
+[otf] 90/141  correct=60  errors=0  113s
+[otf] 100/141  correct=67  errors=0  123s
+[otf] 110/141  correct=74  errors=0  136s
+[otf] 120/141  correct=81  errors=0  144s
+[otf] 130/141  correct=87  errors=0  153s
+[otf] 140/141  correct=93  errors=0  165s
+[otf] 141/141  correct=93  errors=0  171s
+[otf] setup: 904395 tokens, 1207.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 23, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 132 to go
+[otf] 10/132  correct=8  errors=0  8s
+[otf] 20/132  correct=15  errors=0  21s
+[otf] 30/132  correct=24  errors=0  28s
+[otf] 40/132  correct=31  errors=0  44s
+[otf] 50/132  correct=38  errors=0  61s
+[otf] 60/132  correct=45  errors=0  77s
+[otf] 70/132  correct=52  errors=0  89s
+[otf] 80/132  correct=60  errors=0  99s
+[otf] 90/132  correct=68  errors=0  113s
+[otf] 100/132  correct=76  errors=0  122s
+[otf] 110/132  correct=81  errors=0  134s
+[otf] 120/132  correct=85  errors=0  149s
+[otf] 130/132  correct=90  errors=0  163s
+[otf] 132/132  correct=90  errors=0  177s
+[otf] setup: 897551 tokens, 830.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.006, 'model_tries': 28, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 139 to go
+[otf] 10/139  correct=8  errors=0  13s
+[otf] 20/139  correct=17  errors=0  21s
+[otf] 30/139  correct=23  errors=0  32s
+[otf] 40/139  correct=27  errors=0  53s
+[otf] 50/139  correct=35  errors=0  65s
+[otf] 60/139  correct=42  errors=0  77s
+[otf] 70/139  correct=48  errors=0  87s
+[otf] 80/139  correct=51  errors=0  100s
+[otf] 90/139  correct=56  errors=0  113s
+[otf] 100/139  correct=65  errors=0  127s
+[otf] 110/139  correct=73  errors=0  140s
+[otf] 120/139  correct=78  errors=0  150s
+[otf] 130/139  correct=83  errors=0  162s
+[otf] 139/139  correct=86  errors=0  182s
+[otf] setup: 18253 tokens, 57.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 134 to go
+[otf] 10/134  correct=8  errors=0  16s
+[otf] 20/134  correct=13  errors=0  32s
+[otf] 30/134  correct=21  errors=0  43s
+[otf] 40/134  correct=28  errors=0  49s
+[otf] 50/134  correct=34  errors=0  67s
+[otf] 60/134  correct=42  errors=0  80s
+[otf] 70/134  correct=50  errors=0  95s
+[otf] 80/134  correct=57  errors=0  108s
+[otf] 90/134  correct=64  errors=0  123s
+[otf] 100/134  correct=73  errors=0  135s
+[otf] 110/134  correct=83  errors=0  144s
+[otf] 120/134  correct=88  errors=0  157s
+[otf] 130/134  correct=96  errors=0  164s
+[otf] 134/134  correct=98  errors=0  176s
+[otf] setup: 22048 tokens, 88.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 149 to go
+[otf] 10/149  correct=8  errors=0  9s
+[otf] 20/149  correct=14  errors=0  23s
+[otf] 30/149  correct=20  errors=0  33s
+[otf] 40/149  correct=28  errors=0  43s
+[otf] 50/149  correct=35  errors=0  57s
+[otf] 60/149  correct=38  errors=0  67s
+[otf] 70/149  correct=43  errors=0  75s
+[otf] 80/149  correct=52  errors=0  87s
+[otf] 90/149  correct=59  errors=0  94s
+[otf] 100/149  correct=67  errors=0  104s
+[otf] 110/149  correct=75  errors=0  113s
+[otf] 120/149  correct=83  errors=0  121s
+[otf] 130/149  correct=88  errors=0  133s
+[otf] 140/149  correct=93  errors=0  146s
+[otf] 149/149  correct=99  errors=0  177s
+[otf] setup: 1055502 tokens, 885.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.439, 'model_tries': 27, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 155 to go
+[otf] 10/155  correct=8  errors=0  10s
+[otf] 20/155  correct=15  errors=0  23s
+[otf] 30/155  correct=22  errors=0  35s
+[otf] 40/155  correct=29  errors=0  45s
+[otf] 50/155  correct=36  errors=0  58s
+[otf] 60/155  correct=42  errors=0  70s
+[otf] 70/155  correct=48  errors=0  82s
+[otf] 80/155  correct=55  errors=0  89s
+[otf] 90/155  correct=63  errors=0  94s
+[otf] 100/155  correct=70  errors=0  104s
+[otf] 110/155  correct=77  errors=0  118s
+[otf] 120/155  correct=83  errors=0  125s
+[otf] 130/155  correct=90  errors=0  133s
+[otf] 140/155  correct=98  errors=0  154s
+[otf] 150/155  correct=107  errors=0  162s
+[otf] 155/155  correct=109  errors=0  182s
+[otf] setup: 1029824 tokens, 766.8s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.372, 'model_tries': 29, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 160 to go
+[otf] 10/160  correct=9  errors=0  9s
+[otf] 20/160  correct=16  errors=0  20s
+[otf] 30/160  correct=24  errors=0  35s
+[otf] 40/160  correct=31  errors=0  49s
+[otf] 50/160  correct=36  errors=0  59s
+[otf] 60/160  correct=41  errors=0  74s
+[otf] 70/160  correct=46  errors=0  82s
+[otf] 80/160  correct=54  errors=0  94s
+[otf] 90/160  correct=62  errors=0  101s
+[otf] 100/160  correct=69  errors=0  109s
+[otf] 110/160  correct=76  errors=0  119s
+[otf] 120/160  correct=83  errors=0  128s
+[otf] 130/160  correct=91  errors=0  142s
+[otf] 140/160  correct=98  errors=0  154s
+[otf] 150/160  correct=105  errors=0  168s
+[otf] 160/160  correct=111  errors=0  192s
+[otf] setup: 845247 tokens, 641.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.114, 'model_tries': 28, 'model_reused_from': None}
+[otf] 0 already answered, 147 to go
+[otf] 10/147  correct=8  errors=0  11s
+[otf] 20/147  correct=14  errors=0  27s
+[otf] 30/147  correct=20  errors=0  38s
+[otf] 40/147  correct=29  errors=0  51s
+[otf] 50/147  correct=34  errors=0  63s
+[otf] 60/147  correct=42  errors=0  75s
+[otf] 70/147  correct=49  errors=0  90s
+[otf] 80/147  correct=55  errors=0  102s
+[otf] 90/147  correct=61  errors=0  110s
+[otf] 100/147  correct=67  errors=0  120s
+[otf] 110/147  correct=75  errors=0  132s
+[otf] 120/147  correct=82  errors=0  146s
+[otf] 130/147  correct=88  errors=0  156s
+[otf] 140/147  correct=95  errors=0  164s
+[otf] 147/147  correct=98  errors=0  179s
+[otf] setup: 20653 tokens, 58.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 158 to go
+[otf] 10/158  correct=7  errors=0  16s
+[otf] 20/158  correct=10  errors=0  25s
+[otf] 30/158  correct=18  errors=0  32s
+[otf] 40/158  correct=24  errors=0  43s
+[otf] 50/158  correct=29  errors=0  53s
+[otf] 60/158  correct=36  errors=0  63s
+[otf] 70/158  correct=42  errors=0  70s
+[otf] 80/158  correct=49  errors=0  84s
+[otf] 90/158  correct=54  errors=0  96s
+[otf] 100/158  correct=62  errors=0  103s
+[otf] 110/158  correct=69  errors=0  111s
+[otf] 120/158  correct=75  errors=0  122s
+[otf] 130/158  correct=80  errors=0  137s
+[otf] 140/158  correct=89  errors=0  150s
+[otf] 150/158  correct=97  errors=0  162s
+[otf] 158/158  correct=100  errors=0  180s
+[otf] setup: 706651 tokens, 567.0s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 25, 'model_reused_from': None}
+[otf] 0 already answered, 149 to go
+[otf] 10/149  correct=7  errors=0  14s
+[otf] 20/149  correct=17  errors=0  21s
+[otf] 30/149  correct=22  errors=0  38s
+[otf] 40/149  correct=30  errors=0  45s
+[otf] 50/149  correct=37  errors=0  54s
+[otf] 60/149  correct=45  errors=0  72s
+[otf] 70/149  correct=52  errors=0  83s
+[otf] 80/149  correct=59  errors=0  102s
+[otf] 90/149  correct=63  errors=0  124s
+[otf] 100/149  correct=70  errors=0  137s
+[otf] 110/149  correct=78  errors=0  155s
+[otf] 120/149  correct=83  errors=0  170s
+[otf] 130/149  correct=91  errors=0  182s
+[otf] 140/149  correct=98  errors=0  197s
+[otf] 149/149  correct=106  errors=0  211s
+[otf] setup: 969679 tokens, 861.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.32, 'model_tries': 31, 'model_reused_from': None}
+[otf] 0 already answered, 124 to go
+[otf] 10/124  correct=10  errors=0  14s
+[otf] 20/124  correct=17  errors=0  29s
+[otf] 30/124  correct=22  errors=0  46s
+[otf] 40/124  correct=30  errors=0  57s
+[otf] 50/124  correct=37  errors=0  71s
+[otf] 60/124  correct=46  errors=0  81s
+[otf] 70/124  correct=51  errors=0  94s
+[otf] 80/124  correct=58  errors=0  105s
+[otf] 90/124  correct=64  errors=0  116s
+[otf] 100/124  correct=71  errors=0  129s
+[otf] 110/124  correct=76  errors=0  140s
+[otf] 120/124  correct=83  errors=0  154s
+[otf] 124/124  correct=84  errors=0  167s
+[otf] setup: 1208724 tokens, 797.0s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 31, 'model_reused_from': None}
+[otf] 0 already answered, 141 to go
+[otf] 10/141  correct=10  errors=0  12s
+[otf] 20/141  correct=16  errors=0  22s
+[otf] 30/141  correct=24  errors=0  33s
+[otf] 40/141  correct=32  errors=0  50s
+[otf] 50/141  correct=40  errors=0  62s
+[otf] 60/141  correct=48  errors=0  76s
+[otf] 70/141  correct=55  errors=0  90s
+[otf] 80/141  correct=62  errors=0  100s
+[otf] 90/141  correct=67  errors=0  113s
+[otf] 100/141  correct=73  errors=0  124s
+[otf] 110/141  correct=80  errors=0  141s
+[otf] 120/141  correct=88  errors=0  152s
+[otf] 130/141  correct=96  errors=0  164s
+[otf] 140/141  correct=101  errors=0  178s
+[otf] 141/141  correct=102  errors=0  179s
+[otf] setup: 1071217 tokens, 738.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.037, 'model_tries': 25, 'model_reused_from': None}
+[otf] 0 already answered, 147 to go
+[otf] 10/147  correct=5  errors=0  12s
+[otf] 20/147  correct=11  errors=0  21s
+[otf] 30/147  correct=18  errors=0  31s
+[otf] 40/147  correct=22  errors=0  43s
+[otf] 50/147  correct=29  errors=0  57s
+[otf] 60/147  correct=36  errors=0  65s
+[otf] 70/147  correct=42  errors=0  75s
+[otf] 80/147  correct=46  errors=0  90s
+[otf] 90/147  correct=51  errors=0  104s
+[otf] 100/147  correct=57  errors=0  120s
+[otf] 110/147  correct=66  errors=0  130s
+[otf] 120/147  correct=75  errors=0  146s
+[otf] 130/147  correct=79  errors=0  159s
+[otf] 140/147  correct=86  errors=0  167s
+[otf] 147/147  correct=90  errors=0  213s
+[otf] setup: 20813 tokens, 77.2s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 142 to go
+[otf] 10/142  correct=8  errors=0  16s
+[otf] 20/142  correct=12  errors=0  32s
+[otf] 30/142  correct=22  errors=0  43s
+[otf] 40/142  correct=29  errors=0  54s
+[otf] 50/142  correct=37  errors=0  65s
+[otf] 60/142  correct=43  errors=0  78s
+[otf] 70/142  correct=50  errors=0  89s
+[otf] 80/142  correct=57  errors=0  101s
+[otf] 90/142  correct=61  errors=0  118s
+[otf] 100/142  correct=67  errors=0  133s
+[otf] 110/142  correct=75  errors=0  148s
+[otf] 120/142  correct=84  errors=0  161s
+[otf] 130/142  correct=90  errors=0  180s
+[otf] 140/142  correct=98  errors=0  204s
+[otf] 142/142  correct=99  errors=0  208s

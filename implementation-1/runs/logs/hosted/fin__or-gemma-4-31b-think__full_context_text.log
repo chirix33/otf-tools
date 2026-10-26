@@ -1,0 +1,16 @@
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run fin_d[0-9]* --system full_context_text --model or-gemma-4-31b-think --workers 6
+[full_context_text] setup: 0 tokens, 3.6s {'pages': 105, 'doc_tokens_est': 46415, 'kept_tokens_est': 46415, 'kept_pages': 105, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 189568}
+[full_context_text] 0 already answered, 100 to go
+[full_context_text] 10/100  correct=7  errors=0  263s
+[full_context_text] 20/100  correct=14  errors=0  525s
+[full_context_text] 30/100  correct=21  errors=0  1424s
+[full_context_text] 40/100  correct=27  errors=0  1950s
+[full_context_text] 50/100  correct=37  errors=0  2073s
+[full_context_text] error on fin-051-02: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[full_context_text] error on fin-052-01: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[full_context_text] error on fin-053-02: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[full_context_text] 60/100  correct=43  errors=4  2151s
+[full_context_text] 70/100  correct=45  errors=12  2179s
+[full_context_text] 80/100  correct=51  errors=13  2315s
+[full_context_text] 90/100  correct=60  errors=13  2499s

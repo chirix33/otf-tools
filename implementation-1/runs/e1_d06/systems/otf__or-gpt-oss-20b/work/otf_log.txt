@@ -1,0 +1,13 @@
+parsers attempt 1: inputs('Video 10046') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmp_n06ec69\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 178, in inputs
+UnboundLocalError: cannot access local variable 'row' where it is not associated with a value
+parsers attempt 2: 'Video 10046': inputs() reads differently once the outcomes are hidden (cells after time 48.73 not listed in any input's src are hidden). Include in `src` every cell your inputs() reads, also its time and entity cells
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10046': 4 entities (first: [{"id": "obj0", "description": "purple metal cube"}]), recorded_end = 127.0, 4 inputs (first: [{"id": "in_obj0", "time": 16.0, "kind": "arrival", "entities": ["obj0"], "fields": {"x": 0.39, "y": -2.4, "vx": -2.14, "vy": 1.17, "speed": 2.44}}]), 3 outcomes (first: [{"time": 50.0, "kind": "collision", "entities": ["obj0", "obj1"], "value": null}]), params = {}
+- 4 of 4 lines of 'Video 10046: Objects' are not the src of any input or outcome, e.g.: 'Object 0: purple metal cube (color=purple, material=metal, shape=cube)' | 'Object 1: blue rubber cylinder (color=blue, material=rubber, shape=cylinder)' | 'Object 2: brown rubber sphere (color=brown, material=rubber, shape=sphere)' | 'Object 3: red rubber sphere (color=red, material=rubber, shape=sphere)'
+- 2 of 8 lines of 'Video 10046: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 1 (blue rubber cylinder) is in view when the video begins.' | 'Frame 127: The video ends.'
+- 66 of 67 rows of table 'Video 10046: Motion log' are not the src of any input or outcome
+parsers attempt 3: 'Video 10046': with the outcomes hidden, outcomes() still finds them (F1 1.00): the copy still shows them, so some outcome data is being read from cells marked as inputs, or outcomes are read from cells not listed in their src
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10046': 4 entities (first: [{"id": "obj0", "description": "purple metal cube"}]), recorded_end = 127.0, 16 inputs (first: [{"id": "desc_obj0", "time": null, "kind": "description", "entities": ["obj0"], "fields": {}}]), 4 outcomes (first: [{"time": 50.0, "kind": "collision", "entities": ["obj0", "obj1"], "value": null}]), params = {}
+- 63 of 67 rows of table 'Video 10046: Motion log' are not the src of any input or outcome

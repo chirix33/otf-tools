@@ -1,0 +1,136 @@
+
+=== 2026-10-25T15:05:56 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system pageindex --model or-qwen3.6-27b --workers 8
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:root:Error: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error
+WARNING:root:Retrying LLM completion
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-598' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-713' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 247444 tokens, 261.3s {'doc_id': 'pi-51fb2c66a317435eaaea62da64898d93', 'cached_index': False, 'tree_nodes': 45}
+[pageindex] 0 already answered, 60 to go
+[pageindex] error on mfg-2103-03-06: PageIndexAPIError: The model backend failed: litellm.InternalServerError: InternalServerError: OpenAIException - Connection error.
+[pageindex] error on mfg-2103-03-04: PageIndexAPIError: The model backend failed: litellm.InternalServerError: InternalServerError: OpenAIException - Connection error.
+[pageindex] error on mfg-2103-03-05: PageIndexAPIError: The model backend failed: litellm.InternalServerError: InternalServerError: OpenAIException - Connection error.
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-933' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-968' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1034' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1067' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1100' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1166' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1201' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1253' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 10/60  correct=3  errors=6  326s
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1588' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1286' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1679' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1715' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+ERROR:asyncio:Task was destroyed but it is pending!
+task: <Task pending name='Task-1748' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system pageindex --model or-qwen3.6-27b --workers 6
+Task was destroyed but it is pending!
+task: <Task pending name='Task-386' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-453' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-583' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-617' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-730' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-889' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-922' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-955' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-988' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1069' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 247444 tokens, 261.3s {'doc_id': 'pi-51fb2c66a317435eaaea62da64898d93', 'cached_index': True, 'tree_nodes': 45}
+[pageindex] 4 already answered, 56 to go
+[pageindex] error on mfg-2103-03-05: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1148' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-246' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-650' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-827' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1272' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on mfg-2103-03-04: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1669' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1767' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1800' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1850' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1883' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1952' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1985' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2018' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2052' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2203' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2268' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2301' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2334' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2367' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2400' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on mfg-2114-05-02: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2515' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 10/56  correct=1  errors=6  2158s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2433' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2831' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>

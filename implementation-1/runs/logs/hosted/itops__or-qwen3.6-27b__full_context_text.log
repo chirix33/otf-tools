@@ -1,0 +1,18 @@
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system full_context_text --model or-qwen3.6-27b --workers 6
+[full_context_text] setup: 0 tokens, 1.4s {'pages': 48, 'doc_tokens_est': 42675, 'kept_tokens_est': 42675, 'kept_pages': 48, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 100103}
+[full_context_text] 0 already answered, 60 to go
+[full_context_text] 10/60  correct=4  errors=0  579s
+[full_context_text] 20/60  correct=9  errors=0  775s
+[full_context_text] 30/60  correct=14  errors=0  1006s
+[full_context_text] 40/60  correct=16  errors=0  1245s
+[full_context_text] 50/60  correct=21  errors=0  1520s
+[full_context_text] 60/60  correct=25  errors=0  1890s
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 54, 'doc_tokens_est': 49997, 'kept_tokens_est': 49997, 'kept_pages': 54, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 116063}
+[full_context_text] 0 already answered, 60 to go
+[full_context_text] 10/60  correct=5  errors=1  260s
+[full_context_text] error on itops-w14-06: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[full_context_text] error on itops-w14-07: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[full_context_text] error on itops-w14-09: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[full_context_text] 20/60  correct=8  errors=5  328s
+[full_context_text] 30/60  correct=10  errors=5  578s

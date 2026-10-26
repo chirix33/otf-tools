@@ -1,0 +1,6 @@
+parsers attempt 1: entities('Video 10331') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpv8skso1y\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 14, in entities
+AttributeError: 'dict' object has no attribute 'lines'
+parsers attempt 1: passed

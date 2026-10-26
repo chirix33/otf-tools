@@ -1,0 +1,5 @@
+{"time": "2026-10-25T18:09:25", "event": "hosted_start", "phases": ["main", "e2"], "models": ["or-gpt-oss-20b"], "systems": ["pageindex"], "exclude": null, "limits": {"or-gpt-oss-20b": [5, 6], "or-qwen3.6-27b": [6, 8], "or-gemma-4-31b-think": [6, 8]}, "n_jobs": 5, "spend_usd": 155.4967, "pid": 48864}
+{"time": "2026-10-25T18:09:26", "event": "pass_start", "job": "e2__or-gpt-oss-20b__pageindex", "pass_no": 1, "expected": 1067, "answered": 0, "errors": 0}
+{"time": "2026-10-25T18:09:26", "event": "pass_start", "job": "fin__or-gpt-oss-20b__pageindex", "pass_no": 1, "expected": 300, "answered": 95, "errors": 4}
+{"time": "2026-10-25T18:09:26", "event": "pass_start", "job": "itops__or-gpt-oss-20b__pageindex", "pass_no": 1, "expected": 300, "answered": 146, "errors": 2}
+{"time": "2026-10-25T18:09:26", "event": "pass_start", "job": "e1__or-gpt-oss-20b__pageindex", "pass_no": 1, "expected": 2166, "answered": 1049, "errors": 9}

@@ -1,0 +1,40 @@
+parsers attempt 1: 'Cell window 08': bad src: loc 'n0002' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 17': bad src: loc 'n0009' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 27': bad src: loc 'n0016' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 30': bad src: loc 'n0023' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]
+WHAT YOUR FUNCTIONS RETURNED on scope 'Cell window 08': 93 entities (first: [{"id": "M01", "description": "Machine M01"}]), recorded_end = 1200.0, 93 inputs (first: [{"id": "input_machine_M01", "time": 0.0, "kind": "machine_config", "entities": ["M01"], "fields": {"cpu": 6250, "memory": 6244, "fails_at": null, "returns_at": null}}]), 160 outcomes (first: [{"time": 27.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null}]), params = {"window_length": 1200}
+- 8 of 8 rows of table 'Cell window 08: Machines' are not the src of any input or outcome
+- 207 of 207 rows of table 'Cell window 08: Task log' are not the src of any input or outcome
+- 13 of 13 lines of 'Cell window 08: Events' are not the src of any input or outcome, e.g.: 'Time 424: machine M02 failed; tasks T025, T026, T027, T028 stopped and went back to the queue.' | 'Time 424: task T025 restarted on machine M03.' | 'Time 424: task T026 restarted on machine M05.' | 'Time 424: task T027 restarted on machine M05.'
+- 4 of 4 lines of 'Cell window 08: Queue at window end' are not the src of any input or outcome, e.g.: 'State after the events at time 1200.' | 'Tasks running at time 1200 (remaining run time = seconds still to run after time 1200):' | 'Tasks waiting at time 1200, in queue order (each will run its full run time once started):' | 'Machine M02 is down at time 1200; it does not return.'
+- 14 of 14 rows of table 'Cell window 08: Queue at window end: Tasks running at time 1200 (remaining run time = seconds still to run after time 1200)' are not the src of any input or outcome
+- 24 of 24 rows of table 'Cell window 08: Queue at window end: Tasks waiting at time 1200, in queue order (each will run its full run time once started)' are not the src of any input or outcome
+parsers attempt 2: 'Cell window 08': bad src: loc 'n0002' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 17': bad src: loc 'n0009' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 27': bad src: loc 'n0016' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 30': bad src: loc 'n0023' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]
+WHAT YOUR FUNCTIONS RETURNED on scope 'Cell window 08': 93 entities (first: [{"id": "M01", "description": "Machine M01"}]), recorded_end = 1200.0, 93 inputs (first: [{"id": "input_machine_M01", "time": 0.0, "kind": "machine_config", "entities": ["M01"], "fields": {"cpu": 6250, "memory": 6244, "fails_at": null, "returns_at": null}}]), 160 outcomes (first: [{"time": 27.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null}]), params = {"window_length": 1200}
+- 8 of 8 rows of table 'Cell window 08: Machines' are not the src of any input or outcome
+- 207 of 207 rows of table 'Cell window 08: Task log' are not the src of any input or outcome
+- 13 of 13 lines of 'Cell window 08: Events' are not the src of any input or outcome, e.g.: 'Time 424: machine M02 failed; tasks T025, T026, T027, T028 stopped and went back to the queue.' | 'Time 424: task T025 restarted on machine M03.' | 'Time 424: task T026 restarted on machine M05.' | 'Time 424: task T027 restarted on machine M05.'
+- 4 of 4 lines of 'Cell window 08: Queue at window end' are not the src of any input or outcome, e.g.: 'State after the events at time 1200.' | 'Tasks running at time 1200 (remaining run time = seconds still to run after time 1200):' | 'Tasks waiting at time 1200, in queue order (each will run its full run time once started):' | 'Machine M02 is down at time 1200; it does not return.'
+- 14 of 14 rows of table 'Cell window 08: Queue at window end: Tasks running at time 1200 (remaining run time = seconds still to run after time 1200)' are not the src of any input or outcome
+- 24 of 24 rows of table 'Cell window 08: Queue at window end: Tasks waiting at time 1200, in queue order (each will run its full run time once started)' are not the src of any input or outcome
+parsers attempt 3: passed
+explore 1: ok, 3000 chars
+explore 2: ok, 1808 chars
+explore 3: ok, 3000 chars
+simulate attempt 1 (after 3 explore runs): simulate('Cell window 08', start=15.0) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpb0ujynf2\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 338, in simulate
+  File "<string>", line 234, in get_resources
+KeyError: 'memory'
+simulate attempt 2 (after 3 explore runs): simulate('Cell window 08', start=15.0) failed: timeout after 20s
+simulate attempt 3 (after 3 explore runs): simulate('Cell window 08', start=15.0) failed: timeout after 20s
+simulate attempt 4 (after 3 explore runs): simulate('Cell window 08', start=15.0) failed: timeout after 20s
+simulate attempt 5 (after 3 explore runs): simulate('Cell window 08', start=15.0) failed: timeout after 20s
+simulator conversation 1: best F1 0.0
+explore 1: ok, 3000 chars
+explore 2: ok, 2889 chars
+explore 3: ok, 218 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.886 (need 0.4)
+- scope 'Cell window 08' (start 15.0): F1 0.865, 160 hidden outcomes, model produced 122; missed (hidden but not produced): [{"time": 1200.0, "kind": "final_state_running", "entities": ["T039", "M01"], "value": 1674.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T040", "M01"], "value": 1767.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T025", "M03"], "value": 3.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T033", "M03"], "value": 1675.0}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 3.0): F1 0.89, 181 hidden outcomes, model produced 145; missed (hidden but not produced): [{"time": 1200.0, "kind": "final_state_running", "entities": ["T051", "M01"], "value": 108.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T052", "M01"], "value": 158.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T013", "M02"], "value": 4802.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T014", "M02"], "value": 4734.0}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.0): F1 0.879, 218 hidden outcomes, model produced 171; missed (hidden but not produced): [{"time": 1200.0, "kind": "final_state_running", "entities": ["T067", "M01"], "value": 1765.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T079", "M01"], "value": 397.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T093", "M01"], "value": 95.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T072", "M02"], "value": 3716.0}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -6.0): F1 0.909, 289 hidden outcomes, model produced 241; missed (hidden but not produced): [{"time": 1200.0, "kind": "final_state_running", "entities": ["T024", "M01"], "value": 638.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T049", "M01"], "value": 367.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T112", "M01"], "value": 30.0}, {"time": 1200.0, "kind": "final_state_running", "entities": ["T113", "M02"], "value": 37.0}]; extra (produced but not hidden): []
+simulator conversation 2: best F1 0.886

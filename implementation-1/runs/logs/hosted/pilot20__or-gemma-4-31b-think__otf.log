@@ -1,0 +1,149 @@
+
+=== 2026-10-25T15:05:30 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 8
+Traceback (most recent call last):
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 105, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 93, in main
+    run_system(system, d, a.workers, a.limit, a.types, a.per_type)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\runner.py", line 83, in run_system
+    setup = system.setup(doc)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 88, in setup
+    info = self.engine.prepare(doc.pdf_path, cached, lib_dir)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\engine.py", line 61, in prepare
+    self.model = cached_model or generate_model(self.llm, self.nav, self.map_path, log=self.log,
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                library=library.load(library_dir, self.nav))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\toolgen.py", line 407, in generate_model
+    code = extract_code(llm([system, {"role": "user", "content": prompts.PARSERS_USER.format(
+                        ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        context=context, feedback=feedback)}]))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 53, in _llm
+    resp = self.client.chat.completions.create(model=self.spec.served_name, messages=messages,
+                                               **chat_sampling(self.spec, self.reasoning_effort))
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1296, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1148, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+
+=== 2026-10-25T15:07:32 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 8
+Traceback (most recent call last):
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 105, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 93, in main
+    run_system(system, d, a.workers, a.limit, a.types, a.per_type)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\runner.py", line 83, in run_system
+    setup = system.setup(doc)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 88, in setup
+    info = self.engine.prepare(doc.pdf_path, cached, lib_dir)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\engine.py", line 61, in prepare
+    self.model = cached_model or generate_model(self.llm, self.nav, self.map_path, log=self.log,
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                library=library.load(library_dir, self.nav))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\toolgen.py", line 407, in generate_model
+    code = extract_code(llm([system, {"role": "user", "content": prompts.PARSERS_USER.format(
+                        ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        context=context, feedback=feedback)}]))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 53, in _llm
+    resp = self.client.chat.completions.create(model=self.spec.served_name, messages=messages,
+                                               **chat_sampling(self.spec, self.reasoning_effort))
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1296, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1148, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+
+=== 2026-10-25T15:08:00 pass 3: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 8
+
+=== 2026-10-25T15:11:28 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 4
+
+=== 2026-10-25T15:18:28 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 4
+[otf] setup: 22020 tokens, 202.2s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 308 to go
+[otf] 10/308  correct=10  errors=0  43s
+[otf] 20/308  correct=20  errors=0  113s
+[otf] 30/308  correct=29  errors=0  155s
+[otf] 40/308  correct=38  errors=0  213s
+[otf] 50/308  correct=47  errors=0  252s
+[otf] 60/308  correct=57  errors=0  292s
+[otf] 70/308  correct=67  errors=0  322s
+[otf] 80/308  correct=75  errors=0  389s
+[otf] 90/308  correct=84  errors=0  467s
+[otf] 100/308  correct=92  errors=0  648s
+[otf] 110/308  correct=101  errors=0  1044s
+[otf] 120/308  correct=111  errors=0  2313s
+[otf] 130/308  correct=121  errors=0  2409s
+[otf] 140/308  correct=130  errors=0  2488s
+[otf] 150/308  correct=140  errors=0  2554s
+[otf] error on 12933-12: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] 160/308  correct=147  errors=1  4434s
+[otf] error on 13155-0: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] error on 13317-0: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] 170/308  correct=152  errors=6  4740s
+[otf] 180/308  correct=152  errors=16  4748s
+[otf] 190/308  correct=152  errors=26  4749s
+[otf] 200/308  correct=152  errors=36  4751s
+[otf] 210/308  correct=152  errors=46  4752s
+[otf] 220/308  correct=152  errors=56  4753s
+
+=== 2026-10-25T22:33:43 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 4
+[otf] setup: 22020 tokens, 202.2s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 0 already answered, 308 to go
+[otf] 10/308  correct=10  errors=0  40s
+[otf] 20/308  correct=20  errors=0  211s
+[otf] 30/308  correct=30  errors=0  248s
+[otf] 40/308  correct=39  errors=0  342s
+[otf] 50/308  correct=48  errors=0  420s
+[otf] 60/308  correct=58  errors=0  496s
+[otf] 70/308  correct=67  errors=0  611s
+[otf] 80/308  correct=76  errors=0  660s
+[otf] 90/308  correct=84  errors=0  724s
+[otf] 100/308  correct=93  errors=0  791s
+[otf] 110/308  correct=101  errors=0  915s
+[otf] 120/308  correct=111  errors=0  982s
+[otf] 130/308  correct=120  errors=0  1091s
+[otf] 140/308  correct=130  errors=0  1174s
+[otf] 150/308  correct=140  errors=0  1249s
+[otf] 160/308  correct=149  errors=0  1331s
+[otf] 170/308  correct=157  errors=0  1396s
+[otf] 180/308  correct=166  errors=0  1444s
+[otf] 190/308  correct=175  errors=0  1529s
+[otf] 200/308  correct=185  errors=0  1583s
+[otf] 210/308  correct=195  errors=0  1640s
+[otf] 220/308  correct=203  errors=0  1696s
+
+=== 2026-10-26T11:10:08 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-gemma-4-31b-think --workers 4
