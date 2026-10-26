@@ -252,8 +252,8 @@ lines. Titles are then the same in every period (e.g. "...: Order book: Orders r
 days # to #"). G1 re-run: every CLEVRER map (pilot20, e1_d01-d15, e2_d01) byte-identical; finance maps identical;
 toy tests and guard pass. Only manufacturing and IT-operations maps change. Consequence: all OTF runs on those two
 domains (main, dev documents and their tool libraries) are redone; the earlier hosted ones were moved to
-`runs/hosted_discarded_20261025_fix10/`. The baselines are unaffected. Collaborators' ReAct-C and ReCode share the
-map, so their manufacturing / IT-operations runs need the new map too.
+`runs/hosted_discarded_20261025_fix10/`. The baselines are unaffected. Collaborators' ReAct-R, ReAct-C and ReCode read documents through
+the map (list_sections / read_section), so their manufacturing / IT-operations runs need the new map too (GraphRAG does not).
 
 **Finding 1 (2026-10-25 ~17:50; resolved by OTF v3.4 below):** sanity check on finance, gpt-oss.
 Overall OTF 64.7% vs full context 65.3%, but counterfactual 54.0% vs 63.3%. All of the loss is on fin_d02, the one
@@ -335,6 +335,23 @@ all runs hosted), reboot at 07:56, logon at 11:07; runs resumed at 11:10 (~12 ho
 dropped (`repair_predictions.py`), re-asked. OTF generation in progress (Qwen/Gemma documents) restarted from scratch
 (not resumable; the interrupted attempts' tokens are not in setup cost). `scripts/resume_after_reboot.ps1` now restarts
 the hosted runners at logon (unless `runs/logs/HOSTED_RUNS_HALTED` exists or a runner is running).
+
+**gpt-oss complete (2026-10-26 ~12:15; OTF v3.4.2; question accuracy %, overall and cf / expl / pred / desc;
+reports `runs/<split>_hosted_gptoss_report.md`):**
+
+| Split | OTF | Full context | RAG | PageIndex |
+|---|---|---|---|---|
+| E1 | 67.8 (43.7 / 48.5 / 57.6 / 96.6) | 61.2 (42.6 / 37.0 / 26.7 / 95.3) | 49.1 (34.3 / 40.2 / 30.4 / 68.1) | 53.2 (30.1 / 33.1 / 12.4 / 89.3) |
+| E2 | 45.7 (43.3 / 48.3) | 13.2 (13.9 / 12.5) | 17.2 (11.4 / 23.4) | 24.2 (24.7 / 23.6) |
+| Manufacturing | 60.0 (69.3 / 44.0 / 36.0 / 90.7) | 54.3 (46.7 / 56.0 / 30.7 / 84.0) | 25.3 (38.7 / 21.3 / 8.0 / 33.3) | 46.0 (42.7 / 34.7 / 29.3 / 77.3) |
+| IT operations | 27.7 (5.3 / 4.0 / 25.3 / 76.0) | 18.3 (4.0 / 5.3 / 24.0 / 40.0) | 16.7 (5.3 / 8.0 / 21.3 / 32.0) | **32.0** (8.0 / 4.0 / 33.3 / 82.7) |
+| Finance | 68.7 (66.7 / - / - / 70.7) | 65.3 (63.3 / - / - / 67.3) | 64.0 (65.3 / - / - / 62.7) | 52.3 (49.3 / - / - / 55.3) |
+
+E1 ablations (all fall back to reading for gpt-oss, see above): oracle 76.6, reading-only 67.1, no-replay 67.0,
+no-library 65.7. IT operations: PageIndex beats OTF (reported as measured, sec. 4 reporting rule); gpt-oss passed
+generation on 2 of 5 IT-operations documents. Spend: $186 at the end of 2026-10-25 work (gpt-oss nearly all, Qwen /
+Gemma dev checks); $368.5 at 2026-10-26 12:10 with Qwen and Gemma running (~$150 per hour while Qwen's full-context and
+PageIndex runs are in progress).
 
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
