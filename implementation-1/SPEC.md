@@ -297,6 +297,14 @@ Qwen oracle 20 / 216 / 20 / 14 = 270 (271); Qwen generated model 18 / 218 / 20 /
 within run-to-run noise. Two intermediate variants were tried on pilot20 and rejected (pure paired runs without
 alignment: explanatory 15/36; paired with time alignment but the record in every scope: 20/36).
 
+**OTF v3.4.1 (2026-10-25 ~19:45, bug in v3.4's own code; tag `otf-v3.4.1`).** The paired what-if compared the run
+without and with the change using the record's value tolerance (`value_tols`, coarse: hundreds or thousands of units
+for stock), so a real change smaller than that (removing a 55-unit order) counted as "no change" and the recorded value
+stayed; manufacturing counterfactual fell from 72.0% (v3.3 after fix 10) to 50.7% (gpt-oss). Fix: two runs of the same
+model are compared exactly (records still pair within the time tolerance), and a numeric change is applied as recorded
+value + (with-change - without-change). CLEVRER outcomes carry no values, so pilot20 / E1 / E2 are unaffected;
+manufacturing, IT operations and finance OTF answers are redone. Toy test extended.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call

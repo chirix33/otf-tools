@@ -127,10 +127,11 @@ def apply_delta(recorded: list[dict], base_run: list[dict], new_run: list[dict],
     model run from the same point (`start`) without and with the change. The base run is first aligned with the
     recorded outcomes after `start` (same kind and entities, nearest time within `align_tol`), so a recorded outcome
     the model reproduces a little early or late is still recognised; what then disappears or changes value between
-    the two runs is applied to the aligned recorded outcomes, and what newly appears is added, so the model's own
+    the two runs (exactly) is applied to the aligned recorded outcomes (a number as recorded value + the change), and what newly appears is added, so the model's own
     errors (present in both runs) cancel out. A recorded outcome the base run does not reproduce at all is judged by
     the changed run alone, as before v3.4. `overrides` (indexes into `recorded`) are applied first."""
-    d = diff(base_run, new_run, tol_t, vtol)
+    # same model, two runs: records pair up within the time tolerance, but any change of value counts
+    d = diff(base_run, new_run, tol_t, {}, 0.0)
     out = apply_overrides(recorded, overrides or []) if overrides else copy.deepcopy(recorded)
     later = [o for o in out if start is None or rtime(o) is None or rtime(o) > start]
     aligned, _, unaligned = pairs(base_run, later, tol_t if align_tol is None else align_tol, None)
@@ -140,9 +141,10 @@ def apply_delta(recorded: list[dict], base_run: list[dict], new_run: list[dict],
     # (as before v3.4), i.e. they disappear unless the changed run has them
     _, lost, _ = pairs(unaligned, new_run, tol_t, vtol)
     drop |= {id(o) for o in lost}
-    for b, a in d["changed"]:
+    for b, a in d["changed"]:                                   # recorded value + the model's change
         if id(b) in twin:
-            twin[id(b)]["value"] = a.get("value")
+            o, rv, bv, av = twin[id(b)], num(twin[id(b)].get("value")), num(b.get("value")), num(a.get("value"))
+            o["value"] = round(rv + (av - bv), 6) if None not in (rv, bv, av) else a.get("value")
     return [o for o in out if id(o) not in drop] + copy.deepcopy(d["new"])
 
 

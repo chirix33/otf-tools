@@ -271,6 +271,12 @@ def test_paired_delta_cancels_model_error():
     assert kinds[(9.0, "stock", ("D",))] == 500.0                                    # model error cancels out
     assert (7.0, "hit", ("B", "C")) not in kinds                                     # never reproduced, not in new run
     assert kinds[(9.0, "level", ("C",))] == 12.0 and (8.0, "hit", ("A", "C")) in kinds
+    # a small change is still a change, applied to the recorded value (the model's level is off by 100)
+    rec2 = [{"time": 9.0, "kind": "stock", "entities": ["E"], "value": 75.0}]
+    out2 = records.apply_delta(rec2, [{"time": 9.0, "kind": "stock", "entities": ["E"], "value": 175.0}],
+                               [{"time": 9.0, "kind": "stock", "entities": ["E"], "value": 230.0}], 0.5,
+                               {"stock": 1000.0}, None, 4.0, 10.0)
+    assert out2[0]["value"] == 130.0
 
 
 def test_timeless_check():
