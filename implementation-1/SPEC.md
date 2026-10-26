@@ -305,6 +305,16 @@ model are compared exactly (records still pair within the time tolerance), and a
 value + (with-change - without-change). CLEVRER outcomes carry no values, so pilot20 / E1 / E2 are unaffected;
 manufacturing, IT operations and finance OTF answers are redone. Toy test extended.
 
+**OTF v3.4.2 (2026-10-25 ~20:05; tag `otf-v3.4.2`).** (a) The counterfactual DIFFERENCES and the choice checks
+still compared the what-if with the record at the record's value tolerance; since the paired trace equals the record
+except where the change acts, they now compare exactly (the no-replay ablation keeps the tolerance). (b) In a timeless
+scope, a what-if that alters none of the figures the model computes now counts as a failed tool run (reading
+fallback): the tool said "no differences", which the answer step read as "nothing changes", while the question needs
+arithmetic on the changed figure (gpt-oss fin_d02: 0-1 of ~30 tool-answered counterfactuals in v3.3, v3.4 and
+v3.4.1; reading answers on the same document ~55-75%). In timed scopes "no differences" stays an answer. CLEVRER
+outcomes carry no values and are timed, so pilot20 / E1 / E2 are unaffected. Note: finance accuracy varies by +-5
+questions per document between identical runs (fin_d01, reading only: 39, 37, 32 of 50).
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call

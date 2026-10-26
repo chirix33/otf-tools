@@ -148,6 +148,12 @@ class OTFEngine:
     def _tol(self, r: dict) -> float:
         return TIME_TOL_FRAC * r["period"]
 
+    def _value_tols(self, r: dict) -> tuple[dict, float]:
+        """(per-kind tolerance, relative tolerance) for comparing a what-if with the record. Paired what-ifs
+        (v3.4) leave recorded values untouched except where the change acts, so any difference is real: exact.
+        The unpaired no-replay ablation mixes in the model's own errors, so it keeps the record's tolerance."""
+        return (records.value_tols(r["outcomes"]), 0.05) if self.ablation == "no_replay" else ({}, 0.0)
+
     def _recorded(self, r: dict, focus_ids: set) -> str:
         names = self._names(r)
         ent_txt = "\n".join(f"id {e['id']}: {e['description']}" for e in r["entities"])
@@ -233,7 +239,10 @@ class OTFEngine:
         if qtype == "counterfactual":
             patches = self._patches(r, question)
             w = self._what_if(scope, r, patches)
-            d = records.diff(w["baseline"], w["trace"], self._tol(r), records.value_tols(r["outcomes"]))
+            d = records.diff(w["baseline"], w["trace"], self._tol(r), *self._value_tols(r))
+            if w["timeless"] and not (d["gone"] or d["new"] or d["changed"]):
+                # no figure the model computes depends on the change: the tool has nothing to add (v3.4.2)
+                raise ToolError("the change alters no figure the model of the document computes")
             change = json.dumps(patches)
             if w["timeless"]:
                 how = "the figures were recomputed by the model of the document with the changed inputs"
@@ -307,7 +316,7 @@ class OTFEngine:
             if not same:
                 res = "the outcome no longer happens"
             elif records.num(target.get("value")) is not None and \
-                    not records._value_close(target, same[0][1], records.value_tols(r["outcomes"])):
+                    not records._value_close(target, same[0][1], *self._value_tols(r)):
                 res = f"the outcome changes: value {target.get('value')} becomes {same[0][1].get('value')}"
             else:
                 res = "the outcome still happens"
