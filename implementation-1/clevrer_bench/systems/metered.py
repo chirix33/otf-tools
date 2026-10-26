@@ -222,8 +222,10 @@ class MeteredChat:
                 if is_out_of_credits(e):
                     raise OutOfCredits(str(e)[:300]) from e
                 raise
-            if not resp.choices:                  # hosted endpoints may return 200 with only an error body
-                err = RuntimeError(f"no choices in response: {str(getattr(resp, 'error', None) or resp)[:300]}")
+            if not resp.choices or resp.choices[0].finish_reason == "error":
+                # hosted endpoints may return 200 with only an error body, or end a generation with finish_reason
+                # "error" when the provider failed mid-way: infrastructure, retried like a 5xx
+                err = RuntimeError(f"provider error: {str(getattr(resp, 'error', None) or resp)[:300]}")
                 record_failure(err, source, attempt)
                 if attempt == INFRA_RETRIES:
                     raise InfraError(str(err))
@@ -261,6 +263,10 @@ def install_litellm_meter() -> None:
                 if is_out_of_credits(e):
                     raise OutOfCredits(str(e)[:300]) from e
                 raise
+            if _provider_failed(r):
+                e = ProviderFailed("provider ended the generation with finish_reason 'error'")
+                record_failure(e, "litellm", 0)
+                raise e
             _record_litellm(r, time.time() - t)
             return r
 
@@ -282,11 +288,24 @@ def install_litellm_meter() -> None:
                 if is_out_of_credits(e):
                     raise OutOfCredits(str(e)[:300]) from e
                 raise
+            if _provider_failed(r):
+                e = ProviderFailed("provider ended the generation with finish_reason 'error'")
+                record_failure(e, "litellm", 0)
+                raise e                          # GraphRAG retries indexing calls; an answer is retried later
             _record_litellm(r, time.time() - t)
             return _as_stream(r) if stream else r
 
         litellm.completion, litellm.acompletion = completion, acompletion
         _litellm_installed = True
+
+
+class ProviderFailed(RuntimeError):
+    """A hosted provider ended the generation with finish_reason 'error' (infrastructure, not a model outcome)."""
+
+
+def _provider_failed(resp) -> bool:
+    ch = getattr(resp, "choices", None)
+    return bool(ch) and getattr(ch[0], "finish_reason", None) == "error"
 
 
 async def _as_stream(resp):

@@ -145,7 +145,10 @@ class ReActSystem(TierBSystem):
                     except ValueError as e:
                         obs = f"error: tool arguments are not valid JSON ({e})"
                         args = None
-                    if args is not None and c.function.name == "finish":
+                    if args is not None and c.function.name == "finish" and "answer_json" not in args:
+                        # schema violation: say so and let the model call again (within the call cap)
+                        obs = "error: finish requires the argument answer_json (the answer object as a JSON string)"
+                    elif args is not None and c.function.name == "finish":
                         a = args.get("answer_json", "")
                         final = a if isinstance(a, str) else json.dumps(a)
                         outcome = "finish"

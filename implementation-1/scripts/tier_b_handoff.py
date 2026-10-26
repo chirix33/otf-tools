@@ -351,6 +351,16 @@ def analysis(runs: Path, found: dict) -> str:
         cav.append("Gemma 4 31B was dropped from Tier B on 2026-10-26: its bf16 OpenRouter providers were "
                    "rate-limited and the remaining time did not fit a full run. gpt-oss-20b (the Tier A model) is the "
                    "second model instead.")
+    if any("gpt-oss" in m for m, _ in plan):
+        cav.append("Two robustness fixes were added on 2026-10-26, before gpt-oss-20b's development stage (its first "
+                   "attempt was discarded after a few minutes; kept in `_discarded_runs/`): (1) a reply that OpenRouter "
+                   "ends with finish_reason \"error\" (a provider failure mid-generation) is retried as an "
+                   "infrastructure error instead of being scored; Qwen's runs had no such replies. (2) In ReAct, calling "
+                   "`finish` without its `answer_json` argument returns an error to the model, which can call again "
+                   "within the 12-call cap; before, it ended the question with an empty answer. Qwen did this once "
+                   "(ReAct-C, e1_d03, question 13778-6, scored wrong), so Qwen's ReAct-C score could be at most one "
+                   "question (0.14 points) higher under the new rule. Empty replies (no text, no tool call) remain a "
+                   "model outcome for both models, as in the Tier A baselines.")
     n_fix = sum(1 for p in runs.glob("*/systems/graphrag*/*.jsonl") for r in jlines(p) if r.get("usage_corrected"))
     if n_fix:
         cav.append(f"GraphRAG token accounting: {n_fix} rows (answers and ledger entries, mostly pilot20) recorded "

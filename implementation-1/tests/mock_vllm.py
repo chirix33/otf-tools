@@ -8,7 +8,9 @@ report JSON, local-search answers) and plain answers. Usage includes cached/reas
 Behaviour switches (env, for failure tests): MOCK_NEVER_FINISH=1 (agent never calls finish), MOCK_FINISH_AT=N (finish
 on call N), MOCK_RECODE=deep|wide|os|loop (ReCode expansions that recurse, branch, import os, loop), MOCK_BAD_ARGS=1
 (malformed tool arguments first), MOCK_NO_USAGE=1 (omit usage), MOCK_FAIL_FIRST=N (first N requests -> HTTP 500),
-MOCK_EXTRACT_FAIL=1 (GraphRAG extraction returns no records), MOCK_LENGTH=1 (finish_reason=length, no JSON).
+MOCK_EXTRACT_FAIL=1 (GraphRAG extraction returns no records), MOCK_LENGTH=1 (finish_reason=length, no JSON),
+MOCK_FINISH_WRONG_KEY=1 (finish called without answer_json once), MOCK_PROVIDER_ERROR_FIRST=N (first N requests end
+with finish_reason "error", as OpenRouter reports a provider failure).
 """
 from __future__ import annotations
 
@@ -71,6 +73,8 @@ def react_reply(body) -> dict:
     if step == "python":
         return {"tool_calls": [{"name": "python", "arguments": json.dumps(
             {"code": "print(len(doc['nodes']), node_by_title(doc, doc['nodes'][1]['title'])['node_id'])"})}]}
+    if os.environ.get("MOCK_FINISH_WRONG_KEY") and "requires the argument answer_json" not in last_tool:
+        return {"tool_calls": [{"name": "finish", "arguments": json.dumps(json.loads(_answer_for(q)))}]}
     return {"tool_calls": [{"name": "finish", "arguments": json.dumps({"answer_json": _answer_for(q)})}]}
 
 
@@ -211,6 +215,8 @@ class H(BaseHTTPRequestHandler):
             msg["content"] = graphrag_reply(body, prompt)
         else:
             msg["content"] = "Answer: " + _answer_for(prompt)
+        if n <= int(os.environ.get("MOCK_PROVIDER_ERROR_FIRST", "0")):   # 200 with finish_reason "error"
+            msg, finish = {"role": "assistant", "content": None}, "error"
         out = {"id": f"cmpl-{n}", "object": "chat.completion", "created": int(time.time()),
                "model": STATE["served"], "choices": [{"index": 0, "message": msg, "finish_reason": finish}]}
         if not os.environ.get("MOCK_NO_USAGE"):

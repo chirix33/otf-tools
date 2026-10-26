@@ -191,6 +191,13 @@ def test_react_outcomes(runs, env, server):
     assert "not valid JSON" in p.trace["steps"][0]["observations"][0]["content"] and p.trace["outcome"] == "finish"
     env.delenv("MOCK_BAD_ARGS")
 
+    env.setenv("MOCK_FINISH_WRONG_KEY", "1")                    # finish without answer_json -> error, call again
+    p, _ = _ask(s, runs)
+    obs = [o["content"] for st in p.trace["steps"] for o in st.get("observations", [])]
+    assert any("requires the argument answer_json" in o for o in obs) and p.trace["outcome"] == "finish"
+    assert json.loads(p.raw_text)
+    env.delenv("MOCK_FINISH_WRONG_KEY")
+
     env.setenv("MOCK_LENGTH", "1")                              # truncation: completed, scored as parse error
     p, it = _ask(s, runs)
     assert p.trace["finish_reason"] == "length"
@@ -213,6 +220,14 @@ def test_infra_retries_are_ledgered(runs, env):
     p, it = _ask(s, runs)
     rows = [json.loads(l) for l in s.ledger.path.read_text().splitlines() if json.loads(l).get("uid") == it.uid]
     assert [r["status"] for r in rows[:3]] == ["failed", "failed", "ok"] and p.trace["outcome"] == "finish"
+    mock_vllm.STATE["requests"] = 0
+    env.setenv("MOCK_FAIL_FIRST", "0")
+    env.setenv("MOCK_PROVIDER_ERROR_FIRST", "2")                 # finish_reason "error" is infrastructure: retried
+    p, it = _ask(s, runs)
+    rows = [json.loads(l) for l in s.ledger.path.read_text().splitlines() if json.loads(l).get("uid") == it.uid]
+    assert [r["status"] for r in rows[-len(p.trace["steps"]) - 2:][:3]] == ["failed", "failed", "ok"]
+    assert all(st["finish_reason"] != "error" for st in p.trace["steps"]) and p.trace["outcome"] == "finish"
+    env.delenv("MOCK_PROVIDER_ERROR_FIRST")
     env.setenv("MOCK_FAIL_FIRST", "1000000")
     with pytest.raises(metered.InfraError):
         _ask(s, runs)
