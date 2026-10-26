@@ -36,7 +36,8 @@ HALT = LOGS / "HOSTED_RUNS_HALTED"
 MODELS = ("or-gpt-oss-20b", "or-qwen3.6-27b", "or-gemma-4-31b-think")
 MAIN_SPLITS = ("e1", "mfg", "itops", "fin")
 MAIN_SYSTEMS = ("otf", "full_context_text", "rag", "pageindex")
-PI_SHARDS = {"e2_d01": 6}           # PageIndex processes per document (one question at a time each)
+# PageIndex processes per document (one question at a time each); Qwen's agent is slow (2026-10-26)
+PI_SHARDS = {"e2_d01": 12, **{f"{s}_d0{i}": 3 for s in ("mfg", "itops") for i in range(1, 6)}}
 _lock = threading.Lock()
 
 
