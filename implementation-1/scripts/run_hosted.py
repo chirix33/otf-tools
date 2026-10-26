@@ -36,6 +36,7 @@ HALT = LOGS / "HOSTED_RUNS_HALTED"
 MODELS = ("or-gpt-oss-20b", "or-qwen3.6-27b", "or-gemma-4-31b-think")
 MAIN_SPLITS = ("e1", "mfg", "itops", "fin")
 MAIN_SYSTEMS = ("otf", "full_context_text", "rag", "pageindex")
+PI_SHARDS = {"e2_d01": 6}           # PageIndex processes per document (one question at a time each)
 _lock = threading.Lock()
 
 
@@ -51,12 +52,17 @@ class Job:
         self.copy_models_from = copy_models_from     # folder whose cached process models are copied in first
 
     @property
+    def shard(self):
+        return self.args[self.args.index("--shard") + 1] if "--shard" in self.args else None
+
+    @property
     def key(self):
-        return f"{self.pattern}|{self.folder}|{self.model}"
+        return f"{self.pattern}|{self.folder}|{self.shard or ''}|{self.model}"
 
     @property
     def name(self):
-        return f"{self.pattern.replace('_d[0-9]*', '').replace('*', '')}__{self.model}__{self.folder}"
+        base = f"{self.pattern.replace('_d[0-9]*', '').replace('*', '')}__{self.model}__{self.folder}"
+        return base + (f"__shard{self.shard.replace('/', 'of')}" if self.shard else "")
 
 
 def plan(phases: list[str]) -> list[Job]:
@@ -89,8 +95,12 @@ def plan(phases: list[str]) -> list[Job]:
         if j.system != "pageindex":
             out.append(j)
             continue
-        out += [Job(j.phase, j.split, j.system, j.model, j.args, j.folder, j.limit, pattern=d.name)
-                for d in sorted((ROOT / "runs").glob(j.pattern)) if d.is_dir()]
+        for d in sorted((ROOT / "runs").glob(j.pattern)):
+            if not d.is_dir():
+                continue
+            n = PI_SHARDS.get(d.name, 1)        # a large document is also split across processes by question
+            out += [Job(j.phase, j.split, j.system, j.model, j.args + (["--shard", f"{k}/{n}"] if n > 1 else []),
+                        j.folder, j.limit, pattern=d.name) for k in range(n)]
     return out
 
 
@@ -144,6 +154,9 @@ def progress(job: Job) -> dict:
         uids = [json.loads(l)["uid"] for l in (d / "items.jsonl").read_text().splitlines()]
         if job.limit:
             uids = uids[:job.limit]
+        if job.shard:
+            k, n = (int(x) for x in job.shard.split("/"))
+            uids = [u for i, u in enumerate(uids) if i % n == k]
         uids = set(uids)
         expected += len(uids)
         pred = d / "systems" / f"{job.folder}__{job.model}" / "predictions.jsonl"
@@ -328,6 +341,11 @@ def main() -> None:
             if busy >= limits[job.model][0]:
                 continue
             if any(owns(job, c) for c in elsewhere):
+                continue
+            # shards 1..n-1 wait until shard 0 has built and cached the document's PageIndex index
+            if job.shard and not job.shard.startswith("0/") and not (
+                    ROOT / "runs" / job.pattern / "systems" / f"{job.folder}__{job.model}" / "work" /
+                    "pageindex_index.json").exists():
                 continue
             if job.after and (job.after not in finished if job.after in keys
                               else not done(Job("main", "e1", "otf", job.model))):
