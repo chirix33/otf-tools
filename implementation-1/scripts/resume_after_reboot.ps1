@@ -43,7 +43,7 @@ if (Test-Path (Join-Path $Root "runs\logs\HOSTED_RUNS_HALTED")) {
         -RedirectStandardOutput (Join-Path $Root "runs\logs\hosted__runner_resume_pi_$stamp.out") `
         -RedirectStandardError (Join-Path $Root "runs\logs\hosted__runner_resume_pi_$stamp.err") -ArgumentList @(
         "-u", "scripts\run_hosted.py", "--phase", "main", "e2", "--systems", "pageindex",
-        "--model-limits", "or-gpt-oss-20b=6,1", "or-qwen3.6-27b=50,1", "or-gemma-4-31b-think=12,1")
+        "--model-limits", "or-gpt-oss-20b=6,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=8,1")
     Write-Log "logon: hosted runners started (main + PageIndex)"
 }
 
