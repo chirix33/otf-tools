@@ -308,8 +308,9 @@ manufacturing, IT operations and finance OTF answers are redone. Toy test extend
 **OTF v3.4.2 (2026-10-25 ~20:05; tag `otf-v3.4.2`).** (a) The counterfactual DIFFERENCES and the choice checks
 still compared the what-if with the record at the record's value tolerance; since the paired trace equals the record
 except where the change acts, they now compare exactly (the no-replay ablation keeps the tolerance). (b) In a timeless
-scope, a what-if that alters none of the figures the model computes now counts as a failed tool run (reading
-fallback): the tool said "no differences", which the answer step read as "nothing changes", while the question needs
+scope, or one where the model reads no outcomes at all (both models treat report years as a time axis, so finance
+scopes are often "timed" with zero outcomes), a what-if that alters nothing the model computes now counts as a failed
+tool run (reading fallback): the tool said "no differences", which the answer step read as "nothing changes", while the question needs
 arithmetic on the changed figure (gpt-oss fin_d02: 0-1 of ~30 tool-answered counterfactuals in v3.3, v3.4 and
 v3.4.1; reading answers on the same document ~55-75%). In timed scopes "no differences" stays an answer. CLEVRER
 outcomes carry no values and are timed, so pilot20 / E1 / E2 are unaffected. Note: finance accuracy varies by +-5

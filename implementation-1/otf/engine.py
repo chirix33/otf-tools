@@ -240,9 +240,10 @@ class OTFEngine:
             patches = self._patches(r, question)
             w = self._what_if(scope, r, patches)
             d = records.diff(w["baseline"], w["trace"], self._tol(r), *self._value_tols(r))
-            if w["timeless"] and not (d["gone"] or d["new"] or d["changed"]):
-                # no figure the model computes depends on the change: the tool has nothing to add (v3.4.2)
-                raise ToolError("the change alters no figure the model of the document computes")
+            if (w["timeless"] or not r["outcomes"]) and not (d["gone"] or d["new"] or d["changed"]):
+                # nothing the model computes depends on the change (a timeless scope, or one where it reads no
+                # outcomes at all): the tool has nothing to add, so the question is read instead (v3.4.2)
+                raise ToolError("the change alters nothing the model of the document computes")
             change = json.dumps(patches)
             if w["timeless"]:
                 how = "the figures were recomputed by the model of the document with the changed inputs"
