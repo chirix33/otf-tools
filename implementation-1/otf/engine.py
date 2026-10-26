@@ -340,10 +340,10 @@ class OTFEngine:
         trace["used_tool"] = used_tool
         trace["fallback"] = qtype != "descriptive" and not used_tool
         guide = prompts.ANSWER[qtype] if used_tool or qtype == "descriptive" else prompts.ANSWER["descriptive"]
-        if used_tool and self.ablation != "tool_only" and self._records(trace["scope"])["end"] is None:
-            # v3.4: in a timeless scope the figures are inputs, which the tool result does not list, so the scope's
-            # own sections come with it (unchanged figures stay visible). Timed scopes list their recorded outcomes
-            # already; there the extra sections cost explanatory accuracy on pilot20 (20 vs 25 of 36)
+        if used_tool and self.ablation != "tool_only":
+            # v3.4.3: the scope's own sections always come with the tool result, so the answer step sees at least
+            # what the reading fallback sees (unchanged figures, conditions a what-if cannot take away). pilot20:
+            # Qwen generated model explanatory 25 vs 20 of 36, gpt-oss oracle 20 vs 25; manufacturing (Qwen) needed it
             guide = f"{prompts.RECORD_AND_TOOL}\n\n{guide}"
             evidence = (f"THE DOCUMENT'S SECTIONS FOR THIS SCOPE:\n{self._scope_text(trace['scope'])}\n\n"
                         f"TOOL RESULT:\n{evidence}")

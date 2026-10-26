@@ -353,6 +353,17 @@ generation on 2 of 5 IT-operations documents. Spend: $186 at the end of 2026-10-
 Gemma dev checks); $368.5 at 2026-10-26 12:10 with Qwen and Gemma running (~$150 per hour while Qwen's full-context and
 PageIndex runs are in progress).
 
+**OTF v3.4.3 (2026-10-26 ~13:45; tag `otf-v3.4.3`).** Triggered by the sanity check on Qwen manufacturing (all 5
+documents passed generation, F1 0.86-0.99, yet OTF 61.3% vs full context 79.0%; explanatory 21.3 vs 64.0): the choice
+checks cannot take away conditions such as "older backorders were served first" ("not a cause that can be taken
+away"), and the answer step, seeing only the tool result, answered "not responsible". Change: the scope's own sections
+now come with every tool result (before: timeless scopes only), so the answer step always sees at least what the
+reading fallback sees, and the prompt says to decide from the sections what the tool cannot check. pilot20 (dev, Qwen
+generated model, cf / expl / pred): 17 / 25 / 14 vs 18 / 20 / 14 without; the gpt-oss oracle had shown 20 vs 25 on
+explanatory in the earlier variant, so the dev evidence is neutral overall. `ablation=tool_only` keeps the tool result
+alone. Only answers that used a tool change: those rows were set aside (`predictions_v342_tool.jsonl`) and re-asked
+for every model; gpt-oss E1 (no tool use) is unaffected.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call

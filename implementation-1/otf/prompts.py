@@ -199,7 +199,9 @@ outcome)."""
 
 RECORD_AND_TOOL = ("Below are the document's own sections for this scope, then a TOOL RESULT computed with a model "
                    "of the process. Take recorded facts and figures from the sections; take what the model computes "
-                   "(a forecast, or what changes under a hypothetical change) from the tool result.")
+                   "(a forecast, or what changes under a hypothetical change) from the tool result. Where the tool result "
+                   "cannot check something (for example a condition it cannot take away), decide it from the "
+                   "sections.")
 
 ANSWER = {
     "descriptive": "Answer from the document sections below (the question's scope).",
