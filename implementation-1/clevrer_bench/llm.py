@@ -60,6 +60,12 @@ def endpoint_key(spec: ModelSpec) -> str:
     return key
 
 
+def request_timeout(spec: ModelSpec) -> int:
+    """Seconds one request may take: a local vLLM server queues requests (long waits are normal), a hosted endpoint
+    answers or stalls, and a stalled request is better retried (with_backoff) than waited on for half an hour."""
+    return 600 if spec.api_key_env else 1800
+
+
 def chat_sampling(spec: ModelSpec, reasoning_effort: Optional[str] = None) -> dict:
     """kwargs for client.chat.completions.create (OpenAI-compatible servers)."""
     kw: dict = {}
