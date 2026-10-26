@@ -1,12 +1,13 @@
 """Tier B pipeline (started by run_tier_b.py inside the experiment venv).
 
-For each model in order (Qwen, then Gemma; one model on the GPU at a time), for each system in priority order
-(react_c, react_r, graphrag, recode):
+For each model in order (Qwen, then gpt-oss-20b), for each system in priority order (react_c, react_r, graphrag,
+recode). A local model runs its systems one after another (one model on the GPU); a hosted model runs each unfinished
+system as its own child process, in parallel:
   dev:    pilot20 smoke test -> up to 3 predefined candidate slots on all 308 pilot20 questions -> select by
           accuracy, then fewer total tokens, then the earlier slot -> freeze manifest + SPEC sec. 11 block;
   E1:     with a matching freeze manifest only: e1_d03, d06, d09, d12, d15 (694 questions).
-Gemma starts only when every Qwen output validates as complete and its estimated workload (+20%) fits before the
-deadline. At the deadline no new work is admitted and the delivery is finalised as explicitly partial.
+The second model starts only when every Qwen output validates as complete (a local one also only when its estimated
+workload +20% fits before the deadline; hosted children check each candidate slot against the deadline). At the deadline no new work is admitted and the delivery is finalised as explicitly partial.
 Re-running the command resumes: answered questions, built indices and frozen selections are kept.
 """
 from __future__ import annotations
@@ -36,8 +37,10 @@ from tierb.importer import E1_CORE, import_all  # noqa: E402
 from tierb.serving import MockServer, Servers, ServingError, WSLServer, is_hosted  # noqa: E402
 
 # Job plan, in order: "alias" runs every system, "alias:sys1,sys2" only those. Qwen's ReAct-C was completed on the
-# local GPU (qwen3.6-27b); its other systems and all of Gemma run on OpenRouter (or-* in configs/models.json).
-MODELS = ["qwen3.6-27b:react_c", "or-qwen3.6-27b:react_r,graphrag,recode", "or-gemma-4-31b-think"]
+# local GPU (qwen3.6-27b); its other systems ran on OpenRouter (or-* in configs/models.json). The second model is
+# gpt-oss-20b on OpenRouter (CoreWeave, MXFP4); Gemma was dropped on 2026-10-26 (its bf16 hosts were rate-limited
+# and the sequential estimate no longer fit the deadline).
+MODELS = ["qwen3.6-27b:react_c", "or-qwen3.6-27b:react_r,graphrag,recode", "or-gpt-oss-20b"]
 SYSTEMS = ["react_c", "react_r", "graphrag", "recode"]          # priority order (plan sec. 3)
 CDT = timezone(timedelta(hours=-5))                              # America/Chicago on Oct 27 2026 (CDT, UTC-5)
 DEADLINE = datetime(2026, 10, 27, 18, 0, tzinfo=CDT)
@@ -84,12 +87,25 @@ class Pipeline:
 
     def _load(self, name: str, default):
         p = self.tb / name
-        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
+        for i in range(50):
+            try:
+                return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
+            except PermissionError:                    # Windows: another process is replacing it right now
+                time.sleep(0.1 * (i + 1))
+        return json.loads(p.read_text(encoding="utf-8"))
 
     def _save(self, name: str, obj) -> None:
+        """Atomic write. Parallel child processes share these files, so the temp name is per process and a replace
+        that Windows refuses while another process reads the file is retried."""
         p = self.tb / name
-        tmp = p.with_suffix(p.suffix + ".tmp")
+        tmp = p.with_suffix(f"{p.suffix}.{os.getpid()}.tmp")
         tmp.write_text(json.dumps(obj, indent=2, default=str), encoding="utf-8")
+        for i in range(50):
+            try:
+                tmp.replace(p)
+                return
+            except PermissionError:
+                time.sleep(0.1 * (i + 1))
         tmp.replace(p)
 
     def now(self) -> datetime:
@@ -232,6 +248,8 @@ class Pipeline:
         return t["seconds"] / t["questions"] if t and t["questions"] else None
 
     def record_timing(self, model: str, system: str, seconds: float, questions: int, setup_s: float) -> None:
+        self.timing = {**self._load("timing.json", {}), **{k: v for k, v in self.timing.items()
+                                                           if k.startswith(f"{model}/{system}")}}   # other processes' keys
         t = self.timing.setdefault(f"{model}/{system}", {"seconds": 0.0, "questions": 0, "setup_s": 0.0})
         t["seconds"] += seconds
         t["questions"] += questions
@@ -470,6 +488,8 @@ class Pipeline:
     # ------------------------------------------------------------------ delivery
     def deliver(self, partial_reason: str | None = None) -> dict:
         from clevrer_bench.report import make_report, make_split_report
+        if any((self.tb / "freeze").glob("*.json")):
+            self.write_spec()                  # rebuilt from the freeze manifests (parallel children each wrote it)
         jobs, missing_jobs = [], []
         for model, systems in self.a.plan:
             val = self.validate(model)
@@ -513,6 +533,14 @@ class Pipeline:
         if any((self.runs / E1_CORE[0] / "systems" / n).exists() for n in names):
             make_split_report(self.runs, "e1", names)
         self.write_summary(manifest)
+        try:                                   # results folder + analysis for colleagues (never blocks delivery)
+            out = self.runs.parent / "tier_b_results"
+            subprocess.run([sys.executable, str(ROOT / "scripts" / "tier_b_handoff.py"), str(self.runs), str(out)],
+                           check=True, capture_output=True, timeout=1800)
+            self.log(f"[deliver] results folder for colleagues: {out} (+ {out.name}.zip)")
+        except Exception as e:
+            self.log(f"[deliver] results folder not written ({type(e).__name__}: {str(e)[:200]}); run "
+                     f"python scripts/tier_b_handoff.py")
         self.log(f"[deliver] {manifest['status']}: {manifest['complete_jobs']}/{manifest['expected_jobs']} jobs, "
                  f"{manifest['actual_predictions']}/{manifest['expected_predictions']} predictions "
                  f"-> {self.tb / 'delivery_manifest.json'}")
@@ -584,6 +612,8 @@ class Pipeline:
         family = lambda m: m.removeprefix("or-")
         if any(family(p) == family(model) for p, _ in self.a.plan[:i]):
             return True                          # same model, other systems (e.g. Qwen local -> Qwen hosted)
+        if is_hosted(model):
+            return True                          # parallel children: each checks its candidate slots against the deadline
         est = 0.0 if is_hosted(model) else SERVER_STARTUP_S
         n_e1 = sum(len(load_items(self.runs / d / "items.jsonl")) for d in E1_CORE)
         n_pilot = len(load_items(self.runs / "pilot20" / "items.jsonl"))
@@ -604,6 +634,40 @@ class Pipeline:
                  f"{self.seconds_left() / 3600:.1f} h left -> {'start' if ok else 'not admitted'}")
         return ok
 
+    def run_parallel(self, model: str, systems: list[str]) -> int:
+        """A hosted model has no GPU to share, so each unfinished system runs as its own child process (this pipeline
+        with --models model:system --child). Returns 0 when every child finished, else the first failing exit code
+        (3 = out of credits); the children have printed why, and re-running resumes."""
+        val = self.validate(model)
+        todo = [s for s in systems if not all(val[f"{s}/{d}"]["ok"] for d in E1_CORE)]
+        if len(todo) < 2:
+            return 0                           # nothing (or one system) left: run in this process as usual
+        cmd = [sys.executable, "-m", "tierb.pipeline", "--child", "--runs", str(self.runs),
+               "--package", str(self.package), "--deadline", self.deadline.isoformat(),
+               "--smoke-per-type", str(self.a.smoke_per_type)]
+        for flag, v in (("--workers", self.a.workers), ("--dev-limit", self.a.dev_limit), ("--e1-limit", self.a.e1_limit)):
+            if v:
+                cmd += [flag, str(v)]
+        if self.a.mock_server:
+            cmd.append("--mock-server")
+        self.log(f"[parallel] {model}: {', '.join(todo)} run as {len(todo)} processes (log lines are prefixed by "
+                 f"system; each child's own log: runs/tier_b/logs/pipeline.log)")
+        self.event(event="parallel_start", model=model, systems=todo)
+        procs = []
+        for s in todo:
+            procs.append((s, subprocess.Popen(cmd + ["--models", f"{model}:{s}"], cwd=ROOT)))
+            time.sleep(5)                      # staggered: the import/preflight steps read the same files
+        codes = {s: p.wait() for s, p in procs}
+        self.event(event="parallel_done", model=model, exit_codes=codes)
+        bad = {s: (c if c > 0 else 1) for s, c in codes.items() if c}     # negative: killed by a signal
+        if not bad:
+            return 0
+        self.log(f"[parallel] {model}: unfinished ({', '.join(f'{s} exit {c}' for s, c in codes.items() if c)}"
+                 f"{'; a negative code means the process was killed, e.g. out of memory' if min(codes.values()) < 0 else ''}"
+                 f"); finished "
+                 f"work is kept - run the same command again to resume")
+        return 3 if 3 in bad.values() else next(iter(bad.values()))
+
     def run(self) -> int:
         self.event(event="start", args=vars(self.a))
         self.package = self.find_package()
@@ -612,7 +676,8 @@ class Pipeline:
                  f"{sum(summary[d]['questions'] for d in E1_CORE)} questions (checksums verified)")
         self.preflight_local()
         serving = self.server.preflight(self.a.models)
-        self.provenance(summary, {"environment": serving})
+        if not self.a.child:                   # the parent records provenance for the whole plan
+            self.provenance(summary, {"environment": serving})
         partial_reason = None
         for i, (model, systems) in enumerate(self.a.plan):
             if self.past_deadline():
@@ -621,6 +686,10 @@ class Pipeline:
             if i > 0 and not self.admitted(i):
                 partial_reason = f"{model} not admitted (earlier jobs incomplete or not enough time)"
                 break
+            if is_hosted(model) and not self.a.child:
+                code = self.run_parallel(model, systems)
+                if code:
+                    return code
             for j, system in enumerate(systems):
                 if self.past_deadline():
                     partial_reason = "deadline reached"
@@ -632,11 +701,13 @@ class Pipeline:
                     break
                 self.event(event="stage", model=model, system=system, stage="e1")
                 self.e1(model, system)
-            if self.server.describe(model):
+            if self.server.describe(model) and not self.a.child:
                 self.provenance(summary, {model: self.server.describe(model)})
             self.server.stop()
             if partial_reason:
                 break
+        if self.a.child:
+            return 0                           # the parent validates and delivers once every child is done
         m = self.deliver(partial_reason or ("deadline reached" if self.past_deadline() else None))
         self.event(event="done", status=m["status"])
         return 0
@@ -693,6 +764,7 @@ def main(argv=None) -> int:
     ap.add_argument("--dev-limit", type=int, default=None, help=argparse.SUPPRESS)     # tests: fewer pilot questions
     ap.add_argument("--e1-limit", type=int, default=None, help=argparse.SUPPRESS)      # tests: fewer E1 questions
     ap.add_argument("--smoke-per-type", type=int, default=SMOKE_PER_TYPE, help=argparse.SUPPRESS)
+    ap.add_argument("--child", action="store_true", help=argparse.SUPPRESS)        # one system of a parallel run
     a = ap.parse_args(argv)
     a.plan = [(m.partition(":")[0], m.partition(":")[2].split(",") if ":" in m else list(a.systems)) for m in a.models]
     a.models = [m for m, _ in a.plan]
@@ -709,7 +781,8 @@ def main(argv=None) -> int:
     except ImportError:
         pass
     pipe = Pipeline(a)
-    with Lock(pipe.tb / "launcher.lock"):
+    lock = (f"launcher__{a.plan[0][0]}__{'_'.join(a.plan[0][1])}.lock" if a.child else "launcher.lock")
+    with Lock(pipe.tb / lock):
         try:
             return pipe.run()
         except KeyboardInterrupt:

@@ -59,8 +59,10 @@ runs/<run>/                document.pdf, manifest.json, items.jsonl, systems/<na
 
 ## Tier B baselines (GraphRAG, ReAct-R, ReAct-C, ReCode)
 
-One command runs (or resumes) everything for Qwen3.6-27B, then Gemma-4-31B-think, on pilot20 (dev) and E1-core
+One command runs (or resumes) everything for Qwen3.6-27B, then gpt-oss-20b, on pilot20 (dev) and E1-core
 (`e1_d03, d06, d09, d12, d15`, 694 questions). Windows 11 + Python 3.11 + WSL2 Ubuntu-24.04 + one RTX 5090.
+Qwen's ReAct-C ran on the local GPU; the other runs use OpenRouter (`OPENROUTER_API_KEY` in `implementation-1/.env`).
+A hosted model runs its unfinished systems as parallel child processes. Gemma-4-31B was dropped on 2026-10-26.
 The first line runs or resumes everything; `--status` shows where it is:
 
 ```cmd
@@ -81,6 +83,7 @@ missing, and downloads the pinned checkpoints. Ctrl+C is safe: run the same comm
 | Freeze | `runs/tier_b/freeze/<system>__<model>.json` + a generated block in SPEC sec. 11; E1 refuses to run if the configuration later differs |
 | E1 | `runs/e1_dXX/systems/<system>__<model>/{predictions.jsonl, setup.json}` |
 | Delivery | `runs/tier_b/delivery_manifest.json`, `runs/tier_b/DELIVERY.md`, `runs/e1_report.md`, `runs/e1_dXX/report.md` |
+| Results folder | `tier_b_results/` + `tier_b_results.zip`: analysis (`TIER_B_RESULTS.md`), reports, predictions, ledgers, freezes (`scripts/tier_b_handoff.py`, also run after delivery) |
 
 Systems: `clevrer_bench/systems/{react_system,graphrag_system,recode_system}.py`; prompts (all newly authored
 method text, scanned by the domain-word guard) in `baseline_prompts.py`; metering and the 12-call cap in

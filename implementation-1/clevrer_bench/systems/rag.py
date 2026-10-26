@@ -102,8 +102,8 @@ class RAGSystem(QASystem):
                     self.chunks.append({"path": path, "pages": pages,
                                         "text": f"[{path}]\n" + enc.decode(toks[s:s + self.chunk_tokens])})
             self.vectors = self._embed([c["text"] for c in self.chunks])
+            np.save(vec_p, self.vectors)               # vectors first: the meta file marks a complete cache
             meta_p.write_text(json.dumps({"key": key, "chunks": self.chunks}))
-            np.save(vec_p, self.vectors)
         return SetupResult(Usage(), time.time() - t, {"chunks": len(self.chunks), "embed_model": EMBED_MODEL,
                                                       "top_k": self.top_k})
 
