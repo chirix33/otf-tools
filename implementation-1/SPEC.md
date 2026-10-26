@@ -322,6 +322,14 @@ questions per document between identical runs (fin_d01, reading only: 39, 37, 32
 PageIndex pending. Also 2026-10-25 ~20:35: hosted endpoints get a 10-minute request timeout (was 30 min, sized for the
 local vLLM queue); single stalled requests had held whole documents for 30+ minutes.
 
+**gpt-oss E1 (2026-10-25 ~21:40; OTF v3.4.2, hosted only): the navigation-only case (author decision).** OTF 67.8%
+vs full context 61.2%, PageIndex 53.2%, RAG 49.1% (OTF ahead of PageIndex on every type, counterfactual +13.5
+[+9.6, +17.3]; vs full context counterfactual +1.1, n.s.); oracle model 76.6% (predictive 91.2%). No E1 document got a
+passing generated model (5 failed at step 1, 10 at step 2: crashes, a 20 s sandbox timeout, F1 0-0.37; e1_d07 reached
+0.439 but failed the sensitivity guard), so every gpt-oss E1 answer is OTF's scoped-reading fallback. The author chose
+to keep the generation budget unchanged and report gpt-oss E1 as the case where generation fails and OTF falls back
+gracefully; the oracle row shows what working tools add.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
