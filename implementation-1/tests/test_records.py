@@ -251,6 +251,28 @@ def simulate(doc, scope, inputs, params, start=None, horizon=None):
         assert toolgen.check_model(READERS_T + peek, nav, mp)["mean_f1"] == 0.0
 
 
+def test_paired_delta_cancels_model_error():
+    """v3.4: a what-if applies the difference between the model run without and with the change to the record. A
+    value the model gets wrong in both runs keeps its recorded value; an outcome the model reproduces late is still
+    recognised; one it never reproduces is judged by the changed run alone (as before v3.4)."""
+    rec = [{"time": 5.0, "kind": "hit", "entities": ["A", "B"], "value": None},
+           {"time": 7.0, "kind": "hit", "entities": ["B", "C"], "value": None},
+           {"time": 9.0, "kind": "level", "entities": ["C"], "value": 10.0},
+           {"time": 9.0, "kind": "stock", "entities": ["D"], "value": 500.0}]
+    base = [{"time": 6.5, "kind": "hit", "entities": ["A", "B"], "value": None},       # reproduced late
+            {"time": 9.0, "kind": "level", "entities": ["C"], "value": 10.0},
+            {"time": 9.0, "kind": "stock", "entities": ["D"], "value": 0.0}]           # wrong in both runs
+    new = [{"time": 9.0, "kind": "level", "entities": ["C"], "value": 12.0},            # A-B gone, level changes
+           {"time": 9.0, "kind": "stock", "entities": ["D"], "value": 0.0},
+           {"time": 8.0, "kind": "hit", "entities": ["A", "C"], "value": None}]
+    out = records.apply_delta(rec, base, new, 0.5, {}, None, 4.0, 10.0)
+    kinds = {(o["time"], o["kind"], tuple(o["entities"])): o.get("value") for o in out}
+    assert (5.0, "hit", ("A", "B")) not in kinds                                     # removed by the change
+    assert kinds[(9.0, "stock", ("D",))] == 500.0                                    # model error cancels out
+    assert (7.0, "hit", ("B", "C")) not in kinds                                     # never reproduced, not in new run
+    assert kinds[(9.0, "level", ("C",))] == 12.0 and (8.0, "hit", ("A", "C")) in kinds
+
+
 def test_timeless_check():
     nav = timeless_nav()
     with tempfile.TemporaryDirectory() as d:

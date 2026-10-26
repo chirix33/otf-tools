@@ -120,6 +120,32 @@ def diff(before: list[dict], after: list[dict], tol_t: float, vtol: dict, rel: f
     return {"gone": gone, "new": new, "changed": changed}
 
 
+def apply_delta(recorded: list[dict], base_run: list[dict], new_run: list[dict], tol_t: float, vtol: dict,
+                overrides: list[dict] | None = None, start: float | None = None,
+                align_tol: float | None = None) -> list[dict]:
+    """The record with only what the change alters (OTF v3.4, paired runs). `base_run` and `new_run` are the same
+    model run from the same point (`start`) without and with the change. The base run is first aligned with the
+    recorded outcomes after `start` (same kind and entities, nearest time within `align_tol`), so a recorded outcome
+    the model reproduces a little early or late is still recognised; what then disappears or changes value between
+    the two runs is applied to the aligned recorded outcomes, and what newly appears is added, so the model's own
+    errors (present in both runs) cancel out. A recorded outcome the base run does not reproduce at all is judged by
+    the changed run alone, as before v3.4. `overrides` (indexes into `recorded`) are applied first."""
+    d = diff(base_run, new_run, tol_t, vtol)
+    out = apply_overrides(recorded, overrides or []) if overrides else copy.deepcopy(recorded)
+    later = [o for o in out if start is None or rtime(o) is None or rtime(o) > start]
+    aligned, _, unaligned = pairs(base_run, later, tol_t if align_tol is None else align_tol, None)
+    twin = {id(b): o for b, o in aligned}                       # base-run record -> its recorded counterpart
+    drop = {id(twin[id(g)]) for g in d["gone"] if id(g) in twin}
+    # recorded outcomes the model does not reproduce even without the change: judged by the changed run alone
+    # (as before v3.4), i.e. they disappear unless the changed run has them
+    _, lost, _ = pairs(unaligned, new_run, tol_t, vtol)
+    drop |= {id(o) for o in lost}
+    for b, a in d["changed"]:
+        if id(b) in twin:
+            twin[id(b)]["value"] = a.get("value")
+    return [o for o in out if id(o) not in drop] + copy.deepcopy(d["new"])
+
+
 def _on_grid(ts: list[float], coverage: float) -> bool:
     """Do the sorted distinct times lie on a regular grid (start = first time, step = most common gap) that has
     `coverage` of its points present?"""

@@ -197,18 +197,23 @@ Reply with only JSON: {{"target": <number of the outcome the question is about>,
 Use null when a candidate is not something that can be taken away by changing inputs (for example another
 outcome)."""
 
+RECORD_AND_TOOL = ("Below are the document's own sections for this scope, then a TOOL RESULT computed with a model "
+                   "of the process. Take recorded facts and figures from the sections; take what the model computes "
+                   "(a forecast, or what changes under a hypothetical change) from the tool result.")
+
 ANSWER = {
     "descriptive": "Answer from the document sections below (the question's scope).",
     "explanatory": "Answer using the recorded outcomes, the dependency table and the choice checks below. In the "
                    "table, taking an entity's inputs away and re-running a model of the process (checked against "
-                   "the record) makes the listed outcomes disappear. A choice check re-runs the process without that "
-                   "cause. Something is responsible for an outcome when the outcome would not have happened "
+                   "the record) makes the listed outcomes disappear. A choice check re-runs the process with and without "
+                   "that cause and applies the difference to the record. Something is responsible for an outcome when the outcome would not have happened "
                    "without it.",
     "predictive": "Answer using the outcomes the model predicts after the recorded period ends (listed below), run "
                   "forward from the last recorded states and the document's own future inputs, if any, together with "
                   "the recorded outcomes.",
     "counterfactual": "Answer using the counterfactual run below: the record is kept until the change can first "
-                      "matter, then a model of the process, checked against the record, is re-run with the change. "
+                      "matter; from there a model of the process, checked against the record, is run twice, with and "
+                      "without the change, and only what differs between the two runs is applied to the record. "
                       "Outcomes in the counterfactual run happen; recorded outcomes that are not in it would not "
                       "happen. DIFFERENCES lists what the change alters.",
 }

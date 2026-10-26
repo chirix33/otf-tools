@@ -41,7 +41,7 @@ class OTFSystem(QASystem):
         # model_code: path to a hand-written process model used instead of generating one (oracle upper bound)
         self.model_code = model_code
         if model_code:
-            self.name = "otf_oracle"
+            self.name = "otf_oracle" + (f"_{self.ablation}" if self.ablation else "")
         self.client = (OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=1800)
                        if self.spec.is_local else OpenAI(max_retries=6, timeout=600))
         self._tl = threading.local()

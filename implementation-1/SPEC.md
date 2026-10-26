@@ -255,7 +255,7 @@ domains (main, dev documents and their tool libraries) are redone; the earlier h
 `runs/hosted_discarded_20261025_fix10/`. The baselines are unaffected. Collaborators' ReAct-C and ReCode share the
 map, so their manufacturing / IT-operations runs need the new map too.
 
-**OPEN finding (2026-10-25 ~17:50, author decision needed; nothing changed):** sanity check on finance, gpt-oss.
+**Finding 1 (2026-10-25 ~17:50; resolved by OTF v3.4 below):** sanity check on finance, gpt-oss.
 Overall OTF 64.7% vs full context 65.3%, but counterfactual 54.0% vs 63.3%. All of the loss is on fin_d02, the one
 finance document whose generated model passed (F1 0.649): its 33 counterfactual questions answered with the tool
 scored 1/33 (full context 23/33), while the reading-fallback documents fin_d01/d03 scored at or above full context.
@@ -267,7 +267,7 @@ This is not one of the allowed bug classes (no crash, parse failure, contradicti
 "fall back to reading when the tool evidence is empty" or "list the unchanged inputs" would be a design change chosen
 by accuracy, so it is left as is pending the author. It contradicts the "graceful degradation" framing for finance.
 
-**OPEN finding 2 (2026-10-25 ~18:25, author decision needed; nothing changed):** manufacturing, gpt-oss, after fix
+**Finding 2 (2026-10-25 ~18:25; resolved by OTF v3.4 below):** manufacturing, gpt-oss, after fix
 10: OTF 57.7% vs full context 54.3% overall (counterfactual +25.3, predictive -2.7, explanatory 41.3% vs 56.0%,
 -14.7 [-29.3, +1.3]). The explanatory ("which conditions are responsible for the shortfall") choice checks compare
 each "without it" re-run with the *recorded* outcome. In the example inspected (mfg-2103-03-02) every choice,
@@ -276,6 +276,26 @@ re-run from mid-period (day 37) does not carry the accumulated backlog, so every
 The forecast check cuts just before a period's first recorded outcome (small state), so it does not test restarts
 from a large mid-period state. Comparing against an unpatched re-run, or checking restarts mid-period, would be design
 changes chosen by accuracy; left as is pending the author.
+
+**OTF v3.4 (author decision 2026-10-25 ~18:40; git tag `otf-v3.4`).** The author relaxed the freeze: changes that
+make OTF work better are wanted, made generically, validated on pilot20, and every split is re-run with the final
+version (earlier numbers are archived, not reported). Triggered by findings 1-2 above (test-split sanity checks,
+which the paper must not hide). Generation and the forecast check are unchanged, so stored process models are reused
+and only answers are redone. Two changes to the answer step (`otf/engine.py`, `otf/records.py`, `otf/prompts.py`):
+1. *Paired what-ifs* (`records.apply_delta`): a what-if runs the model twice from the same point, without and with
+   the change; the base run is aligned with the record (same kind and entities, nearest time within one recorded
+   period); for aligned outcomes only the difference between the two runs is applied to the record, so a value the
+   model gets wrong in both runs keeps its recorded value (finding 2); a recorded outcome the model never reproduces
+   is judged by the changed run alone, as before. Used by counterfactual runs, the dependency table and the choice
+   checks; the no-replay ablation keeps the unpaired run. Toy test `test_paired_delta_cancels_model_error`.
+2. *Record with the tool result in timeless scopes*: the scope's own sections come before the tool result (prompt
+   `RECORD_AND_TOOL`), so unchanged figures stay visible (finding 1). Not for timed scopes: there the evidence lists
+   the recorded outcomes already, and on pilot20 the extra sections cost explanatory accuracy (gpt-oss oracle 20 vs 25
+   of 36). Switch `ablation=tool_only` turns it off.
+pilot20 validation (all 308; cf / desc / expl / pred = total): gpt-oss oracle 22 / 211 / 23 / 14 = 270 (v3.3: 272);
+Qwen oracle 20 / 216 / 20 / 14 = 270 (271); Qwen generated model 18 / 218 / 20 / 14 = 270 (273). Differences are
+within run-to-run noise. Two intermediate variants were tried on pilot20 and rejected (pure paired runs without
+alignment: explanatory 15/36; paired with time alignment but the record in every scope: 20/36).
 
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped

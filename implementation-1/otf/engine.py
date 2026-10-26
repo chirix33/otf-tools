@@ -176,8 +176,12 @@ class OTFEngine:
             raise ToolError("; ".join(ap["errors"])[:500])
         if r["end"] is None:
             base = self._simulate(scope, r["inputs"], r["params"], None, None)
-            new = records.apply_overrides(self._simulate(scope, ap["inputs"], ap["params"], None, None), ap["overrides"])
-            return {"trace": new, "baseline": base, "t_star": None, "changed_inputs": ap, "timeless": True}
+            new = self._simulate(scope, ap["inputs"], ap["params"], None, None)
+            # paired: the record, with what the change alters between the two recomputations
+            trace = records.apply_delta(r["outcomes"], base, new, self._tol(r), records.value_tols(r["outcomes"]),
+                                        ap["overrides"], None, None)
+            return {"trace": trace, "baseline": r["outcomes"], "t_star": None, "changed_inputs": ap,
+                    "timeless": True}
         end, eps = r["end"], 0.01 * r["period"]
         t_c = r["t0"] if ap["t_c"] is None else ap["t_c"]
         if self.ablation == "no_replay":
@@ -195,11 +199,19 @@ class OTFEngine:
             return {"trace": records.apply_overrides(r["outcomes"], ap["overrides"]), "baseline": r["outcomes"],
                     "t_star": None, "changed_inputs": ap, "timeless": False}
         s = t_star - eps
-        kept = [o for o in r["outcomes"] if records.rtime(o) is not None and records.rtime(o) <= s]
         run = [x for x in self._simulate(scope, ap["inputs"], ap["params"], s, end)
                if records.rtime(x) is None or records.rtime(x) > s]
-        return {"trace": records.apply_overrides(kept + run, ap["overrides"]) if ap["overrides"] else kept + run,
-                "baseline": r["outcomes"], "t_star": t_star, "changed_inputs": ap, "timeless": False}
+        if self.ablation == "no_replay":         # the ablation keeps the unpaired run: the model alone from t0
+            kept = [o for o in r["outcomes"] if records.rtime(o) is not None and records.rtime(o) <= s]
+            return {"trace": records.apply_overrides(kept + run, ap["overrides"]) if ap["overrides"] else kept + run,
+                    "baseline": r["outcomes"], "t_star": t_star, "changed_inputs": ap, "timeless": False}
+        # paired (v3.4): the same model from the same point without the change; only the difference between the
+        # two runs is applied to the record, so the model's own errors cancel out
+        base = [x for x in self._simulate(scope, r["inputs"], r["params"], s, end)
+                if records.rtime(x) is None or records.rtime(x) > s]
+        trace = records.apply_delta(r["outcomes"], base, run, self._tol(r), records.value_tols(r["outcomes"]),
+                                    ap["overrides"], s, r["period"])
+        return {"trace": trace, "baseline": r["outcomes"], "t_star": t_star, "changed_inputs": ap, "timeless": False}
 
     def _patches(self, r: dict, question: str) -> list[dict]:
         time = ("no time (the records are figures, not a process over time)" if r["end"] is None else
@@ -318,6 +330,13 @@ class OTFEngine:
         trace["used_tool"] = used_tool
         trace["fallback"] = qtype != "descriptive" and not used_tool
         guide = prompts.ANSWER[qtype] if used_tool or qtype == "descriptive" else prompts.ANSWER["descriptive"]
+        if used_tool and self.ablation != "tool_only" and self._records(trace["scope"])["end"] is None:
+            # v3.4: in a timeless scope the figures are inputs, which the tool result does not list, so the scope's
+            # own sections come with it (unchanged figures stay visible). Timed scopes list their recorded outcomes
+            # already; there the extra sections cost explanatory accuracy on pilot20 (20 vs 25 of 36)
+            guide = f"{prompts.RECORD_AND_TOOL}\n\n{guide}"
+            evidence = (f"THE DOCUMENT'S SECTIONS FOR THIS SCOPE:\n{self._scope_text(trace['scope'])}\n\n"
+                        f"TOOL RESULT:\n{evidence}")
         reply = self.llm([{"role": "system", "content": instructions},
                           {"role": "user", "content": f"{guide}\n\n{evidence}\n\n{question}"}])
         return reply, trace
