@@ -364,6 +364,16 @@ explanatory in the earlier variant, so the dev evidence is neutral overall. `abl
 alone. Only answers that used a tool change: those rows were set aside (`predictions_v342_tool.jsonl`) and re-asked
 for every model; gpt-oss E1 (no tool use) is unaffected.
 
+**OTF v3.4.4 (2026-10-26 ~16:30; tag `otf-v3.4.4`).** Qwen manufacturing after v3.4.3: OTF 64.3% vs full context
+79.0%, reading-only (same scopes, no tools) 74.7%; the loss is explanatory (tools 29.3 vs reading 70.7), with the
+answer saying "not responsible" where the gold says responsible. Change (`engine._unreproduced`): a choice check
+counts only if the model's own re-run without any change reproduces the target outcome (and its value); otherwise it
+reports "could not be checked" and the record decides. Explanatory, correct of 36 on pilot20 (dev): Qwen generated
+model 25 (v3.4.3: 23), gpt-oss oracle 20 (23) - neutral; manufacturing Qwen 30 of 75 (v3.4.3: 22; reading-only 53;
+full context 48). Tuning on this question type stops here (each further round is another change chosen on test
+results); manufacturing explanatory with tools stays below reading for Qwen and is reported as measured. Only
+explanatory answers that used a tool are re-asked (`predictions_v343_expl.jsonl`).
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call

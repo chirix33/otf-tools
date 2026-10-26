@@ -186,7 +186,7 @@ class OTFEngine:
             # paired: the record, with what the change alters between the two recomputations
             trace = records.apply_delta(r["outcomes"], base, new, self._tol(r), records.value_tols(r["outcomes"]),
                                         ap["overrides"], None, None)
-            return {"trace": trace, "baseline": r["outcomes"], "t_star": None, "changed_inputs": ap,
+            return {"trace": trace, "baseline": r["outcomes"], "base_run": base, "t_star": None, "changed_inputs": ap,
                     "timeless": True}
         end, eps = r["end"], 0.01 * r["period"]
         t_c = r["t0"] if ap["t_c"] is None else ap["t_c"]
@@ -217,7 +217,8 @@ class OTFEngine:
                 if records.rtime(x) is None or records.rtime(x) > s]
         trace = records.apply_delta(r["outcomes"], base, run, self._tol(r), records.value_tols(r["outcomes"]),
                                     ap["overrides"], s, r["period"])
-        return {"trace": trace, "baseline": r["outcomes"], "t_star": t_star, "changed_inputs": ap, "timeless": False}
+        return {"trace": trace, "baseline": r["outcomes"], "base_run": base, "start": s, "t_star": t_star,
+                "changed_inputs": ap, "timeless": False}
 
     def _patches(self, r: dict, question: str) -> list[dict]:
         time = ("no time (the records are figures, not a process over time)" if r["end"] is None else
@@ -290,6 +291,20 @@ class OTFEngine:
                 + (f"\n\nCHOICE CHECKS (re-runs with that cause taken away):\n{checks}" if checks else "")), \
             {"entities": len(who), "choice_checks": bool(checks)}
 
+    def _unreproduced(self, target: dict, w: dict, r: dict, tol: float) -> bool:
+        """v3.4.4: does the model's own re-run without any change (from the same point as the what-if) fail to
+        reproduce `target`, or get its value wrong? Then a re-run without a cause cannot say whether the outcome
+        would still happen, and the record decides. The no-replay ablation keeps the unpaired check."""
+        base, start = w.get("base_run"), w.get("start")
+        if base is None or self.ablation == "no_replay":
+            return False
+        if start is not None and records.rtime(target) is not None and records.rtime(target) <= start:
+            return False                                    # kept from the record, before the re-run starts
+        m = records.pairs([target], base, tol, None)[0]
+        if not m:
+            return True
+        return records.num(target.get("value")) is not None and             not records._value_close(target, m[0][1], records.value_tols(r["outcomes"]))
+
     def _choice_checks(self, scope, r, question, names, tol) -> str:
         """Per-choice but-for test: re-run without each candidate cause; does the target outcome still happen?"""
         if not re.search(r"^\s*\d+:\s", question, flags=re.M):        # no numbered candidates listed
@@ -312,6 +327,9 @@ class OTFEngine:
                 w = self._what_if(scope, r, [p for p in patches if isinstance(p, dict)])
             except ToolError as e:
                 out.append(f"- choice {cid}: could not be checked ({str(e)[:120]})")
+                continue
+            if self._unreproduced(target, w, r, tol):
+                out.append(f"- choice {cid}: could not be checked (the model does not reproduce this outcome)")
                 continue
             same, _, _ = records.pairs([target], w["trace"], tol, None)
             if not same:
