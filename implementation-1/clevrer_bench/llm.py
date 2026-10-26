@@ -102,7 +102,17 @@ PATIENCE_S = 1800
 
 
 def is_transient(e: BaseException) -> bool:
-    return type(e).__name__ in TRANSIENT_NAMES or getattr(e, "status_code", None) in TRANSIENT_STATUS
+    """A transient error, also when wrapped by a library (PageIndex wraps LiteLLM's RateLimitError in its own
+    PageIndexAPIError): the whole cause chain and the message are checked."""
+    seen = set()
+    while e is not None and id(e) not in seen:
+        seen.add(id(e))
+        if type(e).__name__ in TRANSIENT_NAMES or getattr(e, "status_code", None) in TRANSIENT_STATUS:
+            return True
+        if any(n in str(e) for n in ("RateLimitError", "ServiceUnavailableError", "APIConnectionError", "Timeout")):
+            return True
+        e = e.__cause__ or e.__context__
+    return False
 
 
 def _delays():
