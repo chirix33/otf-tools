@@ -120,10 +120,17 @@ class PageIndexSystem(QASystem):
         return SetupResult(u, latency, {"doc_id": self.doc_id, "cached_index": False, "tree_nodes": n_nodes})
 
     def answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
+        global _in_flight
+        with _in_flight_lock:
+            _in_flight += 1
         try:
             return self._answer(item, instructions, prompt)
         finally:
-            _release_connections()
+            with _in_flight_lock:
+                _in_flight -= 1
+                idle = _in_flight == 0
+            if idle:                # clearing while another thread is mid-request hung the process (2026-10-25)
+                _release_connections()
 
     def _answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
         t = time.time()
@@ -181,6 +188,9 @@ class PageIndexSystem(QASystem):
                       (u.get("completion_tokens_details") or {}).get("reasoning_tokens", 0), 0)
         return Prediction(choice["message"]["content"] or "", usage, time.time() - t,
                           trace={"finish_reason": choice.get("finish_reason")})
+
+
+_in_flight, _in_flight_lock = 0, threading.Lock()
 
 
 def _release_connections() -> None:

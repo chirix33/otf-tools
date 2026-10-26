@@ -82,7 +82,16 @@ def plan(phases: list[str]) -> list[Job]:
                          Job(ph, "e1", "otf", m, ["--system-arg", "ablation=no_replay"],
                              folder="otf_no_replay", after=main_otf, copy_models_from="otf"),
                          Job(ph, "e1", "otf", m, ["--system-arg", "use_library=false"], folder="otf_no_library")]
-    return jobs
+    # PageIndex runs one question at a time per process (its connection clean-up is not safe across threads), so
+    # it gets one job per document instead: the documents run in parallel
+    out = []
+    for j in jobs:
+        if j.system != "pageindex":
+            out.append(j)
+            continue
+        out += [Job(j.phase, j.split, j.system, j.model, j.args, j.folder, j.limit, pattern=d.name)
+                for d in sorted((ROOT / "runs").glob(j.pattern)) if d.is_dir()]
+    return out
 
 
 def status(**event) -> None:
@@ -205,6 +214,8 @@ def copy_models(job: Job) -> None:
 
 def run_job(job: Job, workers: int, passes: int = 3) -> None:
     log_p = LOGS / "hosted" / f"{job.name}.log"
+    if job.system == "pageindex":
+        workers = 1
 
     def one_round():
         for p in range(1, passes + 1):
