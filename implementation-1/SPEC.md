@@ -316,6 +316,12 @@ v3.4.1; reading answers on the same document ~55-75%). In timed scopes "no diffe
 outcomes carry no values and are timed, so pilot20 / E1 / E2 are unaffected. Note: finance accuracy varies by +-5
 questions per document between identical runs (fin_d01, reading only: 39, 37, 32 of 50).
 
+**gpt-oss on the new domains with v3.4.2 (2026-10-25 ~20:45; question accuracy, hosted only):** manufacturing OTF
+60.0% vs full context 54.3% vs RAG 25.3% (counterfactual 69.3 vs 46.7; predictive 36.0 vs 30.7; explanatory 44.0 vs
+56.0, still behind); IT operations 27.7 vs 18.3 vs 16.7; finance 68.7 vs 65.3 vs 64.0 (counterfactual 66.7 vs 63.3).
+PageIndex pending. Also 2026-10-25 ~20:35: hosted endpoints get a 10-minute request timeout (was 30 min, sized for the
+local vLLM queue); single stalled requests had held whole documents for 30+ minutes.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
