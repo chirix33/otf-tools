@@ -24,6 +24,8 @@ from .base import Usage
 
 MAX_CALLS_PER_QUESTION = 12
 INFRA_RETRIES = 6            # extra attempts per call after a connection/timeout/429/5xx failure (~3 min of backoff)
+CREDIT_WAIT_S = 1800         # out of credits: keep retrying this long (an auto top-up or a manual one), then stop
+CREDIT_POLL_S = 60
 FROZEN_KEYS = ("model", "temperature", "top_p", "max_tokens", "reasoning_effort")
 USAGE_FIELDS = ("input_tokens", "cached_input_tokens", "output_tokens", "reasoning_tokens", "llm_calls")
 
@@ -51,6 +53,44 @@ def is_out_of_credits(err: BaseException) -> bool:
     m = str(err).lower()
     return getattr(err, "status_code", None) == 402 or "exceed your available credits" in m or \
         "insufficient credits" in m or "add credits" in m
+
+
+_credit_note = {"t": 0.0}
+
+
+def _note_credit_wait() -> None:
+    if time.time() - _credit_note["t"] > 300:            # one console line per 5 minutes, not one per thread
+        _credit_note["t"] = time.time()
+        print(f"[credits] OpenRouter balance is exhausted; retrying every {CREDIT_POLL_S}s for up to "
+              f"{CREDIT_WAIT_S // 60} min (add credits or let auto top-up run)", flush=True)
+
+
+def wait_for_credits(fn):
+    """Call fn(); while it fails with out-of-credits, wait and retry for up to CREDIT_WAIT_S."""
+    waited = 0
+    while True:
+        try:
+            return fn()
+        except Exception as e:
+            if not is_out_of_credits(e) or waited >= CREDIT_WAIT_S:
+                raise
+            _note_credit_wait()
+            time.sleep(CREDIT_POLL_S)
+            waited += CREDIT_POLL_S
+
+
+async def await_for_credits(fn):
+    import asyncio
+    waited = 0
+    while True:
+        try:
+            return await fn()
+        except Exception as e:
+            if not is_out_of_credits(e) or waited >= CREDIT_WAIT_S:
+                raise
+            _note_credit_wait()
+            await asyncio.sleep(CREDIT_POLL_S)
+            waited += CREDIT_POLL_S
 
 
 class InfraError(RuntimeError):
@@ -205,7 +245,8 @@ class MeteredChat:
         for attempt in range(INFRA_RETRIES + 1):
             t = time.time()
             try:
-                resp = self.client.chat.completions.create(model=self.spec.served_name, messages=messages, **args)
+                resp = wait_for_credits(lambda: self.client.chat.completions.create(
+                    model=self.spec.served_name, messages=messages, **args))
             except (openai.APIConnectionError, openai.APITimeoutError, openai.InternalServerError,
                     openai.RateLimitError) as e:
                 record_failure(e, source, attempt)
@@ -257,7 +298,7 @@ def install_litellm_meter() -> None:
             check_cap()
             t = time.time()
             try:
-                r = orig_c(*a, **k)
+                r = wait_for_credits(lambda: orig_c(*a, **k))
             except Exception as e:
                 record_failure(e, "litellm", 0)
                 if is_out_of_credits(e):
@@ -282,7 +323,7 @@ def install_litellm_meter() -> None:
             stream = bool(k.pop("stream", False))
             k.pop("stream_options", None)
             try:
-                r = await orig_a(*a, **k)
+                r = await await_for_credits(lambda: orig_a(*a, **k))
             except Exception as e:
                 record_failure(e, "litellm", 0)
                 if is_out_of_credits(e):
