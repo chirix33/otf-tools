@@ -33,17 +33,21 @@ if (Test-Path (Join-Path $Root "runs\logs\HOSTED_RUNS_HALTED")) {
         Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden -ArgumentList @("-u", "scripts\net_watch.py")
     }
     $stamp = Get-Date -Format "yyyyMMdd_HHmm"
-    Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden `
-        -RedirectStandardOutput (Join-Path $Root "runs\logs\hosted__runner_resume_main_$stamp.out") `
-        -RedirectStandardError (Join-Path $Root "runs\logs\hosted__runner_resume_main_$stamp.err") -ArgumentList @(
-        "-u", "scripts\run_hosted.py", "--phase", "dev", "main", "e2", "ablations",
-        "--models", "or-gpt-oss-20b", "or-qwen3.6-27b", "or-gemma-4-31b-think", "--exclude", "pageindex",
-        "--model-limits", "or-gpt-oss-20b=8,6", "or-qwen3.6-27b=8,6", "or-gemma-4-31b-think=6,4")
-    Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden `
-        -RedirectStandardOutput (Join-Path $Root "runs\logs\hosted__runner_resume_pi_$stamp.out") `
-        -RedirectStandardError (Join-Path $Root "runs\logs\hosted__runner_resume_pi_$stamp.err") -ArgumentList @(
-        "-u", "scripts\run_hosted.py", "--phase", "main", "e2", "--systems", "pageindex",
-        "--model-limits", "or-gpt-oss-20b=6,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=8,1")
+    # 2026-10-27 priorities (deadline): Qwen finishes its ablations; Gemma runs its main OTF (+ small leftovers) and
+    # main PageIndex first; Gemma's E1 full context / RAG, E2 and ablations are left out (Crusoe throughput)
+    $runners = @(
+        @("qwen", @("-u", "scriptsun_hosted.py", "--phase", "dev", "main", "e2", "ablations", "--models", "or-qwen3.6-27b",
+                    "--exclude", "pageindex", "--model-limits", "or-qwen3.6-27b=8,6")),
+        @("gemma", @("-u", "scriptsun_hosted.py", "--phase", "main", "--models", "or-gemma-4-31b-think",
+                     "--exclude", '"pageindex|^e1__.*__(full_context_text|rag)$"', "--model-limits", "or-gemma-4-31b-think=6,6")),
+        @("pi", @("-u", "scriptsun_hosted.py", "--phase", "main", "e2", "--systems", "pageindex", "--exclude", '"^e2_d01__or-gemma"',
+                  "--model-limits", "or-gpt-oss-20b=2,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=10,1"))
+    )
+    foreach ($r in $runners) {
+        Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden `
+            -RedirectStandardOutput (Join-Path $Root "runs\logs\hosted__runner_resume_$($r[0])_$stamp.out") `
+            -RedirectStandardError (Join-Path $Root "runs\logs\hosted__runner_resume_$($r[0])_$stamp.err") -ArgumentList $r[1]
+    }
     Write-Log "logon: hosted runners started (main + PageIndex)"
 }
 
