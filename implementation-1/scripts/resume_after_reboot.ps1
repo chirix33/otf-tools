@@ -39,7 +39,7 @@ if (Test-Path (Join-Path $Root "runs\logs\HOSTED_RUNS_HALTED")) {
         @("qwen", @("-u", "scripts/run_hosted.py", "--phase", "dev", "main", "e2", "ablations", "--models", "or-qwen3.6-27b",
                     "--exclude", "pageindex", "--model-limits", "or-qwen3.6-27b=8,6")),
         @("gemma", @("-u", "scripts/run_hosted.py", "--phase", "main", "--models", "or-gemma-4-31b-think",
-                     "--exclude", '"pageindex|^e1__.*__(full_context_text|rag)$"', "--model-limits", "or-gemma-4-31b-think=6,6")),
+                     "--exclude", "pageindex", "--model-limits", "or-gemma-4-31b-think=6,4")),
         @("pi", @("-u", "scripts/run_hosted.py", "--phase", "main", "e2", "--systems", "pageindex", "--exclude", '"^e2_d01__or-gemma"',
                   "--model-limits", "or-gpt-oss-20b=2,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=10,1"))
     )
