@@ -37,3 +37,30 @@
 [otf] 290/308  correct=256  errors=0  1751s
 [otf] 300/308  correct=266  errors=0  1795s
 [otf] 308/308  correct=273  errors=0  1909s
+
+=== 2026-10-26T13:37:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 166405 tokens, 750.3s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.589, 'model_tries': 10, 'model_reused_from': None, 'cached_model': True}
+[otf] 219 already answered, 89 to go
+[otf] 10/89  correct=9  errors=0  117s
+[otf] 20/89  correct=15  errors=0  251s
+[otf] 30/89  correct=19  errors=0  375s
+[otf] 40/89  correct=26  errors=0  474s
+[otf] 50/89  correct=31  errors=0  577s
+[otf] 60/89  correct=36  errors=0  687s
+[otf] 70/89  correct=43  errors=0  796s
+[otf] 80/89  correct=50  errors=0  918s
+[otf] error on 14362-15: JSONDecodeError: Expecting value: line 31 column 1 (char 165)
+[otf] 89/89  correct=56  errors=1  1078s
+
+=== 2026-10-26T13:55:19 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 166405 tokens, 750.3s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.589, 'model_tries': 10, 'model_reused_from': None, 'cached_model': True}
+[otf] 307 already answered, 1 to go
+[otf] 1/1  correct=0  errors=0  90s
+
+=== 2026-10-26T15:43:07 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run pilot20 --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 166405 tokens, 750.3s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.589, 'model_tries': 10, 'model_reused_from': None, 'cached_model': True}
+[otf] 272 already answered, 36 to go
+[otf] 10/36  correct=5  errors=0  193s
+[otf] 20/36  correct=11  errors=0  337s
+[otf] 30/36  correct=16  errors=0  502s
+[otf] 36/36  correct=22  errors=0  570s

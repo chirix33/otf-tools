@@ -1,0 +1,13 @@
+parsers attempt 1: entities('Report R-184') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpx5zdswl7\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 42, in entities
+UnboundLocalError: cannot access local variable 'scope_nodes' where it is not associated with a value
+parsers attempt 2: entities('Report R-184') returned no entities; entities('Report R-185') returned no entities; entities('Report R-186') returned no entities; entities('Report R-187') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Report R-184': 0 entities (first: []), recorded_end = None, 0 inputs (first: []), 0 outcomes (first: []), params = {}
+- 4 of 4 lines of 'Report R-184: Text' are not the src of any input or outcome, e.g.: 'Loan-to-value (LTV): TORM defines Loan-to-value (LTV) ratio as Vessel values divided by net borrowings on the' | 'vessels.' | 'LTV describes the net debt ratio on the vessel, and is used by TORM to describe the financial situation, the' | 'liquidity risk as well as to express the future possibilities to raise new capital by new loan facilities.'
+- 9 of 9 rows of table 'Report R-184: Table' are not the src of any input or outcome
+parsers attempt 3: entities('Report R-184') returned no entities; entities('Report R-185') returned no entities; entities('Report R-186') returned no entities; entities('Report R-187') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Report R-184': 0 entities (first: []), recorded_end = None, 0 inputs (first: []), 0 outcomes (first: []), params = {}
+- 4 of 4 lines of 'Report R-184: Text' are not the src of any input or outcome, e.g.: 'Loan-to-value (LTV): TORM defines Loan-to-value (LTV) ratio as Vessel values divided by net borrowings on the' | 'vessels.' | 'LTV describes the net debt ratio on the vessel, and is used by TORM to describe the financial situation, the' | 'liquidity risk as well as to express the future possibilities to raise new capital by new loan facilities.'
+- 9 of 9 rows of table 'Report R-184: Table' are not the src of any input or outcome

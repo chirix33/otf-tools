@@ -5,3 +5,57 @@
 [full_context_text] 10/60  correct=4  errors=0  983s
 [full_context_text] error on itops-w04-05: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
 [full_context_text] 20/60  correct=11  errors=1  1888s
+
+=== 2026-10-26T13:40:52 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system full_context_text --model or-gemma-4-31b-think --workers 4
+[full_context_text] setup: 0 tokens, 0.5s {'pages': 48, 'doc_tokens_est': 42675, 'kept_tokens_est': 42675, 'kept_pages': 48, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 100103}
+[full_context_text] 24 already answered, 36 to go
+[full_context_text] 10/36  correct=6  errors=0  649s
+[full_context_text] 20/36  correct=8  errors=0  1392s
+[full_context_text] 30/36  correct=10  errors=0  1944s
+[full_context_text] 36/36  correct=14  errors=0  2597s
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 54, 'doc_tokens_est': 49997, 'kept_tokens_est': 49997, 'kept_pages': 54, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 116063}
+[full_context_text] 0 already answered, 60 to go
+[full_context_text] 10/60  correct=6  errors=0  597s
+[full_context_text] 20/60  correct=9  errors=0  1603s
+[full_context_text] 30/60  correct=13  errors=0  2764s
+[full_context_text] 40/60  correct=18  errors=0  3510s
+[full_context_text] 50/60  correct=22  errors=0  5386s
+[full_context_text] 60/60  correct=26  errors=0  6169s
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 49, 'doc_tokens_est': 43790, 'kept_tokens_est': 43790, 'kept_pages': 49, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 103011}
+[full_context_text] 0 already answered, 60 to go
+[full_context_text] 10/60  correct=5  errors=0  650s
+[full_context_text] 20/60  correct=9  errors=0  1626s
+[full_context_text] 30/60  correct=11  errors=0  2819s
+[full_context_text] 40/60  correct=16  errors=0  4154s
+[full_context_text] 50/60  correct=22  errors=0  5246s
+[full_context_text] 60/60  correct=26  errors=0  6603s
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 44, 'doc_tokens_est': 40531, 'kept_tokens_est': 40531, 'kept_pages': 44, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 94457}
+[full_context_text] 0 already answered, 60 to go
+[full_context_text] 10/60  correct=9  errors=0  689s
+[full_context_text] 20/60  correct=11  errors=0  1792s
+[full_context_text] 30/60  correct=15  errors=0  2740s
+[full_context_text] 40/60  correct=21  errors=0  3348s
+[full_context_text] 50/60  correct=26  errors=0  4146s
+[full_context_text] 60/60  correct=30  errors=0  5001s
+[full_context_text] setup: 0 tokens, 0.0s {'pages': 45, 'doc_tokens_est': 41472, 'kept_tokens_est': 41472, 'kept_pages': 45, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 96960}
+[full_context_text] 0 already answered, 60 to go
+[full_context_text] 10/60  correct=7  errors=0  733s
+[full_context_text] 20/60  correct=12  errors=0  1779s
+[full_context_text] error on itops-w12-12: JSONDecodeError: Expecting value: line 195 column 1 (char 1067)
+[full_context_text] 30/60  correct=16  errors=1  2703s
+[full_context_text] 40/60  correct=18  errors=1  3522s
+[full_context_text] 50/60  correct=21  errors=1  4613s
+[full_context_text] 60/60  correct=24  errors=1  5784s
+
+=== 2026-10-27T12:06:21 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system full_context_text --model or-gemma-4-31b-think --workers 4
+[full_context_text] setup: 0 tokens, 1.7s {'pages': 48, 'doc_tokens_est': 42675, 'kept_tokens_est': 42675, 'kept_pages': 48, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 100103}
+[full_context_text] 60 already answered, 0 to go
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 54, 'doc_tokens_est': 49997, 'kept_tokens_est': 49997, 'kept_pages': 54, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 116063}
+[full_context_text] 60 already answered, 0 to go
+[full_context_text] setup: 0 tokens, 0.2s {'pages': 49, 'doc_tokens_est': 43790, 'kept_tokens_est': 43790, 'kept_pages': 49, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 103011}
+[full_context_text] 60 already answered, 0 to go
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 44, 'doc_tokens_est': 40531, 'kept_tokens_est': 40531, 'kept_pages': 44, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 94457}
+[full_context_text] 60 already answered, 0 to go
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 45, 'doc_tokens_est': 41472, 'kept_tokens_est': 41472, 'kept_pages': 45, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 96960}
+[full_context_text] 59 already answered, 1 to go
+[full_context_text] 1/1  correct=0  errors=0  266s

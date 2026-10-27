@@ -1,0 +1,50 @@
+{"time": "2026-10-27T12:09:04", "event": "hosted_start", "phases": ["main", "e2"], "models": ["or-gpt-oss-20b", "or-qwen3.6-27b", "or-gemma-4-31b-think"], "systems": ["pageindex"], "exclude": "^e2_d01__or-gemma", "limits": {"or-gpt-oss-20b": [2, 1], "or-qwen3.6-27b": [24, 1], "or-gemma-4-31b-think": [10, 1]}, "n_jobs": 168, "spend_usd": 985.5316, "pid": 45000}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d09__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 147, "answered": 5, "errors": 1}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d11__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 149, "answered": 11, "errors": 1}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d10__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 158, "answered": 9, "errors": 2}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d12__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 124, "answered": 2, "errors": 1}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d13__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 141, "answered": 6, "errors": 1}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d14__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 147, "answered": 11, "errors": 1}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "mfg_d01__or-gemma-4-31b-think__pageindex__shard0of3", "pass_no": 1, "expected": 20, "answered": 0, "errors": 0}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e1_d15__or-gemma-4-31b-think__pageindex", "pass_no": 1, "expected": 142, "answered": 6, "errors": 1}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "mfg_d02__or-gemma-4-31b-think__pageindex__shard0of3", "pass_no": 1, "expected": 20, "answered": 0, "errors": 0}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "mfg_d03__or-gemma-4-31b-think__pageindex__shard0of3", "pass_no": 1, "expected": 20, "answered": 0, "errors": 0}
+{"time": "2026-10-27T12:09:05", "event": "pass_start", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard10of12", "pass_no": 1, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:09:51", "event": "job_done", "job": "itops_d02__or-qwen3.6-27b__pageindex__shard0of3", "spend_usd": 985.8844, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:10:30", "event": "pass_start", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "pass_no": 1, "expected": 89, "answered": 87, "errors": 1}
+{"time": "2026-10-27T12:12:16", "event": "pass_start", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 1, "expected": 20, "answered": 18, "errors": 2}
+{"time": "2026-10-27T12:12:37", "event": "pass_start", "job": "itops_d05__or-qwen3.6-27b__pageindex__shard1of3", "pass_no": 1, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:14:23", "event": "job_done", "job": "mfg_d04__or-qwen3.6-27b__pageindex__shard0of3", "spend_usd": 987.8087, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:14:39", "event": "pass_end", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "pass_no": 1, "rc": 0, "hours": 0.07, "spend_usd": 987.8816, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:14:39", "event": "pass_start", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "pass_no": 2, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:14:45", "event": "pass_start", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 1, "expected": 20, "answered": 18, "errors": 1}
+{"time": "2026-10-27T12:14:47", "event": "pass_end", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard10of12", "pass_no": 1, "rc": 0, "hours": 0.1, "spend_usd": 987.8816, "expected": 89, "answered": 89, "errors": 0}
+{"time": "2026-10-27T12:14:48", "event": "job_done", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard10of12", "spend_usd": 987.8816, "expected": 89, "answered": 89, "errors": 0}
+{"time": "2026-10-27T12:15:28", "event": "job_done", "job": "mfg_d04__or-qwen3.6-27b__pageindex__shard2of3", "spend_usd": 988.259, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:15:49", "event": "job_done", "job": "mfg_d01__or-qwen3.6-27b__pageindex__shard0of3", "spend_usd": 988.3566, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:17:16", "event": "job_done", "job": "itops_d01__or-qwen3.6-27b__pageindex__shard1of3", "spend_usd": 989.0874, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:17:37", "event": "job_done", "job": "itops_d03__or-qwen3.6-27b__pageindex__shard0of3", "spend_usd": 989.0962, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:19:46", "event": "job_done", "job": "itops_d04__or-qwen3.6-27b__pageindex__shard1of3", "spend_usd": 989.8184, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:20:41", "event": "pass_end", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 1, "rc": 0, "hours": 0.1, "spend_usd": 990.336, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:20:41", "event": "pass_start", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 2, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:20:56", "event": "pass_end", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 1, "rc": 0, "hours": 0.14, "spend_usd": 990.3822, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:20:56", "event": "pass_start", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 2, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:21:32", "event": "pass_start", "job": "itops_d05__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 1, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:22:17", "event": "pass_end", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "pass_no": 2, "rc": 0, "hours": 0.13, "spend_usd": 990.8149, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:22:17", "event": "pass_start", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "pass_no": 3, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:24:10", "event": "pass_end", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 2, "rc": 0, "hours": 0.05, "spend_usd": 991.4307, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:24:10", "event": "pass_start", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 3, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:24:41", "event": "pass_end", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 2, "rc": 0, "hours": 0.07, "spend_usd": 991.6189, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:24:41", "event": "pass_start", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 3, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:24:47", "event": "pass_end", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "pass_no": 3, "rc": 0, "hours": 0.04, "spend_usd": 991.697, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:24:47", "event": "job_incomplete", "job": "e2_d01__or-qwen3.6-27b__pageindex__shard0of12", "spend_usd": 991.697, "expected": 89, "answered": 88, "errors": 1}
+{"time": "2026-10-27T12:25:22", "event": "pass_end", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "pass_no": 3, "rc": 0, "hours": 0.02, "spend_usd": 992.0111, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:25:22", "event": "job_incomplete", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard0of3", "spend_usd": 992.0111, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:25:29", "event": "pass_start", "job": "itops_d05__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 1, "expected": 20, "answered": 18, "errors": 1}
+{"time": "2026-10-27T12:25:51", "event": "pass_start", "job": "itops_d03__or-qwen3.6-27b__pageindex__shard1of3", "pass_no": 1, "expected": 20, "answered": 18, "errors": 2}
+{"time": "2026-10-27T12:28:19", "event": "pass_end", "job": "itops_d05__or-qwen3.6-27b__pageindex__shard1of3", "pass_no": 1, "rc": 0, "hours": 0.26, "spend_usd": 992.79, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:28:19", "event": "job_done", "job": "itops_d05__or-qwen3.6-27b__pageindex__shard1of3", "spend_usd": 992.79, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:29:26", "event": "pass_end", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 3, "rc": 0, "hours": 0.08, "spend_usd": 993.0778, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:29:26", "event": "job_incomplete", "job": "mfg_d02__or-qwen3.6-27b__pageindex__shard2of3", "spend_usd": 993.0778, "expected": 20, "answered": 19, "errors": 1}
+{"time": "2026-10-27T12:29:47", "event": "job_done", "job": "itops_d01__or-qwen3.6-27b__pageindex__shard0of3", "spend_usd": 993.153, "expected": 20, "answered": 20, "errors": 0}
+{"time": "2026-10-27T12:33:01", "event": "pass_start", "job": "itops_d04__or-qwen3.6-27b__pageindex__shard2of3", "pass_no": 1, "expected": 20, "answered": 19, "errors": 1}

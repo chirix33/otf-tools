@@ -30,3 +30,25 @@
 [full_context_text] setup: 0 tokens, 0.0s {'pages': 95, 'doc_tokens_est': 35510, 'kept_tokens_est': 35510, 'kept_pages': 95, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 139763}
 [full_context_text] 0 already answered, 100 to go
 [full_context_text] 10/100  correct=6  errors=0  277s
+
+=== 2026-10-26T11:57:56 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run fin_d[0-9]* --system full_context_text --model or-qwen3.6-27b --workers 6
+[full_context_text] setup: 0 tokens, 0.4s {'pages': 105, 'doc_tokens_est': 46415, 'kept_tokens_est': 46415, 'kept_pages': 105, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 189568}
+[full_context_text] 100 already answered, 0 to go
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 103, 'doc_tokens_est': 46172, 'kept_tokens_est': 46172, 'kept_pages': 103, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 189847}
+[full_context_text] 52 already answered, 48 to go
+[full_context_text] 10/48  correct=9  errors=0  65s
+[full_context_text] 20/48  correct=16  errors=0  103s
+[full_context_text] 30/48  correct=24  errors=0  142s
+[full_context_text] 40/48  correct=32  errors=0  190s
+[full_context_text] 48/48  correct=40  errors=0  226s
+[full_context_text] setup: 0 tokens, 0.1s {'pages': 95, 'doc_tokens_est': 35510, 'kept_tokens_est': 35510, 'kept_pages': 95, 'truncated': False, 'budget_tokens': 111688, 'doc_chars': 139763}
+[full_context_text] 11 already answered, 89 to go
+[full_context_text] 10/89  correct=10  errors=0  69s
+[full_context_text] 20/89  correct=19  errors=0  103s
+[full_context_text] 30/89  correct=26  errors=0  158s
+[full_context_text] 40/89  correct=34  errors=0  216s
+[full_context_text] 50/89  correct=42  errors=0  259s
+[full_context_text] 60/89  correct=50  errors=0  302s
+[full_context_text] 70/89  correct=57  errors=0  345s
+[full_context_text] 80/89  correct=65  errors=0  391s
+[full_context_text] 89/89  correct=71  errors=0  1039s

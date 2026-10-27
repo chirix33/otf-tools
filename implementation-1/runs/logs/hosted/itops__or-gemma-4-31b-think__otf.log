@@ -15,3 +15,136 @@
 [otf] 40/60  correct=21  errors=0  935s
 
 === 2026-10-26T11:10:08 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-gemma-4-31b-think --workers 4
+[otf] setup: 31460 tokens, 227.4s {'nodes': 43, 'scopes': 6, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 45 already answered, 15 to go
+[otf] 10/15  correct=4  errors=0  520s
+[otf] 15/15  correct=6  errors=0  719s
+[otf] setup: 33407 tokens, 428.8s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=8  errors=0  500s
+[otf] 20/60  correct=11  errors=0  992s
+[otf] 30/60  correct=16  errors=0  1605s
+[otf] 40/60  correct=21  errors=0  2108s
+[otf] 50/60  correct=27  errors=0  2529s
+[otf] 60/60  correct=28  errors=0  3453s
+[otf] setup: 29268 tokens, 500.5s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] error on itops-w01-10: JSONDecodeError: Expecting value: line 23 column 1 (char 121)
+[otf] 10/60  correct=4  errors=1  555s
+[otf] 20/60  correct=8  errors=1  1145s
+[otf] 30/60  correct=12  errors=1  1991s
+[otf] 40/60  correct=18  errors=1  2680s
+[otf] 50/60  correct=22  errors=1  3357s
+
+=== 2026-10-26T13:37:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-gemma-4-31b-think --workers 4
+[otf] setup: 31460 tokens, 227.4s {'nodes': 43, 'scopes': 6, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 33407 tokens, 428.8s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 29268 tokens, 500.5s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 51 already answered, 9 to go
+[otf] 9/9  correct=2  errors=0  761s
+Traceback (most recent call last):
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 107, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py", line 95, in main
+    run_system(system, d, a.workers, a.limit, a.types, a.per_type, a.shard)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\runner.py", line 86, in run_system
+    setup = system.setup(doc)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 88, in setup
+    info = self.engine.prepare(doc.pdf_path, cached, lib_dir)
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\engine.py", line 61, in prepare
+    self.model = cached_model or generate_model(self.llm, self.nav, self.map_path, log=self.log,
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                library=library.load(library_dir, self.nav))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\otf\toolgen.py", line 408, in generate_model
+    code = extract_code(llm([system, {"role": "user", "content": prompts.PARSERS_USER.format(
+                        ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        context=context, feedback=feedback)}]))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\systems\otf_system.py", line 53, in _llm
+    resp = with_backoff(self.client.chat.completions.create, model=self.spec.served_name, messages=messages,
+                                               **chat_sampling(self.spec, self.reasoning_effort))
+  File "C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\clevrer_bench\llm.py", line 120, in with_backoff
+    return fn(*args, **kwargs)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1296, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1153, in request
+    return self._process_response(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        cast_to=cast_to,
+        ^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        retries_taken=retries_taken,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1242, in _process_response
+    return api_response.parse()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_response.py", line 328, in parse
+    parsed = self._parse(to=to)
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_response.py", line 270, in _parse
+    data = response.json()
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx\_models.py", line 832, in json
+    return jsonlib.loads(self.content, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 129 column 1 (char 704)
+
+=== 2026-10-26T13:59:52 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-gemma-4-31b-think --workers 4
+[otf] setup: 31460 tokens, 227.4s {'nodes': 43, 'scopes': 6, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 33407 tokens, 428.8s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 29268 tokens, 500.5s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 33955 tokens, 677.7s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  1040s
+[otf] 20/60  correct=12  errors=0  2033s
+[otf] 30/60  correct=17  errors=0  2647s
+[otf] 40/60  correct=21  errors=0  3496s
+[otf] 50/60  correct=26  errors=0  4398s
+[otf] 60/60  correct=31  errors=0  5171s
+
+=== 2026-10-26T15:43:07 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-gemma-4-31b-think --workers 4
+[otf] setup: 31460 tokens, 227.4s {'nodes': 43, 'scopes': 6, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 33407 tokens, 428.8s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 29268 tokens, 500.5s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 33955 tokens, 677.7s {'nodes': 36, 'scopes': 5, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 166258 tokens, 3230.4s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.403, 'model_tries': 7, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=9  errors=0  1015s
+[otf] 20/60  correct=15  errors=0  3063s
+[otf] 30/60  correct=21  errors=0  4728s
+[otf] 40/60  correct=26  errors=0  6518s
+[otf] 50/60  correct=32  errors=0  7437s
+[otf] 60/60  correct=37  errors=0  8850s

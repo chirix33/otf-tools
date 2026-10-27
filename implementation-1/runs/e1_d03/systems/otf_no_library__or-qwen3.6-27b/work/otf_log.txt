@@ -1,0 +1,20 @@
+parsers attempt 1: entities('Video 10176') failed: File "<string>", line 80, in entities
+  File "<string>", line 70, in _find_child
+NameError: name 'doc' is not defined
+parsers attempt 2: passed
+explore 1: ok, 1410 chars
+explore 2: ok, 3000 chars
+explore 3: ok, 3000 chars
+explore 4: ok, 2573 chars
+explore 5: ok, 2344 chars
+explore 6: ok, 3000 chars
+explore 7: ok, 2435 chars
+explore 8: ok, 3000 chars
+simulate attempt 1 (after 8 explore runs): mean record-match F1 = 0.667 (need 0.4)
+- scope 'Video 10176' (start 44.73): F1 1.0, 1 hidden outcomes, model produced 1; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 10821' (start 55.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 119.0, "kind": "collision", "entities": ["0", "2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10992' (start 51.73): F1 0.5, 3 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 103.0, "kind": "collision", "entities": ["1", "2"], "value": null}, {"time": 106.0, "kind": "collision", "entities": ["0", "3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11526' (start 24.73): F1 0.333, 3 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 47.0, "kind": "collision", "entities": ["1", "3"], "value": null}, {"time": 61.0, "kind": "collision", "entities": ["0", "2"], "value": null}]; extra (produced but not hidden): [{"time": 35.730000000000004, "kind": "collision", "entities": ["1", "3"], "value": null}, {"time": 68.73, "kind": "collision", "entities": ["1", "2"], "value": null}]
+- scope 'Video 11559' (start 20.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 11797' (start 13.73): F1 0.5, 2 hidden outcomes, model produced 2; missed (hidden but not produced): [{"time": 75.0, "kind": "collision", "entities": ["1", "2"], "value": null}]; extra (produced but not hidden): [{"time": 117.73, "kind": "collision", "entities": ["2", "3"], "value": null}]
+simulator conversation 1: best F1 0.667

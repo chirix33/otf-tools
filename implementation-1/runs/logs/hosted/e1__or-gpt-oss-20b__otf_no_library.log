@@ -385,3 +385,92 @@
 [otf_no_library] 130/142  correct=92  errors=0  130s
 [otf_no_library] 140/142  correct=99  errors=0  145s
 [otf_no_library] 142/142  correct=100  errors=0  152s
+
+=== 2026-10-26T13:37:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6 --system-arg use_library=false
+[otf_no_library] setup: 522437 tokens, 379.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.678, 'model_tries': 15, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 65 already answered, 83 to go
+[otf_no_library] 10/83  correct=3  errors=0  38s
+[otf_no_library] 20/83  correct=8  errors=0  60s
+[otf_no_library] 30/83  correct=11  errors=0  83s
+[otf_no_library] 40/83  correct=12  errors=0  108s
+[otf_no_library] 50/83  correct=15  errors=0  143s
+[otf_no_library] 60/83  correct=18  errors=0  173s
+[otf_no_library] 70/83  correct=23  errors=0  204s
+[otf_no_library] 80/83  correct=24  errors=0  227s
+[otf_no_library] 83/83  correct=24  errors=0  246s
+[otf_no_library] setup: 22533 tokens, 69.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 141 already answered, 0 to go
+[otf_no_library] setup: 1017382 tokens, 694.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 25, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 132 already answered, 0 to go
+[otf_no_library] setup: 745952 tokens, 626.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 24, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 139 already answered, 0 to go
+[otf_no_library] setup: 863203 tokens, 519.9s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 24, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 134 already answered, 0 to go
+[otf_no_library] setup: 817552 tokens, 582.9s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 23, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 149 already answered, 0 to go
+[otf_no_library] setup: 21511 tokens, 74.6s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 155 already answered, 0 to go
+[otf_no_library] setup: 1285981 tokens, 1018.6s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.292, 'model_tries': 25, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 160 already answered, 0 to go
+[otf_no_library] setup: 145009 tokens, 243.4s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.717, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 68 already answered, 79 to go
+[otf_no_library] 10/79  correct=2  errors=0  43s
+[otf_no_library] 20/79  correct=5  errors=0  74s
+[otf_no_library] 30/79  correct=6  errors=0  100s
+[otf_no_library] 40/79  correct=7  errors=0  137s
+[otf_no_library] 50/79  correct=11  errors=0  167s
+[otf_no_library] 60/79  correct=16  errors=0  207s
+[otf_no_library] 70/79  correct=19  errors=0  233s
+[otf_no_library] 79/79  correct=22  errors=0  270s
+[otf_no_library] setup: 719912 tokens, 694.1s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.383, 'model_tries': 27, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 158 already answered, 0 to go
+[otf_no_library] setup: 28281 tokens, 128.1s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 149 already answered, 0 to go
+[otf_no_library] setup: 857864 tokens, 515.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 27, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 124 already answered, 0 to go
+[otf_no_library] setup: 25137 tokens, 89.0s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 141 already answered, 0 to go
+[otf_no_library] setup: 548604 tokens, 413.9s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 26, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 147 already answered, 0 to go
+[otf_no_library] setup: 22092 tokens, 75.8s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 142 already answered, 0 to go
+
+=== 2026-10-26T15:43:07 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gpt-oss-20b --workers 6 --system-arg use_library=false
+[otf_no_library] setup: 522437 tokens, 379.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.678, 'model_tries': 15, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 115 already answered, 33 to go
+[otf_no_library] 10/33  correct=3  errors=0  90s
+[otf_no_library] 20/33  correct=7  errors=0  139s
+[otf_no_library] 30/33  correct=10  errors=0  194s
+[otf_no_library] 33/33  correct=13  errors=0  214s
+[otf_no_library] setup: 22533 tokens, 69.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 141 already answered, 0 to go
+[otf_no_library] setup: 1017382 tokens, 694.7s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 25, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 132 already answered, 0 to go
+[otf_no_library] setup: 745952 tokens, 626.4s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 24, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 139 already answered, 0 to go
+[otf_no_library] setup: 863203 tokens, 519.9s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 24, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 134 already answered, 0 to go
+[otf_no_library] setup: 817552 tokens, 582.9s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 23, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 149 already answered, 0 to go
+[otf_no_library] setup: 21511 tokens, 74.6s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 155 already answered, 0 to go
+[otf_no_library] setup: 1285981 tokens, 1018.6s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.292, 'model_tries': 25, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 160 already answered, 0 to go
+[otf_no_library] setup: 145009 tokens, 243.4s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.717, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 114 already answered, 33 to go
+[otf_no_library] 10/33  correct=2  errors=0  58s
+[otf_no_library] 20/33  correct=6  errors=0  110s
+[otf_no_library] 30/33  correct=8  errors=0  157s
+[otf_no_library] 33/33  correct=8  errors=0  179s
+[otf_no_library] setup: 719912 tokens, 694.1s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.383, 'model_tries': 27, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 158 already answered, 0 to go
+[otf_no_library] setup: 28281 tokens, 128.1s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 149 already answered, 0 to go
+[otf_no_library] setup: 857864 tokens, 515.3s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 27, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 124 already answered, 0 to go
+[otf_no_library] setup: 25137 tokens, 89.0s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 141 already answered, 0 to go
+[otf_no_library] setup: 548604 tokens, 413.9s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 26, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 147 already answered, 0 to go
+[otf_no_library] setup: 22092 tokens, 75.8s {'nodes': 81, 'scopes': 20, 'model_passed': False, 'model_f1': 0.0, 'model_tries': 3, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 142 already answered, 0 to go

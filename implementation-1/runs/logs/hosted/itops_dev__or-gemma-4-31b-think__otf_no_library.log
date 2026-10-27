@@ -96,3 +96,8 @@ openai.RateLimitError: Error code: 429 - {'error': {'message': 'Provider returne
 [otf_no_library] setup: 519082 tokens, 1655.8s {'nodes': 29, 'scopes': 4, 'model_passed': True, 'model_f1': 0.886, 'model_tries': 15, 'model_reused_from': None}
 [otf_no_library] 0 already answered, 4 to go
 [otf_no_library] 4/4  correct=3  errors=0  42s
+
+=== 2026-10-26T13:37:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_dev --system otf --model or-gemma-4-31b-think --workers 4 --system-arg use_library=false --limit 4
+[otf_no_library] setup: 519082 tokens, 1655.8s {'nodes': 29, 'scopes': 4, 'model_passed': True, 'model_f1': 0.886, 'model_tries': 15, 'model_reused_from': None, 'cached_model': True}
+[otf_no_library] 2 already answered, 2 to go
+[otf_no_library] 2/2  correct=1  errors=0  192s

@@ -1,0 +1,12 @@
+parsers attempt 1: passed
+explore 1: ok, 3000 chars
+explore 2: ok, 1152 chars
+explore 3: ok, 149 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.506 (need 0.4)
+- scope 'Video 10012' (start 45.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 108.0, "kind": "collision", "entities": ["Object 0", "Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10017' (start 38.73): F1 0.333, 3 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 56.0, "kind": "collision", "entities": ["Object 0", "Object 2"], "value": null}, {"time": 86.0, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): [{"time": 75.8, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}, {"time": 123.7, "kind": "collision", "entities": ["Object 4", "Object 3"], "value": null}]
+- scope 'Video 10046' (start 48.73): F1 0.5, 3 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 103.0, "kind": "collision", "entities": ["Object 0", "Object 2"], "value": null}, {"time": 117.0, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10069' (start 31.73): F1 0.8, 3 hidden outcomes, model produced 2; missed (hidden but not produced): [{"time": 121.0, "kind": "exit", "entities": ["Object 2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10075' (start 35.73): F1 0.4, 3 hidden outcomes, model produced 2; missed (hidden but not produced): [{"time": 61.0, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}, {"time": 72.0, "kind": "collision", "entities": ["Object 0", "Object 3"], "value": null}]; extra (produced but not hidden): [{"time": 49.3, "kind": "collision", "entities": ["Object 1", "Object 2"], "value": null}]
+- scope 'Video 10100' (start 22.73): F1 0.333, 3 hidden outcomes, model produced 3; missed (hidden but not produced): [{"time": 44.0, "kind": "collision", "entities": ["Object 0", "Object 2"], "value": null}, {"time": 52.0, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}]; extra (produced but not hidden): [{"time": 35.2, "kind": "collision", "entities": ["Object 2", "Object 0"], "value": null}, {"time": 45.6, "kind": "collision", "entities": ["Object 1", "Object 3"], "value": null}]
+simulator conversation 1: best F1 0.506

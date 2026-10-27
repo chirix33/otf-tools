@@ -1,0 +1,472 @@
+{
+ "key": {
+  "pdf_sha": "0aa39e868e05e4eb",
+  "model": "or-qwen3.6-27b",
+  "max_tries": 3,
+  "version": "v3"
+ },
+ "model": {
+  "code": "import re\n\ndef entities(doc, scope):\n    scope_node = node_by_title(doc, scope)\n    children_nodes = children(doc, scope_node)\n    products_node = None\n    for child in children_nodes:\n        if child['kind'] == 'table' and 'Products' in child['title']:\n            products_node = child\n            break\n    if products_node is None:\n        return []\n    rows = table_rows(products_node)\n    result = []\n    for _, row in rows:\n        result.append({\n            \"id\": row['product'],\n            \"description\": f\"{row['product']} ({row['group']}/{row['sub-group']}, storage {row['storage location']}, {row['kg per unit']} kg/unit)\"\n        })\n    return result\n\n\ndef recorded_end(doc, scope):\n    scope_node = node_by_title(doc, scope)\n    children_nodes = children(doc, scope_node)\n    ledger_node = None\n    for child in children_nodes:\n        if child['kind'] == 'table' and 'Daily ledger' in child['title']:\n            ledger_node = child\n            break\n    if ledger_node:\n        rows = table_rows(ledger_node)\n        if rows:\n            return max(float(row['day']) for _, row in rows)\n    return None\n\n\ndef params(doc, scope):\n    scope_node = node_by_title(doc, scope)\n    children_nodes = children(doc, scope_node)\n    result = {}\n    for child in children_nodes:\n        if child['kind'] == 'text':\n            match = re.search(r'dispatch capacity:\\s*(\\d+)\\s*kg', child['text'], re.IGNORECASE)\n            if match:\n                result['dispatch_capacity_kg'] = float(match.group(1))\n    return result\n\n\ndef inputs(doc, scope):\n    scope_node = node_by_title(doc, scope)\n    children_nodes = children(doc, scope_node)\n    products_node = None\n    ledger_node = None\n    order_book_table = None\n    for child in children_nodes:\n        if child['kind'] == 'table' and 'Products' in child['title']:\n            products_node = child\n        elif child['kind'] == 'table' and 'Daily ledger' in child['title']:\n            ledger_node = child\n        elif child['kind'] == 'table' and 'Order book' in child['title'] and 'Orders received' in child['title']:\n            order_book_table = child\n    result = []\n    if products_node:\n        prod_rows = table_rows(products_node)\n        for idx, row in prod_rows:\n            result.append({\n                \"id\": f\"opening_stock_{row['product']}\",\n                \"time\": None,\n                \"kind\": \"opening_stock\",\n                \"entities\": [row['product']],\n                \"fields\": {\n                    \"opening_stock\": int(row['opening stock']),\n                    \"kg_per_unit\": float(row['kg per unit'])\n                },\n                \"src\": [[products_node['node_id'], idx, ['product', 'opening stock', 'kg per unit']]]\n            })\n    if ledger_node:\n        ledger_rows = table_rows(ledger_node)\n        for idx, row in ledger_rows:\n            day = float(row['day'])\n            product = row['product']\n            result.append({\n                \"id\": f\"daily_{product}_{int(day)}\",\n                \"time\": day,\n                \"kind\": \"daily_input\",\n                \"entities\": [product],\n                \"fields\": {\"produced\": int(row['produced']), \"ordered\": int(row['ordered'])},\n                \"src\": [[ledger_node['node_id'], idx, ['produced', 'ordered', 'day', 'date', 'product']]]\n            })\n    if order_book_table:\n        ob_rows = table_rows(order_book_table)\n        for idx, row in ob_rows:\n            day = float(row['day'])\n            product = row['product']\n            result.append({\n                \"id\": f\"future_{product}_{int(day)}\",\n                \"time\": day,\n                \"kind\": \"planned_input\",\n                \"entities\": [product],\n                \"fields\": {\"planned_production\": int(row['planned production']), \"ordered\": int(row['ordered'])},\n                \"src\": [[order_book_table['node_id'], idx, ['planned production', 'ordered', 'day', 'date', 'product']]]\n            })\n    return result\n\n\ndef _match_entities_in_line(line, entity_ids):\n    result = []\n    for eid in entity_ids:\n        escaped = re.escape(eid)\n        pattern = r'(?<![A-Za-z0-9\\-])' + escaped + r'(?![A-Za-z0-9\\-])'\n        if re.search(pattern, line):\n            result.append(eid)\n    return result\n\n\ndef outcomes(doc, scope):\n    scope_node = node_by_title(doc, scope)\n    children_nodes = children(doc, scope_node)\n    ledger_node = None\n    events_node = None\n    open_orders_node = None\n    for child in children_nodes:\n        if child['kind'] == 'table' and 'Daily ledger' in child['title']:\n            ledger_node = child\n        elif child['kind'] == 'list' and 'Events' in child['title']:\n            events_node = child\n        elif child['kind'] == 'table' and 'Open orders' in child['title']:\n            open_orders_node = child\n    entity_ids = [e['id'] for e in entities(doc, scope)]\n    result = []\n    if ledger_node:\n        ledger_rows = table_rows(ledger_node)\n        for idx, row in ledger_rows:\n            day = float(row['day'])\n            product = row['product']\n            result.append({\n                \"time\": day,\n                \"kind\": \"shipped\",\n                \"entities\": [product],\n                \"value\": int(row['shipped']),\n                \"src\": [[ledger_node['node_id'], idx, ['shipped', 'day', 'date', 'product']]]\n            })\n            result.append({\n                \"time\": day,\n                \"kind\": \"backordered\",\n                \"entities\": [product],\n                \"value\": int(row['backordered']),\n                \"src\": [[ledger_node['node_id'], idx, ['backordered', 'day', 'date', 'product']]]\n            })\n            result.append({\n                \"time\": day,\n                \"kind\": \"stock\",\n                \"entities\": [product],\n                \"value\": int(row['stock']),\n                \"src\": [[ledger_node['node_id'], idx, ['stock', 'day', 'date', 'product']]]\n            })\n    if events_node:\n        lines = events_node.get('lines', [])\n        for line_idx, line in enumerate(lines):\n            match = re.match(r'Day\\s+(\\d+)', line)\n            if match:\n                day = float(match.group(1))\n                entities_in_event = _match_entities_in_line(line, entity_ids)\n                line_lower = line.lower()\n                if 'dispatch capacity reached' in line_lower:\n                    kind = \"dispatch_capacity_reached\"\n                elif 'runs out of stock' in line_lower:\n                    kind = \"stock_out\"\n                elif 'fully backordered' in line_lower:\n                    kind = \"fully_backordered\"\n                elif 'backlog' in line_lower and 'cleared' in line_lower:\n                    kind = \"backlog_cleared\"\n                else:\n                    kind = \"event\"\n                result.append({\n                    \"time\": day,\n                    \"kind\": kind,\n                    \"entities\": entities_in_event,\n                    \"value\": None,\n                    \"src\": [[events_node['node_id'], line_idx]]\n                })\n    if open_orders_node:\n        oo_rows = table_rows(open_orders_node)\n        end_day_match = re.search(r'end of day\\s+(\\d+)', open_orders_node['title'])\n        end_day = float(end_day_match.group(1)) if end_day_match else None\n        for idx, row in oo_rows:\n            result.append({\n                \"time\": end_day,\n                \"kind\": \"open_order\",\n                \"entities\": [row['product']],\n                \"value\": int(row['units still open']),\n                \"src\": [[open_orders_node['node_id'], idx, ['product', 'day placed', 'units still open']]]\n            })\n    return result\n\n\n# ---- step 2: forward model ----\ndef simulate(doc, scope, inputs, params, start=None, horizon=None):\n    import re\n    from collections import defaultdict\n    \n    cap_kg = params.get('dispatch_capacity_kg')\n    if cap_kg is None:\n        try:\n            scope_node = node_by_title(doc, scope)\n            for child in children(doc, scope_node):\n                if child['kind'] == 'text':\n                    m = re.search(r'dispatch capacity:\\s*(\\d+)', child['text'], re.IGNORECASE)\n                    if m:\n                        cap_kg = float(m.group(1))\n                        break\n        except Exception:\n            pass\n    if cap_kg is None:\n        cap_kg = 407700.0\n        \n    opening = {}\n    daily_data = {}\n    \n    for inp in inputs:\n        if inp['kind'] == 'opening_stock':\n            opening[inp['entities'][0]] = inp['fields']\n        elif inp['kind'] in ('daily_input', 'planned_input'):\n            day = inp['time']\n            prod = inp['entities'][0]\n            if day not in daily_data:\n                daily_data[day] = {}\n            fields = inp['fields']\n            daily_data[day][prod] = {\n                'produced': fields.get('produced', fields.get('planned_production', 0)),\n                'ordered': fields.get('ordered', 0)\n            }\n            \n    if not opening:\n        return []\n        \n    all_days = sorted(daily_data.keys())\n    if not all_days:\n        return []\n        \n    if horizon is None:\n        horizon = all_days[-1]\n        \n    stock = {p: float(v['opening_stock']) for p, v in opening.items()}\n    kg = {p: float(v['kg_per_unit']) for p, v in opening.items()}\n    orders = []\n    outcomes = []\n    \n    last_stock_out = {}\n    prev_bo_pos = {p: False for p in opening}\n    \n    for day in all_days:\n        if day > horizon:\n            break\n            \n        cap_left = cap_kg\n        day_shipped = defaultdict(float)\n        day_inputs = daily_data.get(day, {})\n        \n        # 1. Production arrives\n        for p, vals in day_inputs.items():\n            stock[p] += vals['produced']\n            \n        # 2. Orders join the queue\n        for p, vals in day_inputs.items():\n            if vals['ordered'] > 0:\n                orders.append({'p': p, 'day': day, 'rem': float(vals['ordered']), 'orig': float(vals['ordered'])})\n                \n        # 3. Dispatch\n        # Oldest first; same day -> smaller remaining first, then lower product code\n        orders.sort(key=lambda o: (o['day'], o['rem'], o['p']))\n        \n        cap_reached = False\n        for o in orders:\n            if cap_left <= 1e-9:\n                break\n            p = o['p']\n            if p not in kg: \n                continue\n            w = kg[p]\n            \n            can_cap = int(cap_left / w)\n            can_stk = int(stock[p])\n            can_rem = int(o['rem'])\n            \n            ship = min(can_cap, can_stk, can_rem)\n            \n            if ship > 0:\n                o['rem'] -= ship\n                stock[p] -= ship\n                cap_left -= ship * w\n                day_shipped[p] += ship\n                \n                if ship < can_stk and ship == can_cap:\n                    cap_reached = True\n                    \n        # Clean fulfilled orders\n        orders = [o for o in orders if o['rem'] > 0.5]\n        \n        # 4. Records\n        bo = defaultdict(float)\n        for o in orders:\n            bo[o['p']] += o['rem']\n            \n        for p in opening:\n            sv = int(round(day_shipped[p]))\n            bv = int(round(bo[p]))\n            stok = int(round(stock[p]))\n            \n            outcomes.append({\"time\": float(day), \"kind\": \"shipped\", \"entities\": [p], \"value\": sv})\n            outcomes.append({\"time\": float(day), \"kind\": \"backordered\", \"entities\": [p], \"value\": bv})\n            outcomes.append({\"time\": float(day), \"kind\": \"stock\", \"entities\": [p], \"value\": stok})\n            \n            if cap_reached:\n                outcomes.append({\"time\": float(day), \"kind\": \"dispatch_capacity_reached\", \"entities\": [], \"value\": None})\n                \n            if stok == 0 and bv > 0:\n                if last_stock_out.get(p) != day - 1:\n                    outcomes.append({\"time\": float(day), \"kind\": \"stock_out\", \"entities\": [p], \"value\": None})\n                last_stock_out[p] = day\n            else:\n                last_stock_out[p] = None\n                \n            curr_bo_pos = bv > 0\n            if prev_bo_pos[p] and not curr_bo_pos:\n                outcomes.append({\"time\": float(day), \"kind\": \"backlog_cleared\", \"entities\": [p], \"value\": None})\n            prev_bo_pos[p] = curr_bo_pos\n            \n        for o in orders:\n            if o['day'] == day and abs(o['rem'] - o['orig']) < 0.5:\n                outcomes.append({\"time\": float(day), \"kind\": \"fully_backordered\", \"entities\": [o['p']], \"value\": None})\n                \n    if start is not None:\n        outcomes = [o for o in outcomes if o['time'] > start]\n        \n    return outcomes\n",
+  "passed": true,
+  "mean_f1": 0.904,
+  "tries": 0,
+  "attempts": [
+   {
+    "step": "library",
+    "report": {
+     "scopes": [
+      {
+       "scope": "Plant 2114, Period 03",
+       "start": 28.87,
+       "f1": 0.757,
+       "hidden": 265,
+       "predicted": 242,
+       "missed": [
+        {
+         "time": 32.0,
+         "kind": "shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 9850
+        },
+        {
+         "time": 32.0,
+         "kind": "backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 8177
+        },
+        {
+         "time": 32.0,
+         "kind": "stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 16491
+        },
+        {
+         "time": 33.0,
+         "kind": "shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 11651
+        }
+       ],
+       "extra": [
+        {
+         "time": 32.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 32.0,
+         "kind": "shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 15703
+        },
+        {
+         "time": 32.0,
+         "kind": "backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 2324
+        },
+        {
+         "time": 32.0,
+         "kind": "stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 10638
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1914, Period 05",
+       "start": 56.87,
+       "f1": 0.96,
+       "hidden": 346,
+       "predicted": 327,
+       "missed": [
+        {
+         "time": 58.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 59.0,
+         "kind": "backlog_cleared",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": null
+        },
+        {
+         "time": 61.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 2980
+        },
+        {
+         "time": 61.0,
+         "kind": "backordered",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 846
+        }
+       ],
+       "extra": [
+        {
+         "time": 61.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 3826
+        },
+        {
+         "time": 61.0,
+         "kind": "backordered",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 61.0,
+         "kind": "stock",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 1609
+        },
+        {
+         "time": 62.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 0
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1912, Period 06",
+       "start": 70.87,
+       "f1": 0.951,
+       "hidden": 136,
+       "predicted": 131,
+       "missed": [
+        {
+         "time": 79.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 912
+        },
+        {
+         "time": 79.0,
+         "kind": "backordered",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 249
+        },
+        {
+         "time": 79.0,
+         "kind": "stock",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 2383
+        },
+        {
+         "time": 79.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 79.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 1161
+        },
+        {
+         "time": 79.0,
+         "kind": "backordered",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 79.0,
+         "kind": "stock",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 2134
+        },
+        {
+         "time": 80.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN02K12P"
+         ],
+         "value": 190
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2103, Period 07",
+       "start": 84.87,
+       "f1": 0.95,
+       "hidden": 620,
+       "predicted": 652,
+       "missed": [
+        {
+         "time": 98.0,
+         "kind": "open_order",
+         "entities": [
+          "SOS008L02P"
+         ],
+         "value": 134
+        },
+        {
+         "time": 98.0,
+         "kind": "open_order",
+         "entities": [
+          "SOS008L02P"
+         ],
+         "value": 10
+        },
+        {
+         "time": 98.0,
+         "kind": "open_order",
+         "entities": [
+          "SOS008L02P"
+         ],
+         "value": 2398
+        },
+        {
+         "time": 98.0,
+         "kind": "open_order",
+         "entities": [
+          "SOS008L02P"
+         ],
+         "value": 875
+        }
+       ],
+       "extra": [
+        {
+         "time": 86.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 86.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 86.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 86.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2114, Period 07",
+       "start": 84.87,
+       "f1": 0.941,
+       "hidden": 233,
+       "predicted": 222,
+       "missed": [
+        {
+         "time": 86.0,
+         "kind": "shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 9978
+        },
+        {
+         "time": 86.0,
+         "kind": "backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 5573
+        },
+        {
+         "time": 86.0,
+         "kind": "stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 27965
+        },
+        {
+         "time": 86.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 86.0,
+         "kind": "shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 15551
+        },
+        {
+         "time": 86.0,
+         "kind": "backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 86.0,
+         "kind": "stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 22392
+        },
+        {
+         "time": 87.0,
+         "kind": "shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 13891
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1914, Period 08",
+       "start": 98.87,
+       "f1": 0.864,
+       "hidden": 319,
+       "predicted": 297,
+       "missed": [
+        {
+         "time": 99.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 4691
+        },
+        {
+         "time": 99.0,
+         "kind": "backordered",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 425
+        },
+        {
+         "time": 99.0,
+         "kind": "dispatch_capacity_reached",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 100.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 2671
+        }
+       ],
+       "extra": [
+        {
+         "time": 99.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 5116
+        },
+        {
+         "time": 99.0,
+         "kind": "backordered",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 100.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 2246
+        },
+        {
+         "time": 101.0,
+         "kind": "shipped",
+         "entities": [
+          "ATN01K24P"
+         ],
+         "value": 5137
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.904,
+     "passed": true,
+     "error": null,
+     "sensitive": true,
+     "schedule_kinds": []
+    },
+    "source": "mfg_d02"
+   }
+  ],
+  "failed_step": null,
+  "reused_from": "mfg_d02"
+ },
+ "latency_s": 4.473052740097046,
+ "usage": {
+  "input_tokens": 0,
+  "cached_input_tokens": 0,
+  "output_tokens": 0,
+  "reasoning_tokens": 0,
+  "llm_calls": 0,
+  "total_tokens": 0
+ }
+}

@@ -1,0 +1,114 @@
+
+=== 2026-10-26T17:04:33 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d02 --system pageindex --model or-qwen3.6-27b --workers 1 --shard 0/3
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021D1BC8EBA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1BD55F90>, 32909.0862215)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D1BC8E660>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021D1BDADE80>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1BE917C0>, 33153.1506216)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D1BE8AFD0>
+[pageindex] setup: 185786 tokens, 358.2s {'doc_id': 'pi-8cba8bd721af44c9b3f5604a0123f98c', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 23 already answered, 12 to go
+[pageindex] error on itops-w14-10: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1BE707D0>, 33856.2271285)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D19D0B610>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1BE707D0>, 34206.4867559)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D15842350>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1BC46B70>, 34767.4198326)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D1BC7B890>
+[pageindex] error on itops-w19-13: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1BC46B70>, 34786.8507675)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D15842210>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1A483E30>, 35008.417757)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D15842490>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1A4838B0>, 35279.6861474)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D1BC7B390>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1A483B70>, 35732.9006432)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D1BC7B610>
+[pageindex] error on itops-w21-12: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1A483CD0>, 35778.4636089)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D15841310>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021D1A483B70>, 36485.5104841)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021D1BC7AE90>
+[pageindex] 10/12  correct=5  errors=3  3595s
+
+=== 2026-10-26T18:06:50 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d02 --system pageindex --model or-qwen3.6-27b --workers 1 --shard 0/3
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001F1D11EEBA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001F1D12B2120>, 37105.6011964)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001F1D11EE660>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001F1D0FBAED0>, 38348.7362576)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001F1D15A82D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001F1D11ED550>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001F1D12B3250>, 37418.8543198)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001F1D11DAC10>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001F1D0FBAED0>, 38966.1590946)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001F1CB0D25D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001F1D119E160>, 39149.5261289)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001F1CF267110>
+[pageindex] setup: 185786 tokens, 358.2s {'doc_id': 'pi-8cba8bd721af44c9b3f5604a0123f98c', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 35 already answered, 5 to go
+[pageindex] error on itops-w24-08: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001F1D119E160>, 39564.5672271)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001F1CF267890>
+[pageindex] 5/5  correct=0  errors=2  2937s
+[pageindex] error on itops-w24-11: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+
+=== 2026-10-26T18:55:50 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d02 --system pageindex --model or-qwen3.6-27b --workers 1 --shard 0/3
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000023F9EA92BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000023F9EB61F90>, 39683.636962)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000023F9EA92660>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000023F9EC017F0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000023F9EE49950>, 40145.8971348)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000023F9EE31BD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000023F9E86AED0>, 40982.7336024)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000023F9EAA6990>
+[pageindex] setup: 185786 tokens, 358.2s {'doc_id': 'pi-8cba8bd721af44c9b3f5604a0123f98c', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 42 already answered, 2 to go
+[pageindex] 2/2  correct=1  errors=1  1417s
+[pageindex] error on itops-w24-11: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+
+=== 2026-10-26T19:19:28 pass 3: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d02 --system pageindex --model or-qwen3.6-27b --workers 1 --shard 0/3
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000244C7222BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000244C72F1F90>, 41304.2016723)])']
+connector: <aiohttp.connector.TCPConnector object at 0x00000244C7222660>
+[pageindex] setup: 185786 tokens, 358.2s {'doc_id': 'pi-8cba8bd721af44c9b3f5604a0123f98c', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 45 already answered, 1 to go
+[pageindex] 1/1  correct=0  errors=1  320s
+[pageindex] error on itops-w24-11: PageIndexAPIError: The agent backend failed: Tool choose not found in agent PageIndex
+
+=== 2026-10-27T12:06:21 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d02 --system pageindex --model or-qwen3.6-27b --workers 1 --shard 0/3
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000263DD4C6BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000263DD591F90>, 11011.3686408)])']
+connector: <aiohttp.connector.TCPConnector object at 0x00000263DD4C6660>
+[pageindex] setup: 185786 tokens, 358.2s {'doc_id': 'pi-8cba8bd721af44c9b3f5604a0123f98c', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 57 already answered, 1 to go
+[pageindex] 1/1  correct=0  errors=0  184s
