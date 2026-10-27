@@ -36,11 +36,14 @@ if (Test-Path (Join-Path $Root "runs\logs\HOSTED_RUNS_HALTED")) {
     # 2026-10-27 priorities (deadline): Qwen finishes its ablations; Gemma runs its main OTF (+ small leftovers) and
     # main PageIndex first; Gemma's E1 full context / RAG, E2 and ablations are left out (Crusoe throughput)
     $runners = @(
-        @("qwen", @("-u", "scriptsun_hosted.py", "--phase", "dev", "main", "e2", "ablations", "--models", "or-qwen3.6-27b",
+        @("qwen", @("-u", "scripts
+un_hosted.py", "--phase", "dev", "main", "e2", "ablations", "--models", "or-qwen3.6-27b",
                     "--exclude", "pageindex", "--model-limits", "or-qwen3.6-27b=8,6")),
-        @("gemma", @("-u", "scriptsun_hosted.py", "--phase", "main", "--models", "or-gemma-4-31b-think",
+        @("gemma", @("-u", "scripts
+un_hosted.py", "--phase", "main", "--models", "or-gemma-4-31b-think",
                      "--exclude", '"pageindex|^e1__.*__(full_context_text|rag)$"', "--model-limits", "or-gemma-4-31b-think=6,6")),
-        @("pi", @("-u", "scriptsun_hosted.py", "--phase", "main", "e2", "--systems", "pageindex", "--exclude", '"^e2_d01__or-gemma"',
+        @("pi", @("-u", "scripts
+un_hosted.py", "--phase", "main", "e2", "--systems", "pageindex", "--exclude", '"^e2_d01__or-gemma"',
                   "--model-limits", "or-gpt-oss-20b=2,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=10,1"))
     )
     foreach ($r in $runners) {
