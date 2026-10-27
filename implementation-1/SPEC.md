@@ -383,6 +383,13 @@ only): 56.1 vs 61.2 with the record (v3.4.3 confirmed on E1). Reading-only ablat
 38.6 / 61.0 / 97.2; OTF minus reading-only: counterfactual +4.9 [+1.8, +7.8] (p=0.001), explanatory +0.2, predictive
 -0.9, overall +1.2 - the tools' gain is on counterfactuals; PageIndex's explanatory lead also holds against reading.
 
+**Incident 2026-10-26/27:** unexpected shutdown at 23:19:52 (hard reset, sixth one), reboot 09:06, logon 12:06; the
+logon hook restarted the hosted runners at 12:06 (0 torn lines, 0 damaged cache files); ~12.8 hours lost.
+**Gemma scope for the deadline (2026-10-27 12:15):** Crusoe caps Gemma at ~8-12 answers/min (8 of 8 test requests
+returned 429 at our load) and ~6,700 Gemma main questions remained. Priority within Gemma: OTF and PageIndex (the
+paper's comparison) on E1 and the three domains first; E1 full context and RAG resume if time allows; Gemma E2 and
+ablations are cut (priority rule). Qwen: only ablations and a few PageIndex questions left; gpt-oss complete.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
