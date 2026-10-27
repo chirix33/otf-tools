@@ -374,6 +374,13 @@ full context 48). Tuning on this question type stops here (each further round is
 results); manufacturing explanatory with tools stays below reading for Qwen and is reported as measured. Only
 explanatory answers that used a tool are re-asked (`predictions_v343_expl.jsonl`).
 
+**Qwen E1 (2026-10-26 ~21:20; OTF v3.4.4; question accuracy %, overall / cf / expl / pred):** OTF 74.9 / 43.5 /
+61.2 / 96.3; PageIndex 76.7 / 42.4 / 69.8 / 93.1; full context 67.8 / 35.0 / 46.4 / 84.8; RAG 52.2; oracle 75.1.
+All 15 documents passed generation (e1_d01's model reused by d02-d15, F1 0.44-0.74); OTF matches the oracle. OTF vs
+PageIndex: -1.8 [-3.3, -0.3] overall, counterfactual +1.1 [-2.2, +4.3] (n.s.), explanatory -8.6 [-12.7, -4.9],
+predictive +3.2 [-0.5, +6.9]. Sanity check vs full context passes on every type. Ablation `tool_only` (explanatory
+only): 56.1 vs 61.2 with the record (v3.4.3 confirmed on E1).
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
