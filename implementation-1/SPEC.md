@@ -379,7 +379,9 @@ explanatory answers that used a tool are re-asked (`predictions_v343_expl.jsonl`
 All 15 documents passed generation (e1_d01's model reused by d02-d15, F1 0.44-0.74); OTF matches the oracle. OTF vs
 PageIndex: -1.8 [-3.3, -0.3] overall, counterfactual +1.1 [-2.2, +4.3] (n.s.), explanatory -8.6 [-12.7, -4.9],
 predictive +3.2 [-0.5, +6.9]. Sanity check vs full context passes on every type. Ablation `tool_only` (explanatory
-only): 56.1 vs 61.2 with the record (v3.4.3 confirmed on E1).
+only): 56.1 vs 61.2 with the record (v3.4.3 confirmed on E1). Reading-only ablation (same scopes, no tools): 73.7 /
+38.6 / 61.0 / 97.2; OTF minus reading-only: counterfactual +4.9 [+1.8, +7.8] (p=0.001), explanatory +0.2, predictive
+-0.9, overall +1.2 - the tools' gain is on counterfactuals; PageIndex's explanatory lead also holds against reading.
 
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
