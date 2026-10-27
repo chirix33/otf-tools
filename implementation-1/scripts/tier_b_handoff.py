@@ -89,9 +89,12 @@ def served_label(model: str, served_by: dict) -> str:
 
 def collect(runs: Path, out: Path) -> dict:
     """Copy the deliverable files. Returns what was found."""
+    keep = (out / "FINDINGS.md").read_bytes() if (out / "FINDINGS.md").exists() else None   # hand-written
     if out.exists():
         shutil.rmtree(out)
     (out / "reports").mkdir(parents=True)
+    if keep:
+        (out / "FINDINGS.md").write_bytes(keep)
     tb = runs / "tier_b"
     manifest = jload(tb / "delivery_manifest.json", {})
     plan = [(p["model"], p["systems"]) for p in manifest.get("plan", [])]
