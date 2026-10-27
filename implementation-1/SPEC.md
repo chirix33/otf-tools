@@ -404,6 +404,12 @@ and cf / expl / pred / desc):**
 E1 ablations: oracle 73.9 (48.6 / 54.4 / 88.0 / 97.6), reading-only 67.1, no-replay 67.0, no-library 66.1 (gpt-oss E1
 answers are all scoped reading; see the navigation-only note).
 
+**Reporting rule for persistent errors (decided 2026-10-26, implemented 2026-10-27 in `report.py`):** a question that
+still ends in an error after every retry (e.g. Qwen's PageIndex agent calling a tool that does not exist: "choices",
+"answer", ~110 times before retries) is scored as a wrong answer with 0 options correct, for every system, like a
+truncated answer; otherwise a failing system would be scored only on the questions it managed. Questions not yet
+answered (runs stopped by the deadline) are not scored; reports show them as coverage (answered / expected).
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
