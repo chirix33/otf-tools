@@ -390,6 +390,20 @@ returned 429 at our load) and ~6,700 Gemma main questions remained. Priority wit
 paper's comparison) on E1 and the three domains first; E1 full context and RAG resume if time allows; Gemma E2 and
 ablations are cut (priority rule). Qwen: only ablations and a few PageIndex questions left; gpt-oss complete.
 
+**gpt-oss FINAL (OTF v3.4.4, 2026-10-27; supersedes the 2026-10-26 v3.4.2 table above; question accuracy %, overall
+and cf / expl / pred / desc):**
+
+| Split | OTF | Full context | RAG | PageIndex |
+|---|---|---|---|---|
+| E1 | 67.8 (43.7 / 48.5 / 57.6 / 96.6) | 61.2 (42.6 / 37.0 / 26.7 / 95.3) | 49.1 (34.3 / 40.2 / 30.4 / 68.1) | 53.2 (30.1 / 33.1 / 12.4 / 89.3) |
+| E2 | 45.7 (43.3 / 48.3) | 13.2 (13.9 / 12.5) | 17.2 (11.4 / 23.4) | 24.2 (24.7 / 23.6) |
+| Manufacturing | 64.0 (74.7 / 48.0 / 42.7 / 90.7) | 54.3 (46.7 / 56.0 / 30.7 / 84.0) | 25.3 (38.7 / 21.3 / 8.0 / 33.3) | 46.0 (42.7 / 34.7 / 29.3 / 77.3) |
+| IT operations | 28.3 (4.0 / 6.7 / 26.7 / 76.0) | 18.3 (4.0 / 5.3 / 24.0 / 40.0) | 16.7 (5.3 / 8.0 / 21.3 / 32.0) | 32.0 (8.0 / 4.0 / 33.3 / 82.7) |
+| Finance | 69.0 (67.3 / - / - / 70.7) | 65.3 (63.3 / - / - / 67.3) | 64.0 (65.3 / - / - / 62.7) | 52.3 (49.3 / - / - / 55.3) |
+
+E1 ablations: oracle 73.9 (48.6 / 54.4 / 88.0 / 97.6), reading-only 67.1, no-replay 67.0, no-library 66.1 (gpt-oss E1
+answers are all scoped reading; see the navigation-only note).
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
