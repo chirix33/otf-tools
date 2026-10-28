@@ -41,7 +41,7 @@ if (Test-Path (Join-Path $Root "runs\logs\HOSTED_RUNS_HALTED")) {
         @("gemma", @("-u", "scripts/run_hosted.py", "--phase", "main", "--models", "or-gemma-4-31b-think",
                      "--exclude", "pageindex", "--model-limits", "or-gemma-4-31b-think=6,4")),
         @("pi", @("-u", "scripts/run_hosted.py", "--phase", "main", "e2", "--systems", "pageindex", "--exclude", '"^e2_d01__or-gemma"',
-                  "--model-limits", "or-gpt-oss-20b=2,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=10,1"))
+                  "--model-limits", "or-gpt-oss-20b=2,1", "or-qwen3.6-27b=24,1", "or-gemma-4-31b-think=16,1"))
     )
     foreach ($r in $runners) {
         Start-Process -FilePath $Python -WorkingDirectory $Root -WindowStyle Hidden `
