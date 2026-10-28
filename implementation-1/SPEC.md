@@ -410,6 +410,37 @@ still ends in an error after every retry (e.g. Qwen's PageIndex agent calling a 
 truncated answer; otherwise a failing system would be scored only on the questions it managed. Questions not yet
 answered (runs stopped by the deadline) are not scored; reports show them as coverage (answered / expected).
 
+**HOSTED RESULTS, FINAL (2026-10-28 ~01:00; OTF v3.4.4; `python scripts/hosted_reports.py` ->
+`runs/<split>_hosted_report.{md,json}`; hosted `or-*` rows only; persistent errors counted as wrong).** Question
+accuracy %, overall (counterfactual):
+
+| Split | Model | OTF | Full context | RAG | PageIndex |
+|---|---|---|---|---|---|
+| E1 | gpt-oss-20b | 67.8 (43.7) | 61.2 (42.6) | 49.1 (34.3) | 53.2 (30.1) |
+| E1 | Qwen3.6-27B | 74.9 (43.5) | 67.8 (35.0) | 52.2 (27.4) | 76.7 (42.4) |
+| E1 | Gemma-4-31B | 82.5 (54.2) | 82.6 (46.6) | 58.5 (30.7) | 77.1 (44.6) |
+| E2 | gpt-oss-20b | 45.7 (43.3) | 13.2 (13.9) | 17.2 (11.4) | 24.2 (24.7) |
+| E2 | Qwen3.6-27B | 51.1 (40.1) | 17.6 (15.3) | 20.2 (14.8) | 51.6 (41.2) |
+| Manufacturing | gpt-oss-20b | 64.0 (74.7) | 54.3 (46.7) | 25.3 (38.7) | 46.0 (42.7) |
+| Manufacturing | Qwen3.6-27B | 69.0 (58.7) | 79.0 (73.3) | 27.3 (40.0) | 77.3 (65.3) |
+| Manufacturing | Gemma-4-31B | 82.0 (70.7) | 83.3 (74.7) | 30.0 (53.3) | 80.3 (61.3) |
+| IT operations | gpt-oss-20b | 28.3 (4.0) | 18.3 (4.0) | 16.7 (5.3) | 32.0 (8.0) |
+| IT operations | Qwen3.6-27B | 52.3 (37.3) | 43.0 (8.0) | 26.0 (20.0) | 45.3 (13.3) |
+| IT operations | Gemma-4-31B | 50.3 (17.3) | 44.0 (13.3) | 24.7 (14.7) | 50.7 (12.0) |
+| Finance | gpt-oss-20b | 69.0 (67.3) | 65.3 (63.3) | 64.0 (65.3) | 52.3 (49.3) |
+| Finance | Qwen3.6-27B | 83.7 (82.0) | 82.7 (79.3) | 76.3 (77.3) | 83.0 (81.3) |
+| Finance | Gemma-4-31B | 80.0 (78.7) | 78.0 (74.0) | 73.0 (74.0) | 79.7 (80.0) |
+
+Per-type numbers, CIs and paired differences are in the reports. Documents with a passing generated model:
+gpt-oss E1 0/15, E2 0/1, mfg 5/5, itops 2/5, fin 1/3; Qwen E1 15/15, E2 1/1, mfg 5/5, itops 5/5, fin 0/3; Gemma E1
+15/15, E2 not run, mfg 0/5, itops 1/5, fin 0/3. E1 ablations (gpt-oss, Qwen) in `runs/e1_hosted_report.md`; Qwen:
+oracle 75.1, reading-only 73.7, no-replay 68.6, no-library 73.0. Not run (deadline): Gemma E2 and all Gemma
+ablations. Gemma E1 predictive: OTF 82.0 vs full context 98.2 - the loss is on e1_d02 / e1_d03 (0/15, 2/12), which use
+the model generated on e1_d02 (forecast F1 0.42, an honest but weak physics simulator); the other 13 documents use
+e1_d04's model and match reading. Reported as measured. Qwen manufacturing PageIndex: 3 questions failed on every
+retry (agent called nonexistent tools) and count as wrong. Cost: OpenRouter total usage $1,050.37, of which ~$991
+for the hosted runs (from $59.19 before them), including dev checks, validations and re-asks.
+
 **Hosted harness (2026-10-25, same for every system; no method change):**
 - *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
   connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
