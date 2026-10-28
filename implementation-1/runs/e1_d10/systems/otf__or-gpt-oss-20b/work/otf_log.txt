@@ -1,0 +1,7 @@
+parsers attempt 1: the code does not run: rejected: syntax error: '[' was never closed (<unknown>, line 68)
+parsers attempt 2: the code does not run: rejected: syntax error: '[' was never closed (<unknown>, line 80)
+parsers attempt 3: outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10251': 6 entities (first: [{"id": "0", "description": "brown metal sphere"}]), recorded_end = 127.0, 6 inputs (first: [{"id": "I1", "time": 0.0, "kind": "arrival", "entities": ["1"], "fields": {"x": 0.3, "y": 0.73, "vx": 0.0, "vy": 0.0, "speed": 0.0}}]), 0 outcomes (first: []), params = {}
+- 6 of 6 lines of 'Video 10251: Objects' are not the src of any input or outcome, e.g.: 'Object 0: brown metal sphere (color=brown, material=metal, shape=sphere)' | 'Object 1: blue metal cube (color=blue, material=metal, shape=cube)' | 'Object 2: purple metal cube (color=purple, material=metal, shape=cube)' | 'Object 3: gray metal sphere (color=gray, material=metal, shape=sphere)'
+- 3 of 9 lines of 'Video 10251: Events' are not the src of any input or outcome, e.g.: 'Frame 29: Object 0 (brown metal sphere) collides with Object 1 (blue metal cube).' | 'Frame 44: Object 1 (blue metal cube) collides with Object 3 (gray metal sphere).' | 'Frame 127: The video ends.'
+- 111 of 111 rows of table 'Video 10251: Motion log' are not the src of any input or outcome

@@ -120,6 +120,84 @@ def diff(before: list[dict], after: list[dict], tol_t: float, vtol: dict, rel: f
     return {"gone": gone, "new": new, "changed": changed}
 
 
+def apply_delta(recorded: list[dict], base_run: list[dict], new_run: list[dict], tol_t: float, vtol: dict,
+                overrides: list[dict] | None = None, start: float | None = None,
+                align_tol: float | None = None) -> list[dict]:
+    """The record with only what the change alters (OTF v3.4, paired runs). `base_run` and `new_run` are the same
+    model run from the same point (`start`) without and with the change. The base run is first aligned with the
+    recorded outcomes after `start` (same kind and entities, nearest time within `align_tol`), so a recorded outcome
+    the model reproduces a little early or late is still recognised; what then disappears or changes value between
+    the two runs (exactly) is applied to the aligned recorded outcomes (a number as recorded value + the change), and what newly appears is added, so the model's own
+    errors (present in both runs) cancel out. A recorded outcome the base run does not reproduce at all is judged by
+    the changed run alone, as before v3.4. `overrides` (indexes into `recorded`) are applied first."""
+    # same model, two runs: records pair up within the time tolerance, but any change of value counts
+    d = diff(base_run, new_run, tol_t, {}, 0.0)
+    out = apply_overrides(recorded, overrides or []) if overrides else copy.deepcopy(recorded)
+    later = [o for o in out if start is None or rtime(o) is None or rtime(o) > start]
+    aligned, _, unaligned = pairs(base_run, later, tol_t if align_tol is None else align_tol, None)
+    twin = {id(b): o for b, o in aligned}                       # base-run record -> its recorded counterpart
+    drop = {id(twin[id(g)]) for g in d["gone"] if id(g) in twin}
+    # recorded outcomes the model does not reproduce even without the change: judged by the changed run alone
+    # (as before v3.4), i.e. they disappear unless the changed run has them
+    _, lost, _ = pairs(unaligned, new_run, tol_t, vtol)
+    drop |= {id(o) for o in lost}
+    for b, a in d["changed"]:                                   # recorded value + the model's change
+        if id(b) in twin:
+            o, rv, bv, av = twin[id(b)], num(twin[id(b)].get("value")), num(b.get("value")), num(a.get("value"))
+            o["value"] = round(rv + (av - bv), 6) if None not in (rv, bv, av) else a.get("value")
+    return [o for o in out if id(o) not in drop] + copy.deepcopy(d["new"])
+
+
+def _on_grid(ts: list[float], coverage: float) -> bool:
+    """Do the sorted distinct times lie on a regular grid (start = first time, step = most common gap) that has
+    `coverage` of its points present?"""
+    gaps = [round(b - a, 6) for a, b in zip(ts, ts[1:]) if b > a]
+    if not gaps:
+        return False
+    step = max(set(gaps), key=gaps.count)
+    grid = [ts[0] + i * step for i in range(int(round((ts[-1] - ts[0]) / step)) + 1)]
+    present = sum(any(abs(g - t) <= 1e-6 * max(1.0, abs(g)) for t in ts) for g in grid)
+    return bool(grid) and present / len(grid) >= coverage
+
+
+def schedule_kinds(outcomes: list[dict], nav_idx: dict, min_times: int = 5, coverage: float = 0.8) -> set:
+    """Kinds of value-less outcomes that are a recording schedule, not something the process produces: one record
+    for (nearly) every row of the table(s) they are read from (`coverage` of the rows), at times on a regular grid
+    (at least `min_times` distinct times, `coverage` of the grid points present). Example: one record per entity at
+    every sample time of a table of states. A forecast of such records says nothing about the process. Events read
+    from lists, events that occur on only some rows, and quantities with values are never schedules."""
+    by: dict = {}
+    for o in outcomes:
+        if num(o.get("value")) is None and rtime(o) is not None:
+            by.setdefault(kind(o), []).append(o)
+    out = set()
+    for k, recs in by.items():
+        ts = sorted({round(rtime(o), 6) for o in recs})
+        if len(ts) < min_times or not _on_grid(ts, coverage):
+            continue
+        rows, tables = set(), set()
+        for o in recs:
+            for loc in o.get("src") or []:
+                n = nav_idx.get(str(loc[0])) if isinstance(loc, (list, tuple)) and loc else None
+                if n is None or n.get("kind") != "table" or len(loc) < 2:
+                    rows = None
+                    break
+                rows.add((n["node_id"], loc[1]))
+                tables.add(n["node_id"])
+            if rows is None:
+                break
+        if rows is None or not tables:
+            continue
+        total = sum(len(nav_idx[t]["table"]["rows"]) for t in tables)
+        if total and len(rows) / total >= coverage:
+            out.add(k)
+    return out
+
+
+def drop_kinds(recs: list[dict], kinds: set) -> list[dict]:
+    return [r for r in recs if kind(r) not in kinds] if kinds else recs
+
+
 # ---------- provenance ----------
 def _node_index(nav: dict) -> dict:
     return {n["node_id"]: n for n in nav["nodes"]}
@@ -189,11 +267,29 @@ def first_outcome_cut(outcomes: list[dict], t0: float, end: float | None) -> flo
     return min(times) - 0.01 * max(end - t0, 1e-9)
 
 
-def blind(nav: dict, scope: str, inputs: list[dict], outcomes: list[dict], cut: float | None) -> dict:
+def _time_column(rows: list[list[str]], span: tuple[float, float]) -> int | None:
+    """A column that reads as the scope's time axis: numeric in every non-empty cell, non-decreasing down the
+    rows, at least 3 distinct values, ending inside the scope's recorded span [t0, end] (a table may start
+    up to one period before the first record)."""
+    t0, end = span
+    tol = 1e-6 * max(abs(end - t0), 1.0)
+    t0 -= abs(end - t0)
+    for j in range(max((len(r) for r in rows), default=0)):
+        vals = [num(r[j]) for r in rows if j < len(r) and str(r[j]).strip() != ""]
+        if (vals and None not in vals and len(set(vals)) >= 3 and all(a <= b for a, b in zip(vals, vals[1:]))
+                and t0 - tol <= vals[0] and vals[-1] <= end + tol):
+            return j
+    return None
+
+
+def blind(nav: dict, scope: str, inputs: list[dict], outcomes: list[dict], cut: float | None,
+          span: tuple[float, float] | None = None) -> dict:
     """A copy of the map in which `scope` keeps what a forward model may use. Kept: every cell or line an
     input was read from. Hidden: cells and lines of outcomes after `cut` (all outcomes if timeless), and, in
-    tables or lists that timed records were read from, rows and lines whose time is after `cut`. Text nodes
-    are emptied. Other scopes and the front matter are untouched."""
+    tables or lists that timed records were read from, rows and lines whose time is after `cut`. A table no
+    record was read from is hidden after `cut` too when it has a time column over the scope's recorded `span`
+    (t0, end): otherwise a model could forecast by reading a recorded trajectory its readers never cite
+    (post-freeze bug fix 9). Text nodes are emptied. Other scopes and the front matter are untouched."""
     blinded = copy.deepcopy(nav)
     idx = _node_index(blinded)
     keep = units(inputs, idx)
@@ -229,12 +325,16 @@ def blind(nav: dict, scope: str, inputs: list[dict], outcomes: list[dict], cut: 
                                 and abs(num(rows[k][j]) - t) < 1e-6 for k, t in refs):
                     tcol = j
                     break
+        elif cut is not None and span is not None:      # not read from: hidden after the cut if it is timed
+            tcol = _time_column(rows, span)
         new_rows = []
         for k, row in enumerate(rows):
             t = row_t.get((nid, k))
             if t is None and nid in timed_nodes:
                 t = num(row[tcol]) if tcol is not None and tcol < len(row) else next(
                     (num(c) for c in row if num(c) is not None), None)
+            elif t is None and tcol is not None:
+                t = num(row[tcol]) if tcol < len(row) else None
             late = cut is not None and t is not None and t > cut
             out = [c if (nid, k, j) in keep or not ((nid, k, j) in hide or late) else "" for j, c in enumerate(row)]
             if any((nid, k, j) in keep or not ((nid, k, j) in hide or late) for j in range(len(row))):

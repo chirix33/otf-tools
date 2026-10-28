@@ -1,0 +1,50 @@
+{
+  "system": "otf",
+  "model": "or-gemma-4-31b-think",
+  "reasoning_effort": null,
+  "model_spec": {
+    "alias": "or-gemma-4-31b-think",
+    "served_name": "google/gemma-4-31b-it",
+    "base_url": "https://openrouter.ai/api/v1",
+    "reasoning_effort": null,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "top_k": 64,
+      "reasoning": {
+        "enabled": true
+      },
+      "provider": {
+        "order": [
+          "Crusoe"
+        ],
+        "quantizations": [
+          "bf16"
+        ],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    },
+    "api_key_env": "OPENROUTER_API_KEY"
+  },
+  "usage": {
+    "input_tokens": 16738,
+    "cached_input_tokens": 18,
+    "output_tokens": 14041,
+    "reasoning_tokens": 6382,
+    "llm_calls": 3,
+    "total_tokens": 30779
+  },
+  "latency_s": 500.0106279850006,
+  "info": {
+    "nodes": 72,
+    "scopes": 11,
+    "model_passed": false,
+    "model_f1": 0.0,
+    "model_tries": 3,
+    "model_reused_from": null,
+    "cached_model": true
+  }
+}

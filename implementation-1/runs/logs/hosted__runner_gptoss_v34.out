@@ -1,0 +1,43 @@
+{"time": "2026-10-25T19:14:13", "event": "hosted_start", "phases": ["dev", "main", "e2", "ablations"], "models": ["or-gpt-oss-20b"], "systems": null, "exclude": "pageindex|^pilot20__", "limits": {"or-gpt-oss-20b": [8, 6], "or-qwen3.6-27b": [6, 8], "or-gemma-4-31b-think": [6, 8]}, "n_jobs": 22, "spend_usd": 162.7842, "pid": 53632}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "itops_dev__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "mfg_dev__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "fin_dev__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "e2__or-gpt-oss-20b__otf", "pass_no": 1, "expected": 1067, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "fin__or-gpt-oss-20b__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "mfg__or-gpt-oss-20b__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "itops__or-gpt-oss-20b__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:15", "event": "pass_start", "job": "e1__or-gpt-oss-20b__otf", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:31", "event": "pass_end", "job": "fin_dev__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.0, "spend_usd": 162.796, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T19:14:31", "event": "job_done", "job": "fin_dev__or-gpt-oss-20b__otf_no_library", "spend_usd": 162.796, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T19:14:36", "event": "pass_start", "job": "e1__or-gpt-oss-20b__otf_oracle", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:14:41", "event": "pass_end", "job": "mfg_dev__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.01, "spend_usd": 162.796, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T19:14:41", "event": "job_done", "job": "mfg_dev__or-gpt-oss-20b__otf_no_library", "spend_usd": 162.796, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T19:14:57", "event": "pass_start", "job": "e1__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T19:15:23", "event": "pass_end", "job": "itops_dev__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.02, "spend_usd": 162.8991, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T19:15:27", "event": "job_done", "job": "itops_dev__or-gpt-oss-20b__otf_no_library", "spend_usd": 162.8991, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T19:19:32", "event": "pass_end", "job": "fin__or-gpt-oss-20b__otf", "pass_no": 1, "rc": 0, "hours": 0.09, "spend_usd": 163.3829, "expected": 300, "answered": 300, "errors": 0}
+{"time": "2026-10-25T19:19:33", "event": "otf_library_pass", "job": "fin__or-gpt-oss-20b__otf", "documents_switched": 0}
+{"time": "2026-10-25T19:19:33", "event": "job_done", "job": "fin__or-gpt-oss-20b__otf", "spend_usd": 163.3829, "expected": 300, "answered": 300, "errors": 0}
+{"time": "2026-10-25T19:33:42", "event": "pass_end", "job": "mfg__or-gpt-oss-20b__otf", "pass_no": 1, "rc": 0, "hours": 0.32, "spend_usd": 164.4157, "expected": 300, "answered": 300, "errors": 0}
+{"time": "2026-10-25T19:33:42", "event": "otf_library_pass", "job": "mfg__or-gpt-oss-20b__otf", "documents_switched": 0}
+{"time": "2026-10-25T19:33:42", "event": "job_done", "job": "mfg__or-gpt-oss-20b__otf", "spend_usd": 164.4157, "expected": 300, "answered": 300, "errors": 0}
+{"time": "2026-10-25T19:43:26", "event": "pass_end", "job": "itops__or-gpt-oss-20b__otf", "pass_no": 1, "rc": 0, "hours": 0.49, "spend_usd": 164.8177, "expected": 300, "answered": 300, "errors": 0}
+{"time": "2026-10-25T19:43:28", "event": "otf_library_pass", "job": "itops__or-gpt-oss-20b__otf", "documents_switched": 0}
+{"time": "2026-10-25T19:43:28", "event": "job_done", "job": "itops__or-gpt-oss-20b__otf", "spend_usd": 164.8177, "expected": 300, "answered": 300, "errors": 0}
+{"time": "2026-10-25T19:44:52", "event": "pass_end", "job": "e2__or-gpt-oss-20b__otf", "pass_no": 1, "rc": 0, "hours": 0.51, "spend_usd": 164.8648, "expected": 1067, "answered": 1067, "errors": 0}
+{"time": "2026-10-25T19:44:53", "event": "otf_library_pass", "job": "e2__or-gpt-oss-20b__otf", "documents_switched": 0}
+{"time": "2026-10-25T19:44:56", "event": "job_done", "job": "e2__or-gpt-oss-20b__otf", "spend_usd": 164.8648, "expected": 1067, "answered": 1067, "errors": 0}
+{"time": "2026-10-25T21:03:29", "event": "pass_end", "job": "e1__or-gpt-oss-20b__otf", "pass_no": 1, "rc": 0, "hours": 1.82, "spend_usd": 174.5965, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:03:30", "event": "otf_library_pass", "job": "e1__or-gpt-oss-20b__otf", "documents_switched": 0}
+{"time": "2026-10-25T21:03:30", "event": "job_done", "job": "e1__or-gpt-oss-20b__otf", "spend_usd": 174.5965, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:03:33", "event": "pass_start", "job": "e1__or-gpt-oss-20b__otf_no_replay", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T21:03:33", "event": "pass_start", "job": "e1__or-gpt-oss-20b__otf_reading_only", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T21:11:36", "event": "pass_end", "job": "e1__or-gpt-oss-20b__otf_oracle", "pass_no": 1, "rc": 0, "hours": 1.95, "spend_usd": 176.17, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:11:36", "event": "job_done", "job": "e1__or-gpt-oss-20b__otf_oracle", "spend_usd": 176.17, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:49:17", "event": "pass_end", "job": "e1__or-gpt-oss-20b__otf_reading_only", "pass_no": 1, "rc": 0, "hours": 0.76, "spend_usd": 181.0496, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:49:17", "event": "job_done", "job": "e1__or-gpt-oss-20b__otf_reading_only", "spend_usd": 181.0144, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:52:36", "event": "pass_end", "job": "e1__or-gpt-oss-20b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 2.63, "spend_usd": 181.4558, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:52:36", "event": "job_done", "job": "e1__or-gpt-oss-20b__otf_no_library", "spend_usd": 181.4994, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:59:11", "event": "pass_end", "job": "e1__or-gpt-oss-20b__otf_no_replay", "pass_no": 1, "rc": 0, "hours": 0.93, "spend_usd": 182.2263, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:59:11", "event": "job_done", "job": "e1__or-gpt-oss-20b__otf_no_replay", "spend_usd": 182.2263, "expected": 2166, "answered": 2166, "errors": 0}
+{"time": "2026-10-25T21:59:34", "event": "hosted_done", "spend_usd": 182.2868}

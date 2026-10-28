@@ -1,0 +1,65 @@
+
+=== 2026-10-26T15:00:34 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d04 --system pageindex --model or-qwen3.6-27b --workers 1
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF19BA6E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B4730>, 25490.5993959), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B4470>, 25494.2851249), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1A1722D0>, 25499.3428644), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4C7BB0>, 25501.3474131), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B4CB0>, 25501.7697791), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19BA3410>, 25505.3273408), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B41B0>, 25508.4887433), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4C7A20>, 25517.0363885), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B5230>, 25517.5081856), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B49F0>, 25521.3749929), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19BA3130>, 25546.8910086), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B4F70>, 25552.1349415), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1A1728D0>, 25563.0281844), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1B4B54F0>, 25589.4519955)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF19BA6900>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF22108980>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1D170730>, 25639.5351998)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF220B1E50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1A187A10>, 25658.1508853)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF220B2D50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1A1875F0>, 25674.2838654)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF220B2D50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1A1875F0>, 25776.3726356)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE5D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1B3F6270>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF12209A70>, 26983.2202289)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE710>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1B3F6E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1A187A10>, 29047.4831198)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF223D3390>
+[pageindex] setup: 163076 tokens, 160.8s {'doc_id': 'pi-14f01d3b215b40c49915c89360e25e2f', 'cached_index': False, 'tree_nodes': 22}
+[pageindex] 0 already answered, 60 to go
+[pageindex] error on itops-w02-06: PageIndexAPIError: The agent did not finish within max_turns (the default limit). Raise max_turns, or narrow the question.
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1D170730>, 29421.3010258)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF165660D0>
+[pageindex] error on itops-w02-07: PageIndexAPIError: The agent backend failed: Tool choices not found in agent PageIndex
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF12209A70>, 29621.1555416)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE850>
+[pageindex] error on itops-w02-08: PageIndexAPIError: The agent backend failed: Tool  browse_documents not found in agent PageIndex
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1B3F6E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1D170730>, 31013.7008418)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF223D3C50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF12209A70>, 31032.5915564)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF223D3C50>
+[pageindex] 10/60  correct=5  errors=3  5422s
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1D170730>, 31051.6402833)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE850>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF12209A70>, 31076.9980159)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE710>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1D170730>, 31620.2201738)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE850>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1B3F6120>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF12209A70>, 32877.6355942)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF1B3EE5D0>

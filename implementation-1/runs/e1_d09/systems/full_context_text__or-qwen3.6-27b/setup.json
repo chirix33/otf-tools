@@ -1,0 +1,47 @@
+{
+  "system": "full_context_text",
+  "model": "or-qwen3.6-27b",
+  "reasoning_effort": null,
+  "model_spec": {
+    "alias": "or-qwen3.6-27b",
+    "served_name": "qwen/qwen3.6-27b",
+    "base_url": "https://openrouter.ai/api/v1",
+    "reasoning_effort": null,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "top_k": 20,
+      "reasoning": {
+        "enabled": true
+      },
+      "provider": {
+        "order": [
+          "Alibaba"
+        ],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    },
+    "api_key_env": "OPENROUTER_API_KEY"
+  },
+  "usage": {
+    "input_tokens": 0,
+    "cached_input_tokens": 0,
+    "output_tokens": 0,
+    "reasoning_tokens": 0,
+    "llm_calls": 0,
+    "total_tokens": 0
+  },
+  "latency_s": 0.050554513931274414,
+  "info": {
+    "pages": 51,
+    "doc_tokens_est": 54431,
+    "kept_tokens_est": 54431,
+    "kept_pages": 51,
+    "truncated": false,
+    "budget_tokens": 111688,
+    "doc_chars": 116401
+  }
+}

@@ -1,0 +1,70 @@
+
+=== 2026-10-26T17:05:04 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d01 --system pageindex --model or-gemma-4-31b-think --workers 1 --shard 1/3
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000214348E2A50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000214349A5F90>, 32929.6812062)])']
+connector: <aiohttp.connector.TCPConnector object at 0x00000214348E2510>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A05D30>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A07620>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434AF57C0>, 32937.6017135)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434ADAFD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434ABC4D0>, 32957.3761124)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434DD96D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A070E0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434E18830>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434ABC650>, 32998.4318923)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434ADBC50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434A59A30>, 33077.1518882)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434DDA0D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A07230>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434E19940>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434A598C0>, 33228.9000954)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434DD8910>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434DFC470>, 33455.9892979)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434DDA710>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434E18050>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434E1A510>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000214349EBA10>, 33602.6197315)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434ADB610>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434DFC5D0>, 33794.0603317)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434DDB110>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434E19A90>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021434DFD650>, 34028.7793818)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434DDB610>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A04050>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A07CB0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000214349EB330>, 34205.3525368)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434ADB890>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000214349EAC50>, 34430.9832859)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434AD9A90>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021434A07B60>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000214349EADB0>, 34691.2722785)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021434AD91D0>
+[pageindex] setup: 129331 tokens, 2216.1s {'doc_id': 'pi-af4e861d4c1740af9ee9b7c60d9c5f75', 'cached_index': True, 'tree_nodes': 31}
+[pageindex] 0 already answered, 20 to go
+[pageindex] error on itops-w04-02: PageIndexAPIError: The model backend failed: litellm.RateLimitError: RateLimitError: OpenAIException - Provider returned error

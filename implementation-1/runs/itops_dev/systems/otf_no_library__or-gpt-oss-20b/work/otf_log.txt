@@ -1,0 +1,34 @@
+parsers attempt 1: 'Cell window 08': bad src: loc 'n0003' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 17': bad src: loc 'n0010' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 27': bad src: loc 'n0017' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Cell window 30': bad src: loc 'n0024' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]
+WHAT YOUR FUNCTIONS RETURNED on scope 'Cell window 08': 136 entities (first: [{"id": "M01", "description": "machine M01"}]), recorded_end = 1192.0, 94 inputs (first: [{"kind": "machine_capacity", "id": null, "time": null, "entities": ["M01"], "fields": {"CPU": 6250.0, "memory": 6244.0}}]), 122 outcomes (first: [{"time": 27.0, "kind": "start", "entities": ["T001", "M01"], "value": null}]), params = {}
+- 8 of 8 rows of table 'Cell window 08: Machines' are not the src of any input or outcome
+- 207 of 207 rows of table 'Cell window 08: Task log' are not the src of any input or outcome
+- 13 of 13 lines of 'Cell window 08: Events' are not the src of any input or outcome, e.g.: 'Time 424: machine M02 failed; tasks T025, T026, T027, T028 stopped and went back to the queue.' | 'Time 424: task T025 restarted on machine M03.' | 'Time 424: task T026 restarted on machine M05.' | 'Time 424: task T027 restarted on machine M05.'
+- 4 of 4 lines of 'Cell window 08: Queue at window end' are not the src of any input or outcome, e.g.: 'State after the events at time 1200.' | 'Tasks running at time 1200 (remaining run time = seconds still to run after time 1200):' | 'Tasks waiting at time 1200, in queue order (each will run its full run time once started):' | 'Machine M02 is down at time 1200; it does not return.'
+- 14 of 14 rows of table 'Cell window 08: Queue at window end: Tasks running at time 1200 (remaining run time = seconds still to run after time 1200)' are not the src of any input or outcome
+- 24 of 24 rows of table 'Cell window 08: Queue at window end: Tasks waiting at time 1200, in queue order (each will run its full run time once started)' are not the src of any input or outcome
+parsers attempt 2: passed
+explore 1: error, 52 chars
+explore 2: ok, 923 chars
+explore 3: ok, 58 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 08' (start 15.35): F1 0.0, 122 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 27.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 43.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 46.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 62.0, "kind": "finish", "entities": ["T001", "M01"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 3.27): F1 0.0, 145 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 15.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 50.0, "kind": "finish", "entities": ["T001", "M01"], "value": null}, {"time": 62.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 62.0, "kind": "start", "entities": ["T003", "M01"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.45): F1 0.0, 171 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 38.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 98.0, "kind": "start", "entities": ["T002", "M02"], "value": null}, {"time": 99.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 100.0, "kind": "start", "entities": ["T004", "M03"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -5.91): F1 0.0, 241 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 6.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 43.0, "kind": "start", "entities": ["T002", "M02"], "value": null}, {"time": 44.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 45.0, "kind": "start", "entities": ["T004", "M03"], "value": null}]; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.0
+parsers attempt 1: entities('Cell window 08') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpz0l29js7\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 28, in entities
+TypeError: 'NoneType' object is not subscriptable
+parsers attempt 2: entities('Cell window 08') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmp30qouv13\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 48, in entities
+AttributeError: 'NoneType' object has no attribute 'get'
+parsers attempt 3: entities('Cell window 08') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpbxwfp2yy\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 44, in entities
+AttributeError: 'NoneType' object has no attribute 'get'

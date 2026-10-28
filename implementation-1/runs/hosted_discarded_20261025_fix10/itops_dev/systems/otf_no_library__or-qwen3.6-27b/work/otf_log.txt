@@ -1,0 +1,14 @@
+parsers attempt 1: passed
+explore 1: ok, 1109 chars
+explore 2: ok, 2728 chars
+explore 3: ok, 2203 chars
+explore 4: ok, 1337 chars
+explore 5: ok, 489 chars
+explore 6: ok, 660 chars
+explore 7: ok, 287 chars
+simulate attempt 1 (after 7 explore runs): mean record-match F1 = 0.941 (need 0.4)
+- scope 'Cell window 08' (start 15.0): F1 0.919, 136 hidden outcomes, model produced 160; missed (hidden but not produced): []; extra (produced but not hidden): [{"time": 1200.0, "kind": "remaining_run_time", "entities": ["T059"], "value": 123.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T062"], "value": 134.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T064"], "value": 182.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T070"], "value": 860.0}]
+- scope 'Cell window 17' (start 3.0): F1 0.957, 166 hidden outcomes, model produced 181; missed (hidden but not produced): []; extra (produced but not hidden): [{"time": 1200.0, "kind": "remaining_run_time", "entities": ["T069"], "value": 289.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T071"], "value": 808.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T057"], "value": 117.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T061"], "value": 1976.0}]
+- scope 'Cell window 27' (start 26.0): F1 0.942, 194 hidden outcomes, model produced 218; missed (hidden but not produced): []; extra (produced but not hidden): [{"time": 1200.0, "kind": "remaining_run_time", "entities": ["T039"], "value": 3065.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T040"], "value": 2937.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T078"], "value": 619.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T091"], "value": 245.0}]
+- scope 'Cell window 30' (start -6.0): F1 0.947, 260 hidden outcomes, model produced 289; missed (hidden but not produced): []; extra (produced but not hidden): [{"time": 1200.0, "kind": "remaining_run_time", "entities": ["T126"], "value": 258.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T127"], "value": 223.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T128"], "value": 242.0}, {"time": 1200.0, "kind": "remaining_run_time", "entities": ["T129"], "value": 257.0}]
+simulator conversation 1: best F1 0.941

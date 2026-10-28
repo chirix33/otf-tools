@@ -19,7 +19,7 @@ import numpy as np
 from openai import OpenAI
 
 from ..data import QAItem
-from ..llm import chat_sampling, chat_usage, endpoint_key
+from ..llm import chat_sampling, chat_usage, endpoint_key, request_timeout, with_backoff
 from .base import Document, Prediction, QASystem, SetupResult, Usage
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
@@ -68,7 +68,7 @@ class RAGSystem(QASystem):
         super().__init__(model, reasoning_effort)
         self.top_k, self.chunk_tokens, self.overlap = top_k, chunk_tokens, overlap_tokens
         if self.spec.is_local:
-            self.client = OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=1800)
+            self.client = OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=request_timeout(self.spec))
         else:
             self.client = OpenAI(max_retries=6, timeout=600)
         self._embed_lock = threading.Lock()
@@ -116,7 +116,7 @@ class RAGSystem(QASystem):
         messages = [{"role": "system", "content": instructions},
                     {"role": "user", "content": f"RETRIEVED PASSAGES FROM THE DOCUMENT:\n{ctx}\n\n{prompt}"}]
         if self.spec.is_local:
-            resp = self.client.chat.completions.create(model=self.spec.served_name, messages=messages,
+            resp = with_backoff(self.client.chat.completions.create, model=self.spec.served_name, messages=messages,
                                                        **chat_sampling(self.spec, self.reasoning_effort))
             choice = resp.choices[0]
             text, usage, finish = choice.message.content or "", chat_usage(resp.usage), choice.finish_reason

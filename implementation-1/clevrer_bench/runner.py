@@ -59,7 +59,7 @@ def build_split(raw_dir: Path, runs_root: Path, name: str, n_videos: int, per_do
 
 
 def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None = None,
-               types: list[str] | None = None, per_type: int | None = None) -> Path:
+               types: list[str] | None = None, per_type: int | None = None, shard: str | None = None) -> Path:
     items = load_items(run_dir / "items.jsonl")
     if types:
         items = [it for it in items if it.question_type in types]
@@ -68,6 +68,9 @@ def run_system(system: QASystem, run_dir: Path, workers: int, limit: int | None 
                  for it in [x for x in items if x.question_type == t][:per_type]]
     if limit:
         items = items[:limit]
+    if shard:      # "k/n": every n-th question from the k-th, so n processes can share one document
+        k, n = (int(x) for x in shard.split("/"))
+        items = [it for i, it in enumerate(items) if i % n == k]
     # one directory per (system, model); pilot runs used the bare system name for gpt-5.5
     out_dir = run_dir / "systems" / (system.name if system.model == "gpt-5.5" else f"{system.name}__{system.model}")
     work = out_dir / "work"

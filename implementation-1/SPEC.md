@@ -200,6 +200,306 @@ is model-dependent: gpt-oss passed 1 of 8 attempts over the two gate runs, Qwen 
    numbered. Affects gridded tables only: G1 re-run, all CLEVRER maps identical. Remaining known map limit: one
    finance prose section (fin_d02 R-136 Text) still parses as a word table.
 
+**Post-freeze bug fix 8 (2026-10-25, found in the local Qwen E1 run; logged under the bug-fix rule):** the forecast
+check certified a vacuous model. Qwen's reading code labelled every motion-log row as a value-less outcome
+(`state_update`) and no collision; value-less records are matched by kind, entities and time only, so forecasting
+"each object has a row every 8 frames" scored F1 0.76 and passed (e1_d02, reused by d03-d07), and Qwen's pilot20
+gate-probe model passed the same way (`motion` rows, F1 0.57). In use the evidence buried the real collisions:
+predictive accuracy was 16/16 on e1_d01 (reading fallback) and 9/77 on d02-d07. Fix: `records.schedule_kinds` marks a
+value-less outcome kind as a recording schedule when it has one record for at least 80% of the rows of the table(s)
+it is read from AND its times lie on a regular grid (>= 5 distinct times, >= 80% of grid points present); such kinds
+are not scored by the step-1 replay probe or the forecast check, the sensitivity guard ignores them, the engine
+leaves them out of the evidence, and the parser prompt says so (the prompt would otherwise contradict the check).
+Re-check of existing models offline: oracle unchanged (F1 0.644, passes); Qwen e1_d02 model rejected at step 1; Qwen
+pilot20 model F1 0.0 (fails); Qwen e1_d01 0.362, mfg_dev 0.922, itops_dev 0.749 and gpt-oss itops_dev 0.807 unchanged.
+Toy test added (`test_schedule_rows_are_not_outcomes`); guard test passes. Same kind of loophole as copying the
+record: a check must reward forecasting what happens, not when rows exist (a paper point).
+
+**Move to OpenRouter (author decision 2026-10-25).** All remaining runs, and re-runs of everything reported, use the
+hosted `or-*` aliases (sec. 2): full context, RAG, PageIndex and OTF-Tools (+ oracle and the ablations: reading only,
+no replay, no library) on E1, E2 and the three new domains; the pilot20 dev checks run first. Collaborators run the
+other baselines (GraphRAG, ReAct-R, ReAct-C, ReCode). The local GPU runs were halted at 14:50 (marker
+`runs/logs/LOCAL_RUNS_HALTED` blocks auto-resume); local results stay on disk as an archive and are not used in the
+paper. No spending cap. Latency is not compared with the local runs.
+
+**Post-freeze bug fix 9 (2026-10-25, found in the first hosted pilot20 dev check; a checker defect that certified a
+wrong model; git tag `otf-v3.2`):** the blinded copy hid later rows only in tables that the model's reading code
+took records from. gpt-oss (`or-gpt-oss-20b`) read every input and outcome from the Events list and never cited the
+Motion log, so the Motion log stayed whole on the blinded copy; its `simulate` scanned the recorded positions for
+frames where two objects are within 0.5 units and passed with F1 0.911 (the hand-written oracle scores 0.644).
+That is replay of a recorded trajectory, which the check exists to reject. Fix (`records.blind`, `_time_column`): a
+table in the scope that no record was read from is also hidden after the cut when it has a time column, i.e. a
+column that is numeric, non-decreasing down the rows, has >= 3 distinct values and ends inside the scope's recorded
+span. It can only hide more; timeless scopes (finance) are unchanged. Toy test `test_unread_trajectory_is_blinded`
+added; the guard test passes. Offline re-check (`scripts/recheck_models.py`): oracle unchanged (F1 0.644, passes);
+mfg_dev Qwen 0.922, itops_dev Qwen 0.749 and gpt-oss 0.807 / 0.663 unchanged. The archived local Qwen E1 models
+were passing the same way: d03 0.707 -> 0.362, d04 0.668 -> 0.167, d05 0.723 -> 0.364, d07 0.634 -> 0.203 (now
+fail); d02 0.763 -> 0.400 and d06 0.549 -> 0.478 still pass. The hosted dev outputs made under the old checker were
+moved to `runs/hosted_discarded_20261025/` and generated again.
+
+**Post-freeze bug fix 10 (2026-10-25 ~17:30, a Navigation Map parse failure; git tag `otf-v3.3`), found by the
+sanity check against full context** (gpt-oss manufacturing: OTF predictive 18.7% vs full context 30.7%). A leaf with
+several ruled tables of different widths kept only its first table; the later tables and the captions fell into the
+node's `text`, which neither the generated readers nor the reading fallback use. Lost: the manufacturing "Order book"
+table of orders and planned production for the forecast days in every period with open backorders (11-12 of 15
+periods per document; those periods' first table is the open-order list), and the IT-operations waiting queue in
+"Queue at window end" (e.g. 51 waiting tasks in itops_d01 window 04). The questions state that this table holds
+what then happened, so OTF's predictive tool ran without the future inputs (it used 1.5x the recorded period
+instead) while full context, RAG and PageIndex, which read the PDF text, had them. Fix (`navmap.build_map`,
+`_captioned_tables`): a leaf holding ruled tables and its own caption lines is split; each ruled table (with its
+continuations) becomes a sibling node titled "<leaf title>: <the line just before it>" and the leaf keeps the caption
+lines. Titles are then the same in every period (e.g. "...: Order book: Orders received and production planned for
+days # to #"). G1 re-run: every CLEVRER map (pilot20, e1_d01-d15, e2_d01) byte-identical; finance maps identical;
+toy tests and guard pass. Only manufacturing and IT-operations maps change. Consequence: all OTF runs on those two
+domains (main, dev documents and their tool libraries) are redone; the earlier hosted ones were moved to
+`runs/hosted_discarded_20261025_fix10/`. The baselines are unaffected. Collaborators' ReAct-R, ReAct-C and ReCode read documents through
+the map (list_sections / read_section), so their manufacturing / IT-operations runs need the new map too (GraphRAG does not).
+
+**Finding 1 (2026-10-25 ~17:50; resolved by OTF v3.4 below):** sanity check on finance, gpt-oss.
+Overall OTF 64.7% vs full context 65.3%, but counterfactual 54.0% vs 63.3%. All of the loss is on fin_d02, the one
+finance document whose generated model passed (F1 0.649): its 33 counterfactual questions answered with the tool
+scored 1/33 (full context 23/33), while the reading-fallback documents fin_d01/d03 scored at or above full context.
+Cause: for a timeless scope the counterfactual evidence is ENTITIES + RECORDED OUTCOMES + the changed input + the
+recomputed outcomes (`engine._recorded`, `_evidence`). This model reads every reported figure as an input, so on
+most reports there are no outcomes and the evidence holds none of the unchanged figures (e.g. R-104: "change from
+2018 to 2019 if 2019 were 30.1" needs 2018 = 20.9, which the evidence never shows), and the answer is null or wrong.
+This is not one of the allowed bug classes (no crash, parse failure, contradiction, or wrongly certified model), and
+"fall back to reading when the tool evidence is empty" or "list the unchanged inputs" would be a design change chosen
+by accuracy, so it is left as is pending the author. It contradicts the "graceful degradation" framing for finance.
+
+**Finding 2 (2026-10-25 ~18:25; resolved by OTF v3.4 below):** manufacturing, gpt-oss, after fix
+10: OTF 57.7% vs full context 54.3% overall (counterfactual +25.3, predictive -2.7, explanatory 41.3% vs 56.0%,
+-14.7 [-29.3, +1.3]). The explanatory ("which conditions are responsible for the shortfall") choice checks compare
+each "without it" re-run with the *recorded* outcome. In the example inspected (mfg-2103-03-02) every choice,
+including the one the gold marks as not responsible, turned a recorded backlog of 10,781 into 0, i.e. the model's
+re-run from mid-period (day 37) does not carry the accumulated backlog, so every candidate cause looks responsible.
+The forecast check cuts just before a period's first recorded outcome (small state), so it does not test restarts
+from a large mid-period state. Comparing against an unpatched re-run, or checking restarts mid-period, would be design
+changes chosen by accuracy; left as is pending the author.
+
+**OTF v3.4 (author decision 2026-10-25 ~18:40; git tag `otf-v3.4`).** The author relaxed the freeze: changes that
+make OTF work better are wanted, made generically, validated on pilot20, and every split is re-run with the final
+version (earlier numbers are archived, not reported). Triggered by findings 1-2 above (test-split sanity checks,
+which the paper must not hide). Generation and the forecast check are unchanged, so stored process models are reused
+and only answers are redone. Two changes to the answer step (`otf/engine.py`, `otf/records.py`, `otf/prompts.py`):
+1. *Paired what-ifs* (`records.apply_delta`): a what-if runs the model twice from the same point, without and with
+   the change; the base run is aligned with the record (same kind and entities, nearest time within one recorded
+   period); for aligned outcomes only the difference between the two runs is applied to the record, so a value the
+   model gets wrong in both runs keeps its recorded value (finding 2); a recorded outcome the model never reproduces
+   is judged by the changed run alone, as before. Used by counterfactual runs, the dependency table and the choice
+   checks; the no-replay ablation keeps the unpaired run. Toy test `test_paired_delta_cancels_model_error`.
+2. *Record with the tool result in timeless scopes*: the scope's own sections come before the tool result (prompt
+   `RECORD_AND_TOOL`), so unchanged figures stay visible (finding 1). Not for timed scopes: there the evidence lists
+   the recorded outcomes already, and on pilot20 the extra sections cost explanatory accuracy (gpt-oss oracle 20 vs 25
+   of 36). Switch `ablation=tool_only` turns it off.
+pilot20 validation (all 308; cf / desc / expl / pred = total): gpt-oss oracle 22 / 211 / 23 / 14 = 270 (v3.3: 272);
+Qwen oracle 20 / 216 / 20 / 14 = 270 (271); Qwen generated model 18 / 218 / 20 / 14 = 270 (273). Differences are
+within run-to-run noise. Two intermediate variants were tried on pilot20 and rejected (pure paired runs without
+alignment: explanatory 15/36; paired with time alignment but the record in every scope: 20/36).
+
+**OTF v3.4.1 (2026-10-25 ~19:45, bug in v3.4's own code; tag `otf-v3.4.1`).** The paired what-if compared the run
+without and with the change using the record's value tolerance (`value_tols`, coarse: hundreds or thousands of units
+for stock), so a real change smaller than that (removing a 55-unit order) counted as "no change" and the recorded value
+stayed; manufacturing counterfactual fell from 72.0% (v3.3 after fix 10) to 50.7% (gpt-oss). Fix: two runs of the same
+model are compared exactly (records still pair within the time tolerance), and a numeric change is applied as recorded
+value + (with-change - without-change). CLEVRER outcomes carry no values, so pilot20 / E1 / E2 are unaffected;
+manufacturing, IT operations and finance OTF answers are redone. Toy test extended.
+
+**OTF v3.4.2 (2026-10-25 ~20:05; tag `otf-v3.4.2`).** (a) The counterfactual DIFFERENCES and the choice checks
+still compared the what-if with the record at the record's value tolerance; since the paired trace equals the record
+except where the change acts, they now compare exactly (the no-replay ablation keeps the tolerance). (b) In a timeless
+scope, or one where the model reads no outcomes at all (both models treat report years as a time axis, so finance
+scopes are often "timed" with zero outcomes), a what-if that alters nothing the model computes now counts as a failed
+tool run (reading fallback): the tool said "no differences", which the answer step read as "nothing changes", while the question needs
+arithmetic on the changed figure (gpt-oss fin_d02: 0-1 of ~30 tool-answered counterfactuals in v3.3, v3.4 and
+v3.4.1; reading answers on the same document ~55-75%). In timed scopes "no differences" stays an answer. CLEVRER
+outcomes carry no values and are timed, so pilot20 / E1 / E2 are unaffected. Note: finance accuracy varies by +-5
+questions per document between identical runs (fin_d01, reading only: 39, 37, 32 of 50).
+
+**gpt-oss on the new domains with v3.4.2 (2026-10-25 ~20:45; question accuracy, hosted only):** manufacturing OTF
+60.0% vs full context 54.3% vs RAG 25.3% (counterfactual 69.3 vs 46.7; predictive 36.0 vs 30.7; explanatory 44.0 vs
+56.0, still behind); IT operations 27.7 vs 18.3 vs 16.7; finance 68.7 vs 65.3 vs 64.0 (counterfactual 66.7 vs 63.3).
+PageIndex pending. Also 2026-10-25 ~20:35: hosted endpoints get a 10-minute request timeout (was 30 min, sized for the
+local vLLM queue); single stalled requests had held whole documents for 30+ minutes.
+
+**gpt-oss E1 (2026-10-25 ~21:40; OTF v3.4.2, hosted only): the navigation-only case (author decision).** OTF 67.8%
+vs full context 61.2%, PageIndex 53.2%, RAG 49.1% (OTF ahead of PageIndex on every type, counterfactual +13.5
+[+9.6, +17.3]; vs full context counterfactual +1.1, n.s.); oracle model 76.6% (predictive 91.2%). No E1 document got a
+passing generated model (5 failed at step 1, 10 at step 2: crashes, a 20 s sandbox timeout, F1 0-0.37; e1_d07 reached
+0.439 but failed the sensitivity guard), so every gpt-oss E1 answer is OTF's scoped-reading fallback. The author chose
+to keep the generation budget unchanged and report gpt-oss E1 as the case where generation fails and OTF falls back
+gracefully; the oracle row shows what working tools add.
+
+**Incident 2026-10-25/26 (hosted runs):** unexpected shutdown at 23:01:59 (event 41/6008, hard reset; no GPU load,
+all runs hosted), reboot at 07:56, logon at 11:07; runs resumed at 11:10 (~12 hours lost). 2 torn prediction lines
+dropped (`repair_predictions.py`), re-asked. OTF generation in progress (Qwen/Gemma documents) restarted from scratch
+(not resumable; the interrupted attempts' tokens are not in setup cost). `scripts/resume_after_reboot.ps1` now restarts
+the hosted runners at logon (unless `runs/logs/HOSTED_RUNS_HALTED` exists or a runner is running).
+
+**gpt-oss complete (2026-10-26 ~12:15; OTF v3.4.2; question accuracy %, overall and cf / expl / pred / desc;
+reports `runs/<split>_hosted_gptoss_report.md`):**
+
+| Split | OTF | Full context | RAG | PageIndex |
+|---|---|---|---|---|
+| E1 | 67.8 (43.7 / 48.5 / 57.6 / 96.6) | 61.2 (42.6 / 37.0 / 26.7 / 95.3) | 49.1 (34.3 / 40.2 / 30.4 / 68.1) | 53.2 (30.1 / 33.1 / 12.4 / 89.3) |
+| E2 | 45.7 (43.3 / 48.3) | 13.2 (13.9 / 12.5) | 17.2 (11.4 / 23.4) | 24.2 (24.7 / 23.6) |
+| Manufacturing | 60.0 (69.3 / 44.0 / 36.0 / 90.7) | 54.3 (46.7 / 56.0 / 30.7 / 84.0) | 25.3 (38.7 / 21.3 / 8.0 / 33.3) | 46.0 (42.7 / 34.7 / 29.3 / 77.3) |
+| IT operations | 27.7 (5.3 / 4.0 / 25.3 / 76.0) | 18.3 (4.0 / 5.3 / 24.0 / 40.0) | 16.7 (5.3 / 8.0 / 21.3 / 32.0) | **32.0** (8.0 / 4.0 / 33.3 / 82.7) |
+| Finance | 68.7 (66.7 / - / - / 70.7) | 65.3 (63.3 / - / - / 67.3) | 64.0 (65.3 / - / - / 62.7) | 52.3 (49.3 / - / - / 55.3) |
+
+E1 ablations (all fall back to reading for gpt-oss, see above): oracle 76.6, reading-only 67.1, no-replay 67.0,
+no-library 65.7. IT operations: PageIndex beats OTF (reported as measured, sec. 4 reporting rule); gpt-oss passed
+generation on 2 of 5 IT-operations documents. Spend: $186 at the end of 2026-10-25 work (gpt-oss nearly all, Qwen /
+Gemma dev checks); $368.5 at 2026-10-26 12:10 with Qwen and Gemma running (~$150 per hour while Qwen's full-context and
+PageIndex runs are in progress).
+
+**OTF v3.4.3 (2026-10-26 ~13:45; tag `otf-v3.4.3`).** Triggered by the sanity check on Qwen manufacturing (all 5
+documents passed generation, F1 0.86-0.99, yet OTF 61.3% vs full context 79.0%; explanatory 21.3 vs 64.0): the choice
+checks cannot take away conditions such as "older backorders were served first" ("not a cause that can be taken
+away"), and the answer step, seeing only the tool result, answered "not responsible". Change: the scope's own sections
+now come with every tool result (before: timeless scopes only), so the answer step always sees at least what the
+reading fallback sees, and the prompt says to decide from the sections what the tool cannot check. pilot20 (dev, Qwen
+generated model, cf / expl / pred): 17 / 25 / 14 vs 18 / 20 / 14 without; the gpt-oss oracle had shown 20 vs 25 on
+explanatory in the earlier variant, so the dev evidence is neutral overall. `ablation=tool_only` keeps the tool result
+alone. Only answers that used a tool change: those rows were set aside (`predictions_v342_tool.jsonl`) and re-asked
+for every model; gpt-oss E1 (no tool use) is unaffected.
+
+**OTF v3.4.4 (2026-10-26 ~16:30; tag `otf-v3.4.4`).** Qwen manufacturing after v3.4.3: OTF 64.3% vs full context
+79.0%, reading-only (same scopes, no tools) 74.7%; the loss is explanatory (tools 29.3 vs reading 70.7), with the
+answer saying "not responsible" where the gold says responsible. Change (`engine._unreproduced`): a choice check
+counts only if the model's own re-run without any change reproduces the target outcome (and its value); otherwise it
+reports "could not be checked" and the record decides. Explanatory, correct of 36 on pilot20 (dev): Qwen generated
+model 25 (v3.4.3: 23), gpt-oss oracle 20 (23) - neutral; manufacturing Qwen 30 of 75 (v3.4.3: 22; reading-only 53;
+full context 48). Tuning on this question type stops here (each further round is another change chosen on test
+results); manufacturing explanatory with tools stays below reading for Qwen and is reported as measured. Only
+explanatory answers that used a tool are re-asked (`predictions_v343_expl.jsonl`).
+
+**Qwen E1 (2026-10-26 ~21:20; OTF v3.4.4; question accuracy %, overall / cf / expl / pred):** OTF 74.9 / 43.5 /
+61.2 / 96.3; PageIndex 76.7 / 42.4 / 69.8 / 93.1; full context 67.8 / 35.0 / 46.4 / 84.8; RAG 52.2; oracle 75.1.
+All 15 documents passed generation (e1_d01's model reused by d02-d15, F1 0.44-0.74); OTF matches the oracle. OTF vs
+PageIndex: -1.8 [-3.3, -0.3] overall, counterfactual +1.1 [-2.2, +4.3] (n.s.), explanatory -8.6 [-12.7, -4.9],
+predictive +3.2 [-0.5, +6.9]. Sanity check vs full context passes on every type. Ablation `tool_only` (explanatory
+only): 56.1 vs 61.2 with the record (v3.4.3 confirmed on E1). Reading-only ablation (same scopes, no tools): 73.7 /
+38.6 / 61.0 / 97.2; OTF minus reading-only: counterfactual +4.9 [+1.8, +7.8] (p=0.001), explanatory +0.2, predictive
+-0.9, overall +1.2 - the tools' gain is on counterfactuals; PageIndex's explanatory lead also holds against reading.
+
+**Incident 2026-10-26/27:** unexpected shutdown at 23:19:52 (hard reset, sixth one), reboot 09:06, logon 12:06; the
+logon hook restarted the hosted runners at 12:06 (0 torn lines, 0 damaged cache files); ~12.8 hours lost.
+**Gemma scope for the deadline (2026-10-27 12:15):** Crusoe caps Gemma at ~8-12 answers/min (8 of 8 test requests
+returned 429 at our load) and ~6,700 Gemma main questions remained. Priority within Gemma: OTF and PageIndex (the
+paper's comparison) on E1 and the three domains first; E1 full context and RAG resume if time allows; Gemma E2 and
+ablations are cut (priority rule). Qwen: only ablations and a few PageIndex questions left; gpt-oss complete.
+
+**gpt-oss FINAL (OTF v3.4.4, 2026-10-27; supersedes the 2026-10-26 v3.4.2 table above; question accuracy %, overall
+and cf / expl / pred / desc):**
+
+| Split | OTF | Full context | RAG | PageIndex |
+|---|---|---|---|---|
+| E1 | 67.8 (43.7 / 48.5 / 57.6 / 96.6) | 61.2 (42.6 / 37.0 / 26.7 / 95.3) | 49.1 (34.3 / 40.2 / 30.4 / 68.1) | 53.2 (30.1 / 33.1 / 12.4 / 89.3) |
+| E2 | 45.7 (43.3 / 48.3) | 13.2 (13.9 / 12.5) | 17.2 (11.4 / 23.4) | 24.2 (24.7 / 23.6) |
+| Manufacturing | 64.0 (74.7 / 48.0 / 42.7 / 90.7) | 54.3 (46.7 / 56.0 / 30.7 / 84.0) | 25.3 (38.7 / 21.3 / 8.0 / 33.3) | 46.0 (42.7 / 34.7 / 29.3 / 77.3) |
+| IT operations | 28.3 (4.0 / 6.7 / 26.7 / 76.0) | 18.3 (4.0 / 5.3 / 24.0 / 40.0) | 16.7 (5.3 / 8.0 / 21.3 / 32.0) | 32.0 (8.0 / 4.0 / 33.3 / 82.7) |
+| Finance | 69.0 (67.3 / - / - / 70.7) | 65.3 (63.3 / - / - / 67.3) | 64.0 (65.3 / - / - / 62.7) | 52.3 (49.3 / - / - / 55.3) |
+
+E1 ablations: oracle 73.9 (48.6 / 54.4 / 88.0 / 97.6), reading-only 67.1, no-replay 67.0, no-library 66.1 (gpt-oss E1
+answers are all scoped reading; see the navigation-only note).
+
+**Reporting rule for persistent errors (decided 2026-10-26, implemented 2026-10-27 in `report.py`):** a question that
+still ends in an error after every retry (e.g. Qwen's PageIndex agent calling a tool that does not exist: "choices",
+"answer", ~110 times before retries) is scored as a wrong answer with 0 options correct, for every system, like a
+truncated answer; otherwise a failing system would be scored only on the questions it managed. Questions not yet
+answered (runs stopped by the deadline) are not scored; reports show them as coverage (answered / expected).
+
+**HOSTED RESULTS, FINAL (2026-10-28 ~01:00; OTF v3.4.4; `python scripts/hosted_reports.py` ->
+`runs/<split>_hosted_report.{md,json}`; hosted `or-*` rows only; persistent errors counted as wrong).** Question
+accuracy %, overall (counterfactual):
+
+| Split | Model | OTF | Full context | RAG | PageIndex |
+|---|---|---|---|---|---|
+| E1 | gpt-oss-20b | 67.8 (43.7) | 61.2 (42.6) | 49.1 (34.3) | 53.2 (30.1) |
+| E1 | Qwen3.6-27B | 74.9 (43.5) | 67.8 (35.0) | 52.2 (27.4) | 76.7 (42.4) |
+| E1 | Gemma-4-31B | 82.5 (54.2) | 82.6 (46.6) | 58.5 (30.7) | 77.1 (44.6) |
+| E2 | gpt-oss-20b | 45.7 (43.3) | 13.2 (13.9) | 17.2 (11.4) | 24.2 (24.7) |
+| E2 | Qwen3.6-27B | 51.1 (40.1) | 17.6 (15.3) | 20.2 (14.8) | 51.6 (41.2) |
+| Manufacturing | gpt-oss-20b | 64.0 (74.7) | 54.3 (46.7) | 25.3 (38.7) | 46.0 (42.7) |
+| Manufacturing | Qwen3.6-27B | 69.0 (58.7) | 79.0 (73.3) | 27.3 (40.0) | 77.3 (65.3) |
+| Manufacturing | Gemma-4-31B | 82.0 (70.7) | 83.3 (74.7) | 30.0 (53.3) | 80.3 (61.3) |
+| IT operations | gpt-oss-20b | 28.3 (4.0) | 18.3 (4.0) | 16.7 (5.3) | 32.0 (8.0) |
+| IT operations | Qwen3.6-27B | 52.3 (37.3) | 43.0 (8.0) | 26.0 (20.0) | 45.3 (13.3) |
+| IT operations | Gemma-4-31B | 50.3 (17.3) | 44.0 (13.3) | 24.7 (14.7) | 50.7 (12.0) |
+| Finance | gpt-oss-20b | 69.0 (67.3) | 65.3 (63.3) | 64.0 (65.3) | 52.3 (49.3) |
+| Finance | Qwen3.6-27B | 83.7 (82.0) | 82.7 (79.3) | 76.3 (77.3) | 83.0 (81.3) |
+| Finance | Gemma-4-31B | 80.0 (78.7) | 78.0 (74.0) | 73.0 (74.0) | 79.7 (80.0) |
+
+Per-type numbers, CIs and paired differences are in the reports. Documents with a passing generated model:
+gpt-oss E1 0/15, E2 0/1, mfg 5/5, itops 2/5, fin 1/3; Qwen E1 15/15, E2 1/1, mfg 5/5, itops 5/5, fin 0/3; Gemma E1
+15/15, E2 not run, mfg 0/5, itops 1/5, fin 0/3. E1 ablations (gpt-oss, Qwen) in `runs/e1_hosted_report.md`; Qwen:
+oracle 75.1, reading-only 73.7, no-replay 68.6, no-library 73.0. Not run (deadline): Gemma E2 and all Gemma
+ablations. Gemma E1 predictive: OTF 82.0 vs full context 98.2 - the loss is on e1_d02 / e1_d03 (0/15, 2/12), which use
+the model generated on e1_d02 (forecast F1 0.42, an honest but weak physics simulator); the other 13 documents use
+e1_d04's model and match reading. Reported as measured. Qwen manufacturing PageIndex: 3 questions failed on every
+retry (agent called nonexistent tools) and count as wrong. Cost: OpenRouter total usage $1,050.37, of which ~$991
+for the hosted runs (from $59.19 before them), including dev checks, validations and re-asks.
+
+**Hosted harness (2026-10-25, same for every system; no method change):**
+- *Patient retries.* `clevrer_bench/llm.py` `with_backoff`: transient endpoint errors (429, 5xx, timeouts, dropped
+  connections) are retried with exponential backoff (5 s doubling to 2 min, up to 30 min) around every model call
+  of full context, RAG, OTF and PageIndex (indexing calls and the per-question agent). Reason: Crusoe (Gemma)
+  returned 429 at 4 parallel jobs, and OTF's answer step catches every exception while building tool evidence, so
+  a 429 there silently became a reading fallback (seen on Gemma's pilot20 oracle, question 12052-14); in generation
+  a 429 crashed setup and restarted generation, which would give more tries than the budget.
+- *Transient tool errors are not answers.* `scripts/run_hosted.py` drops any OTF answer whose `tool_error` is a
+  transient endpoint error before each pass, so the question is asked again instead of being scored as a fallback.
+- *No-library ablation folder.* `use_library=false` now writes to `otf_no_library__<model>` (bookkeeping), so it
+  never mixes with the main `otf` run. The dev-document checks therefore sit in `otf_no_library__or-*`.
+- *Ablations start from the main run's models.* Reading-only and no-replay copy the main E1 run's final
+  `otf_model.json` per document (after the library re-check), so they differ from `otf` only by the switch and
+  report the same setup cost. No-library generates afresh on every document.
+- *Runner.* `scripts/run_hosted.py` (jobs = split x system x model, up to 3 passes, OTF library re-check and
+  re-answer as in `run_queue.py`; events in `runs/logs/hosted__status.jsonl`, output in `runs/logs/hosted/`).
+  Concurrency per model: gpt-oss 6 jobs x 8 questions, Qwen 6 x 6, Gemma 3 x 4.
+- *Incident (15:05-15:25):* killing the first runners left their `run.py` children running, so for ~15 min two
+  processes answered the same questions. Fixed by de-duplication (first valid answer per question kept; 190 rows
+  dropped in 6 baseline files, no torn lines) and a runner guard (`--stop` kills runners and children; a runner will
+  not start while hosted `run.py` processes exist). PageIndex indexes of e1_d01/d02 and mfg_d01 may have been built
+  twice; the cached index and its token count are one build's.
+- *Spend.* The OpenRouter key had used $59.19 before the hosted runs started (smoke tests); spend is reported
+  from that baseline.
+- *Incident (16:20-16:48): network choke and credits.* With ~150 requests in flight (all three models at once), new
+  outbound connections from this PC timed out (any site; DNS fine) and OpenRouter began returning 402 ("would exceed
+  your available credits given your current in-flight requests"). Stopping every run restored the network within a
+  minute. The account holds $200 of credits, $147.45 used at 16:50 ($88.26 by the hosted runs). 402 is now treated as
+  transient (wait and retry, never an answer or a fallback). Only gpt-oss resumed (16:55, ~60 requests in flight);
+  Qwen and Gemma wait for a credit top-up. Throughput measured before the stop: gpt-oss ~46, Qwen ~20-27, Gemma ~6-8
+  answers per minute (Crusoe throttles Gemma; Novita bf16 timed out on E1- and E2-sized prompts, so Crusoe is the
+  only usable bf16 provider).
+- *Root cause of the network choke (found 17:40-18:15):* the PageIndex adapter leaked one open connection per
+  question (PageIndex runs each question's agent in a fresh event loop and LiteLLM caches one HTTP client per loop for
+  up to an hour), so the PC's connections climbed by ~20 per minute until new ones were refused (seen a second time at
+  17:40 with only gpt-oss running; 85 -> 249 connections in 8 min with 2 PageIndex jobs). `pageindex_system.py` now
+  drops LiteLLM's client cache and collects the clients after each question (a test process: 8 questions left 8
+  connections open before, 0 after); requests and answers are unchanged. Since then connections stay ~45 and every
+  probe passes (`scripts/net_watch.py`, `runs/logs/hosted__net.jsonl`).
+- *Library re-check bookkeeping.* An OTF job counts as finished only once its library re-check is logged, so a stop
+  between the last answer and the re-check cannot skip it.
+
+**Hosted dev checks (2026-10-25, otf-v3.2, after fix 9; `scripts/hosted_dev_summary.py`).** Token metering works on
+OpenRouter: input, cached, output and reasoning tokens are all reported (and per-call cost); reasoning tokens > 0 for
+Qwen (~1.6k per question) and Gemma (~0.8k), so thinking is on. pilot20, all 308 questions (cf / desc / expl / pred):
+
+| Model | OTF generation on pilot20 | OTF (pilot20) | Oracle (pilot20) |
+|---|---|---|---|
+| or-gpt-oss-20b | failed at step 1 (3 tries: no entities, then `src` given as a bare node id); 25k setup tokens; reading fallback | 17/38, 211/220, 18/36, 8/14 = 254/308 (82.5%) | 21/38, 211/220, 26/36, 14/14 = 272/308 (88.3%) |
+| or-qwen3.6-27b | passed, F1 0.589 (parsers try 1, simulator conversation 1); 166k setup tokens (36k reasoning), 13 min | 22/38, 216/220, 21/36, 14/14 = 273/308 (88.6%) | 21/38, 216/220, 20/36, 14/14 = 271/308 (88.0%) |
+| or-gemma-4-31b-think | failed at step 1 (3 tries: a crash, then `src` as a bare node id); 22k setup tokens; reading fallback | 151/163 so far (92.6%) | 242/266 so far (91.0%) |
+
+Dev documents (library off, first 4 questions; generation only, accuracy not looked at): gpt-oss failed on mfg_dev
+(step 1, 24k), itops_dev (step 2, F1 0 over 23 submissions, crashes in its own code, 663k) and fin_dev (step 1, 29k);
+Qwen failed mfg_dev (step 1, 53k) and passed itops_dev (F1 0.941, 174k); Gemma passed mfg_dev (F1 0.784, 137k) and
+failed itops_dev (step 1, 30k) and fin_dev (step 1, 37k). Every failure is in the model's own code (bad `src` shape,
+crashes, reading outcomes from input cells), not a harness error; no tool errors on any answered question. Generation
+reliability stays model-dependent, as in the local gate runs (gpt-oss passed 1 of 8 attempts there).
+
 **Finance framing (author decision 2026-10-23):** finance stays as the domain without a process. Most report tables
 list reported figures with few derived cells, so the forecast check has little to verify and both models modelled
 the years as a time axis; OTF is expected to fall back to reading there. The paper reports it as graceful

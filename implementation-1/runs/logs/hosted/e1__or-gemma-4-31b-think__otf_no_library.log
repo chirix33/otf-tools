@@ -1,0 +1,20 @@
+
+=== 2026-10-26T19:33:30 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-gemma-4-31b-think --workers 4 --system-arg use_library=false
+[otf_no_library] setup: 545989 tokens, 8243.3s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.531, 'model_tries': 25, 'model_reused_from': None}
+[otf_no_library] 0 already answered, 148 to go
+[otf_no_library] 10/148  correct=7  errors=0  719s
+[otf_no_library] 20/148  correct=14  errors=0  1152s
+[otf_no_library] 30/148  correct=23  errors=0  1415s
+[otf_no_library] 40/148  correct=33  errors=0  1802s
+[otf_no_library] 50/148  correct=43  errors=0  2114s
+[otf_no_library] 60/148  correct=51  errors=0  2276s
+[otf_no_library] 70/148  correct=59  errors=0  2536s
+[otf_no_library] 80/148  correct=67  errors=0  2856s
+[otf_no_library] 90/148  correct=76  errors=0  3258s
+[otf_no_library] 100/148  correct=85  errors=0  3455s
+[otf_no_library] 110/148  correct=92  errors=0  3742s
+[otf_no_library] 120/148  correct=102  errors=0  3999s
+[otf_no_library] 130/148  correct=111  errors=0  4482s
+[otf_no_library] 140/148  correct=121  errors=0  4857s
+[otf_no_library] error on 14996-11: TypeError: 'NoneType' object is not subscriptable
+[otf_no_library] 148/148  correct=128  errors=1  5234s

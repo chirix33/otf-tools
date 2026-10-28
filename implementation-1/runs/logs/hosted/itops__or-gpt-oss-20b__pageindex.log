@@ -1,0 +1,1291 @@
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system pageindex --model or-gpt-oss-20b --workers 8
+[pageindex] setup: 113247 tokens, 578.3s {'doc_id': 'pi-2ac388fa84354a6f8d32b4077e321581', 'cached_index': False, 'tree_nodes': 31}
+[pageindex] 0 already answered, 60 to go
+[pageindex] error on itops-w04-07: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+[pageindex] error on itops-w04-05: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2534' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 10/60  correct=2  errors=3  1254s
+[pageindex] error on itops-w07-08: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2769' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2838' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2873' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3317' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3384' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 20/60  correct=4  errors=5  1304s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3556' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3614' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3844' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3910' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4014' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4080' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4425' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 30/60  correct=6  errors=5  1427s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4642' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4776' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5113' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5507' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5889' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5988' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6021' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 40/60  correct=8  errors=6  1745s
+
+=== 2026-10-25T16:52:28 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system pageindex --model or-gpt-oss-20b --workers 6
+Task was destroyed but it is pending!
+task: <Task pending name='Task-95' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-128' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-161' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-194' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-260' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-293' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-326' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-359' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-392' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-425' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-458' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 113247 tokens, 578.3s {'doc_id': 'pi-2ac388fa84354a6f8d32b4077e321581', 'cached_index': True, 'tree_nodes': 31}
+[pageindex] 37 already answered, 23 to go
+[pageindex] error on itops-w18-01: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-524' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-694' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on itops-w22-02: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-784' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1047' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1080' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1113' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1146' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1212' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1245' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 10/23  correct=3  errors=2  43s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1347' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1416' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1449' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1482' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1619' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1652' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on itops-w25-05: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1892' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 20/23  correct=10  errors=3  74s
+[pageindex] 23/23  correct=10  errors=3  117s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2694' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2727' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2760' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2777' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2826' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2859' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 104107 tokens, 30.0s {'doc_id': 'pi-16dddcf4bd444d0191b97a43669281a8', 'cached_index': False, 'tree_nodes': 22}
+[pageindex] 0 already answered, 60 to go
+[pageindex] error on itops-w10-02: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2991' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3024' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3057' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3090' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3183' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3249' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3351' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3489' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3556' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3589' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3658' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3727' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3760' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3793' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 10/60  correct=5  errors=1  47s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3927' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4032' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4065' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4098' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4164' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4230' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4335' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on itops-w14-09: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4475' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4508' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4543' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4576' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4609' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4699' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4732' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4833' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4901' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 20/60  correct=8  errors=2  88s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5107' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5140' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5173' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5272' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5342' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5582' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5648' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5790' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5823' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5892' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 30/60  correct=12  errors=2  152s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6349' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6418' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on itops-w21-07: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7134' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 40/60  correct=18  errors=3  461s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7221' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7254' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7287' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7320' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7388' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-7864' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8067' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8133' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8166' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8200' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8248' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8281' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8550' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-8584' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 50/60  correct=20  errors=3  821s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-9812' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+
+=== 2026-10-25T18:02:12 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system pageindex --model or-gpt-oss-20b --workers 3
+Task was destroyed but it is pending!
+task: <Task pending name='Task-50' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-83' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-116' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-149' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-182' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 113247 tokens, 578.3s {'doc_id': 'pi-2ac388fa84354a6f8d32b4077e321581', 'cached_index': True, 'tree_nodes': 31}
+[pageindex] 57 already answered, 3 to go
+[pageindex] 3/3  correct=3  errors=0  41s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-357' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-391' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 104107 tokens, 30.0s {'doc_id': 'pi-16dddcf4bd444d0191b97a43669281a8', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 56 already answered, 4 to go
+[pageindex] 4/4  correct=0  errors=0  101s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1025' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1295' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1328' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1397' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1430' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1597' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1700' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1733' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1799' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2003' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2136' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2205' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 105030 tokens, 23.5s {'doc_id': 'pi-0fff4895a31d47fe9e01de5ee7347b26', 'cached_index': False, 'tree_nodes': 26}
+[pageindex] 0 already answered, 60 to go
+[pageindex] 10/60  correct=4  errors=0  81s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2539' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2711' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2813' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2846' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on itops-w06-06: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3087' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 20/60  correct=7  errors=1  154s
+[pageindex] error on itops-w06-13: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3579' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3612' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3645' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3678' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+
+=== 2026-10-25T18:09:26 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system pageindex --model or-gpt-oss-20b --workers 6
+Task was destroyed but it is pending!
+task: <Task pending name='Task-95' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-128' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-161' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-227' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-260' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-293' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-326' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-359' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-392' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-458' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F763C0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A80308A450>, 26467.4661727)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A804F6A5D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-194' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-425' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F774D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A803059FF0>, 26471.1221352)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A804F6B390>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-527' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-596' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A804C922D0>, 26476.2334316)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A804F691D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76F90>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26471.3850926)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802E15F90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-631' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F75FD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A804F97A20>, 26482.8873194)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A804F696D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-732' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F757F0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A804E6F6F0>, 26485.5415875)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A804F6BC50>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A8751C38C0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26484.0166616)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F642D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-833' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC590>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEDB0>, 26493.9719916)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB9D10>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76900>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26493.8899077)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F64410>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-907' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-940' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1011' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1044' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDE90>, 26496.931909)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB9BD0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F74AD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26495.8415475)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB9A90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1114' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1146' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76A50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DC9F0>, 26498.5886129)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A8752E0F50>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1215' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1250' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F74C20>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCE10>, 26504.3814179)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB9950>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F770E0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCCB0>, 26499.5978962)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802E15BD0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC830>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26505.022405)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F64B90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1315' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76A50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26512.0647574)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F64550>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1386' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F756A0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A804F97BB0>, 26518.177726)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A804F75160>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1487' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] setup: 113247 tokens, 578.3s {'doc_id': 'pi-2ac388fa84354a6f8d32b4077e321581', 'cached_index': True, 'tree_nodes': 31}
+[pageindex] 60 already answered, 0 to go
+[pageindex] setup: 104107 tokens, 30.0s {'doc_id': 'pi-16dddcf4bd444d0191b97a43669281a8', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 60 already answered, 0 to go
+[pageindex] setup: 105030 tokens, 23.5s {'doc_id': 'pi-0fff4895a31d47fe9e01de5ee7347b26', 'cached_index': True, 'tree_nodes': 26}
+[pageindex] 26 already answered, 34 to go
+[pageindex] 10/34  correct=3  errors=0  65s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1556' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC980>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE150>, 26527.5005635)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65F90>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFCAD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE570>, 26520.1739737)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F64A50>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1593' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F74980>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCB50>, 26531.2408679)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A8752E3ED0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1694' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76CF0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DD0D0>, 26531.4209771)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A8752E0B90>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC590>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26531.9584771)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65F90>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEDB0>, 26536.2723627)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802E15BD0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1784' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] error on itops-w28-09: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A875EADFD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDD30>, 26543.3692578)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB8E10>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1875' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F746E0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCCB0>, 26543.955706)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F660D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2012' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2047' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F77380>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEDB0>, 26554.9656873)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A8752E0B90>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFCAD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26545.014955)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F651D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2113' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2080' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC1A0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DD390>, 26556.7827876)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802E15E50>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2218' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2251' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE410>, 26560.6031683)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802E15BD0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC590>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE570>, 26559.1301765)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F651D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2286' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F77620>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DC9F0>, 26562.252969)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB8E10>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFD940>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEDB0>, 26563.6243105)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65450>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2355' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F75160>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE2B0>, 26564.5728617)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB9590>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F75E80>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26563.9099032)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65BD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26568.5891604)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB8E10>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2482' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2548' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+[pageindex] 20/34  correct=5  errors=1  115s
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A875EAE3C0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE150>, 26568.969686)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F64CD0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2653' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2688' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F75A90>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCF70>, 26571.3234961)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F656D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFD010>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DC9F0>, 26569.9321334)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65310>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2721' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F76A50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDD30>, 26579.4990268)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB8F50>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC050>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26571.9924841)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65450>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2790' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task exception was never retrieved
+future: <Task finished name='Task-2790' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> exception=RuntimeError('cannot reuse already awaited coroutine')>
+Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pageindex\utils.py", line 105, in run_off_loop
+    asyncio.get_running_loop()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+RuntimeError: cannot reuse already awaited coroutine
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2825' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC440>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DC9F0>, 26580.0422013)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F656D0>
+[pageindex] error on itops-w29-06: PageIndexAPIError: The agent backend failed: Tool search_document not found in agent PageIndex
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2950' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2985' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFCAD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26580.3893609)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65450>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3018' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFD7F0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDD30>, 26591.2644677)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65590>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F74830>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCB50>, 26591.733327)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F660D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3155' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFCC20>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DEC50>, 26591.9576471)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F64B90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3287' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFC440>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DE410>, 26599.0489734)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65950>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFD940>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A802D978B0>, 26603.3447261)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65E50>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3356' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F757F0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DCE10>, 26612.0085451)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB8E10>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3458' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A875EAECF0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DD390>, 26617.1916375)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F660D0>
+[pageindex] 30/34  correct=8  errors=2  164s
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A804F74830>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DD4F0>, 26653.124596)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A802EB91D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A802EFCC20>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A8030DDBD0>, 26672.5683196)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A875F65810>
+
+=== 2026-10-25T19:14:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system pageindex --model or-gpt-oss-20b --workers 6
+Task was destroyed but it is pending!
+task: <Task pending name='Task-69' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-135' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-168' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-233' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-266' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D110440>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0D1028F0>, 30370.6064763)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0CDFFE00>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D110D70>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0D102760>, 30377.1155667)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0CF67750>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D111BE0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0CDCA2D0>, 30384.6541054)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11CF50>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D1116A0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B28A450>, 30401.5080659)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11C690>
+[pageindex] setup: 113247 tokens, 578.3s {'doc_id': 'pi-2ac388fa84354a6f8d32b4077e321581', 'cached_index': True, 'tree_nodes': 31}
+[pageindex] 60 already answered, 0 to go
+[pageindex] setup: 104107 tokens, 30.0s {'doc_id': 'pi-16dddcf4bd444d0191b97a43669281a8', 'cached_index': True, 'tree_nodes': 22}
+[pageindex] 60 already answered, 0 to go
+[pageindex] setup: 105030 tokens, 23.5s {'doc_id': 'pi-0fff4895a31d47fe9e01de5ee7347b26', 'cached_index': True, 'tree_nodes': 26}
+[pageindex] 56 already answered, 4 to go
+[pageindex] 4/4  correct=0  errors=0  59s
+Task was destroyed but it is pending!
+task: <Task pending name='Task-744' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-777' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-810' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-843' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-876' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-909' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-942' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-975' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1008' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1041' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1247BA10>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF1015A890>, 30420.9902688), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D4F0>, 30421.04602), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9EAF0>, 30422.9183336), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D230>, 30425.8346891), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF1015A2D0>, 30426.1851647), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DA70>, 30426.2345913), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D7B0>, 30427.6868026), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CCB0>, 30429.4770424), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DFF0>, 30432.7983404), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DD30>, 30434.6570638), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9E2B0>, 30435.020173), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9E570>, 30440.8610292), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CF70>, 30443.9038226), (<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9E830>, 30446.5769564)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171E50>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1107' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF7D388AD0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D390>, 30454.1583966)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11C410>
+[pageindex] setup: 95332 tokens, 47.6s {'doc_id': 'pi-3c23635856d24401858ccb717e172e67', 'cached_index': False, 'tree_nodes': 22}
+[pageindex] 0 already answered, 60 to go
+[pageindex] error on itops-w02-02: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696CF0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D650>, 30456.8009147)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11F890>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1164' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696900>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9C9F0>, 30456.9935143)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11C550>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697A10>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D390>, 30456.9892631)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0719D1D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1218' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task exception was never retrieved
+future: <Task finished name='Task-1218' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> exception=RuntimeError('cannot reuse already awaited coroutine')>
+Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pageindex\utils.py", line 105, in run_off_loop
+    asyncio.get_running_loop()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+RuntimeError: cannot reuse already awaited coroutine
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEBA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DBD0>, 30459.0794334)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11D1D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1304' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1337' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697620>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D390>, 30460.3512738)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173890>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DD30>, 30462.7862376)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1406' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F1D0>, 30463.9968583)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11FD90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1545' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1582' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696900>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30467.0250484)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11C2D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697B60>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D390>, 30465.8414778)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172490>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1651' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task exception was never retrieved
+future: <Task finished name='Task-1651' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> exception=RuntimeError('cannot reuse already awaited coroutine')>
+Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pageindex\utils.py", line 105, in run_off_loop
+    asyncio.get_running_loop()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+RuntimeError: cannot reuse already awaited coroutine
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697620>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CF70>, 30470.2969662)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF7CD951D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1247B4D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9EAF0>, 30471.2770681)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171590>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9FA10>, 30473.1854431)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171810>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1755' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1856' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1889' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE510>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D650>, 30478.920903)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF7CD96490>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697E00>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30475.1188729)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172490>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-1924' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1247AA50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DD30>, 30479.8693716)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171950>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696CF0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9E570>, 30483.8711965)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11C410>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF1247ACF0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D230>, 30481.5811633)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173C50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30490.5951845)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173890>
+[pageindex] 10/60  correct=4  errors=1  41s
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F1D0>, 30494.0381875)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171590>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2125' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task exception was never retrieved
+future: <Task finished name='Task-2125' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> exception=RuntimeError('cannot reuse already awaited coroutine')>
+Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pageindex\utils.py", line 105, in run_off_loop
+    asyncio.get_running_loop()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+RuntimeError: cannot reuse already awaited coroutine
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2179' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEA50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30494.193277)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173D90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2229' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEBA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F1D0>, 30501.3108669)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30513.9076843)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+[pageindex] error on itops-w03-09: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>commentary not found in agent PageIndex
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30544.9987878)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172490>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2451' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6970E0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CE10>, 30545.1746119)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11F250>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2718' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2620' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEE40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CE10>, 30576.5815059)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF7CD96490>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F1D0>, 30579.8078687)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2787' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF7D389010>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30586.4871961)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173D90>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2888' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697E00>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CE10>, 30594.9672655)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171450>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2989' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3090' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3125' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6970E0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9FCD0>, 30595.8751709)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696660>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30595.9485969)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171310>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3160' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6974D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9C9F0>, 30600.108188)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172350>
+[pageindex] 20/60  correct=5  errors=2  151s
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697CB0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D910>, 30600.6351904)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696A50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F490>, 30603.6664649)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172210>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6978C0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30601.5955295)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171310>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3297' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3332' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3401' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3436' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6974D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DD30>, 30604.5788931)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171F90>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696CF0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D7B0>, 30606.2875477)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3504' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697230>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30614.5018878)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101716D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6978C0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9EAF0>, 30649.9515155)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697E00>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30651.8766755)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172210>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3574' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697620>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9DD30>, 30658.7504559)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3696' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE510>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4F70>, 30691.42368)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3797' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEE40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30700.7498752)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171310>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-3930' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE7B0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30705.8598709)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101716D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4032' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4133' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4166' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDF230>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30708.3938529)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171450>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4201' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697B60>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F490>, 30749.40874)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4F70>, 30772.3555246)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171450>
+[pageindex] 30/60  correct=8  errors=2  323s
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0B27FB60>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30777.3241927)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173610>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4372' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEE40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30779.1755853)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4509' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4544' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEA50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30779.53209)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172490>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4610' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6967B0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CF70>, 30794.4800372)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171F90>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30805.2435522)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172490>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE7B0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F490>, 30807.1066887)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171810>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4748' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30818.5918898)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173890>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4902' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE900>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30818.8271858)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173610>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4952' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6967B0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9CF70>, 30827.1552852)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172490>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE7B0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4F70>, 30847.4283957)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11EC10>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5054' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697E00>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30852.9899718)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172210>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5155' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30904.6968228)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10172210>
+[pageindex] 40/60  correct=10  errors=2  456s
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE7B0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30935.0977327)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF0D11D1D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5388' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEA50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30943.0720047)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5521' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30948.4303173)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173610>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30958.3542864)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 30966.1341185)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171F90>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDF230>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 30970.9123579)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173ED0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5923' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6024' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6057' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEA50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30972.0762551)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6092' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D697230>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9F1D0>, 30976.4311045)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173C50>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 30984.0041304)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173890>
+[pageindex] error on itops-w26-06: PageIndexAPIError: The agent backend failed: Tool get_page_content<|channel|>json not found in agent PageIndex
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEE40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4F70>, 30985.8837248)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171310>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6217' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6286' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6319' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE900>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 30987.8995898)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101739D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6354' coro=<LoggingWorker._worker_loop() running at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:233> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D6978C0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9D910>, 31006.9208577)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171810>
+[pageindex] 50/60  correct=13  errors=3  558s
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4F70>, 31026.8869846)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101739D0>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDE510>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0AF938B0>, 31035.1193011)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF101720D0>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6588' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF06CDEBA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF06CCEC50>, 31052.01068)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173890>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 31052.3497387)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173610>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-6754' coro=<LoggingWorker._worker_loop() done, defined at C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\litellm\litellm_core_utils\logging_worker.py:221> wait_for=<Future cancelled>>
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001FF0D696BA0>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF19A9C9F0>, 31057.7758001)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171310>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D4B50>, 31082.4630296)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10173890>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001FF0B2D54F0>, 31120.82404)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001FF10171310>

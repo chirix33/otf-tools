@@ -1,0 +1,10 @@
+{"time": "2026-10-27T12:06:19", "event": "hosted_start", "phases": ["dev", "main", "e2", "ablations"], "models": ["or-gpt-oss-20b", "or-qwen3.6-27b", "or-gemma-4-31b-think"], "systems": null, "exclude": "pageindex", "limits": {"or-gpt-oss-20b": [8, 6], "or-qwen3.6-27b": [8, 6], "or-gemma-4-31b-think": [6, 4]}, "n_jobs": 72, "spend_usd": 984.7892, "pid": 26276}
+{"time": "2026-10-27T12:06:19", "event": "dropped_transient_tool_errors", "job": "e1__or-gemma-4-31b-think__otf", "n": 1}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "e2__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 1067, "answered": 276, "errors": 1}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "itops__or-gemma-4-31b-think__full_context_text", "pass_no": 1, "expected": 300, "answered": 299, "errors": 1}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "itops__or-gemma-4-31b-think__rag", "pass_no": 1, "expected": 300, "answered": 298, "errors": 2}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "e1__or-gemma-4-31b-think__full_context_text", "pass_no": 1, "expected": 2166, "answered": 1180, "errors": 6}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "e1__or-gemma-4-31b-think__rag", "pass_no": 1, "expected": 2166, "answered": 1055, "errors": 0}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "e1__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 2166, "answered": 442, "errors": 3}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "e1__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "expected": 2166, "answered": 1158, "errors": 0}
+{"time": "2026-10-27T12:06:21", "event": "pass_start", "job": "e1__or-qwen3.6-27b__otf_no_replay", "pass_no": 1, "expected": 2166, "answered": 1784, "errors": 0}

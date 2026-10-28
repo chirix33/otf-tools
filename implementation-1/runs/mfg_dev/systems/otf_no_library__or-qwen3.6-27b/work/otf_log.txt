@@ -1,0 +1,16 @@
+parsers attempt 1: entities('Plant 1912, Period 01') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpvel42e2o\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 8, in entities
+AttributeError: 'NoneType' object has no attribute 'get'
+parsers attempt 2: inputs('Plant 1914, Period 01') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmp05idgx9z\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 45, in inputs
+ValueError: invalid literal for int() with base 10: '4.8'
+parsers attempt 3: 'Plant 1912, Period 01': inputs() fails on the copy in which the outcomes are hidden (hidden cells are empty strings '', hidden rows and lines are removed); read only the cells your src lists. Error: File "<string>", line 64, in inputs
+  File "<string>", line 7, in _parse_num
+ValueError: could not convert string to float: ''
+WHAT YOUR FUNCTIONS RETURNED on scope 'Plant 1912, Period 01': 3 entities (first: [{"id": "ATN02K12P", "description": "A ATN ATN02K12P"}]), recorded_end = 14.0, 120 inputs (first: [{"id": "init_ATN02K12P", "time": 1.0, "kind": "initial_state", "entities": ["ATN02K12P"], "fields": {"opening_stock": 2950, "kg_per_unit": 24}}]), 156 outcomes (first: [{"time": 1.0, "kind": "shipped", "entities": ["ATN02K12P"], "value": 873}]), params = {}
+- 4 of 4 lines of 'Plant 1912, Period 01: Order book' are not the src of any input or outcome, e.g.: 'Order book at the end of day 14: orders received and production planned for days 15 to 21. These quantities are' | 'exactly what then happened.' | 'Open orders at the end of day 14 (backordered):' | 'Orders received and production planned for days 15 to 21:'
+- 2 of 2 rows of table 'Plant 1912, Period 01: Order book: Open orders at the end of day 14 (backordered)' are not the src of any input or outcome

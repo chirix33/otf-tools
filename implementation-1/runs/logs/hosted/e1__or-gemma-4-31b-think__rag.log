@@ -1,0 +1,142 @@
+
+=== 2026-10-25T15:05:56 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 8
+[rag] setup: 0 tokens, 77.3s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 148 to go
+[rag] error on 10017-15: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on 10017-4: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on 10017-11: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 10/148  correct=1  errors=9  59s
+[rag] 20/148  correct=1  errors=19  103s
+[rag] 30/148  correct=1  errors=29  188s
+[rag] 40/148  correct=5  errors=32  338s
+[rag] 50/148  correct=7  errors=38  507s
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 14 already answered, 134 to go
+[rag] 10/134  correct=4  errors=0  901s
+[rag] 20/134  correct=11  errors=0  1425s
+[rag] 30/134  correct=17  errors=0  1987s
+[rag] 40/134  correct=23  errors=0  2425s
+
+=== 2026-10-26T11:44:48 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 4
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 59 already answered, 89 to go
+[rag] 10/89  correct=7  errors=0  342s
+[rag] 20/89  correct=14  errors=0  626s
+[rag] 30/89  correct=21  errors=0  883s
+[rag] 40/89  correct=24  errors=0  1218s
+[rag] 50/89  correct=32  errors=0  1355s
+[rag] 60/89  correct=36  errors=0  1533s
+[rag] 70/89  correct=40  errors=0  1908s
+[rag] 80/89  correct=47  errors=0  2203s
+[rag] 89/89  correct=52  errors=0  2463s
+[rag] setup: 0 tokens, 8.4s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 141 to go
+[rag] 10/141  correct=7  errors=0  307s
+[rag] 20/141  correct=11  errors=0  610s
+[rag] 30/141  correct=17  errors=0  937s
+[rag] 40/141  correct=20  errors=0  1276s
+[rag] 50/141  correct=26  errors=0  1560s
+[rag] 60/141  correct=34  errors=0  1980s
+[rag] 70/141  correct=40  errors=0  2167s
+[rag] 80/141  correct=49  errors=0  2464s
+[rag] 90/141  correct=53  errors=0  2935s
+[rag] 100/141  correct=59  errors=0  3267s
+[rag] 110/141  correct=66  errors=0  3633s
+[rag] 120/141  correct=73  errors=0  3833s
+[rag] 130/141  correct=80  errors=0  4042s
+[rag] 140/141  correct=87  errors=0  4243s
+[rag] 141/141  correct=87  errors=0  4353s
+[rag] setup: 0 tokens, 9.6s {'chunks': 186, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 132 to go
+[rag] 10/132  correct=7  errors=0  324s
+[rag] 20/132  correct=15  errors=0  584s
+[rag] 30/132  correct=24  errors=0  804s
+[rag] 40/132  correct=31  errors=0  1121s
+[rag] 50/132  correct=38  errors=0  1398s
+[rag] 60/132  correct=44  errors=0  1673s
+[rag] 70/132  correct=49  errors=0  1891s
+[rag] 80/132  correct=57  errors=0  2291s
+[rag] 90/132  correct=62  errors=0  2574s
+[rag] 100/132  correct=66  errors=0  3002s
+[rag] 110/132  correct=69  errors=0  3316s
+[rag] 120/132  correct=73  errors=0  3791s
+[rag] 130/132  correct=75  errors=0  4096s
+[rag] 132/132  correct=75  errors=0  4366s
+[rag] setup: 0 tokens, 7.2s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 139 to go
+[rag] 10/139  correct=5  errors=0  404s
+[rag] 20/139  correct=11  errors=0  657s
+[rag] 30/139  correct=18  errors=0  1106s
+[rag] 40/139  correct=25  errors=0  1953s
+[rag] 50/139  correct=31  errors=0  2491s
+[rag] 60/139  correct=37  errors=0  2779s
+[rag] 70/139  correct=43  errors=0  3142s
+[rag] 80/139  correct=50  errors=0  3477s
+[rag] 90/139  correct=56  errors=0  4260s
+[rag] 100/139  correct=63  errors=0  5199s
+[rag] 110/139  correct=65  errors=0  6111s
+[rag] 120/139  correct=69  errors=0  6661s
+[rag] 130/139  correct=72  errors=0  7215s
+[rag] 139/139  correct=74  errors=0  7923s
+[rag] setup: 0 tokens, 7.8s {'chunks': 181, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 134 to go
+[rag] 10/134  correct=7  errors=0  818s
+[rag] 20/134  correct=13  errors=0  1201s
+[rag] 30/134  correct=19  errors=0  1932s
+[rag] 40/134  correct=27  errors=0  2344s
+[rag] 50/134  correct=35  errors=0  3699s
+[rag] 60/134  correct=43  errors=0  4113s
+[rag] 70/134  correct=46  errors=0  5643s
+[rag] 80/134  correct=53  errors=0  6091s
+[rag] 90/134  correct=59  errors=0  6363s
+[rag] 100/134  correct=65  errors=0  6556s
+[rag] 110/134  correct=72  errors=0  6925s
+[rag] 120/134  correct=77  errors=0  7197s
+[rag] 130/134  correct=81  errors=0  7828s
+[rag] 134/134  correct=82  errors=0  8357s
+[rag] setup: 0 tokens, 7.4s {'chunks': 172, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 149 to go
+[rag] 10/149  correct=8  errors=0  495s
+[rag] 20/149  correct=12  errors=0  1398s
+[rag] 30/149  correct=16  errors=0  1996s
+[rag] 40/149  correct=21  errors=0  2423s
+[rag] 50/149  correct=26  errors=0  2698s
+[rag] 60/149  correct=31  errors=0  3222s
+[rag] 70/149  correct=35  errors=0  4052s
+[rag] 80/149  correct=39  errors=0  4714s
+[rag] 90/149  correct=43  errors=0  5407s
+[rag] 100/149  correct=48  errors=0  5857s
+[rag] 110/149  correct=53  errors=0  6256s
+[rag] 120/149  correct=56  errors=0  6620s
+[rag] 130/149  correct=65  errors=0  6970s
+[rag] 140/149  correct=69  errors=0  7435s
+[rag] 149/149  correct=73  errors=0  7686s
+[rag] setup: 0 tokens, 6.7s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 155 to go
+[rag] 10/155  correct=4  errors=0  413s
+[rag] 20/155  correct=12  errors=0  738s
+[rag] 30/155  correct=17  errors=0  1010s
+[rag] 40/155  correct=23  errors=0  1451s
+[rag] 50/155  correct=31  errors=0  1983s
+[rag] 60/155  correct=32  errors=0  2418s
+[rag] 70/155  correct=39  errors=0  2531s
+[rag] 80/155  correct=45  errors=0  2864s
+[rag] 90/155  correct=51  errors=0  3057s
+[rag] 100/155  correct=59  errors=0  3318s
+[rag] 110/155  correct=64  errors=0  3483s
+[rag] 120/155  correct=72  errors=0  3649s
+[rag] 130/155  correct=80  errors=0  3875s
+[rag] 140/155  correct=84  errors=0  4327s
+[rag] 150/155  correct=90  errors=0  4515s
+[rag] 155/155  correct=92  errors=0  4564s
+[rag] setup: 0 tokens, 6.2s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 160 to go
+[rag] 10/160  correct=6  errors=0  176s
+[rag] 20/160  correct=11  errors=0  363s
+[rag] 30/160  correct=15  errors=0  780s
+[rag] 40/160  correct=21  errors=0  1349s
+[rag] 50/160  correct=26  errors=0  1601s
+
+=== 2026-10-27T12:06:21 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 4

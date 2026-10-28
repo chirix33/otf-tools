@@ -1,0 +1,19 @@
+parsers attempt 1: passed
+explore 1: ok, 1177 chars
+explore 2: ok, 1820 chars
+explore 3: error, 24 chars
+explore 4: ok, 309 chars
+explore 5: ok, 326 chars
+explore 6: ok, 777 chars
+explore 7: ok, 2015 chars
+simulate attempt 1 (after 7 explore runs): simulate('Cell window 08', start=15.0) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpsaxpcua5\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 244, in simulate
+KeyError: 'cpu'
+simulate attempt 2 (after 7 explore runs): mean record-match F1 = 0.679 (need 0.4)
+- scope 'Cell window 08' (start 15.0): F1 0.821, 161 hidden outcomes, model produced 124; missed (hidden but not produced): [{"time": 1040.0, "kind": "task_start", "entities": ["T067", "M05"], "value": null}, {"time": 1072.0, "kind": "task_finish", "entities": ["T067", "M05"], "value": null}, {"time": 1147.0, "kind": "task_start", "entities": ["T078", "M04"], "value": null}, {"time": 1161.0, "kind": "task_start", "entities": ["T068", "M05"], "value": null}]; extra (produced but not hidden): [{"time": 1040.0, "kind": "task_start", "entities": ["T067", "M06"], "value": null}, {"time": 1072.0, "kind": "task_finish", "entities": ["T067", "M06"], "value": null}, {"time": 1074.0, "kind": "task_start", "entities": ["T078", "M05"], "value": null}, {"time": 1094.0, "kind": "task_start", "entities": ["T070", "M05"], "value": null}]
+- scope 'Cell window 17' (start 3.0): F1 0.626, 182 hidden outcomes, model produced 144; missed (hidden but not produced): [{"time": 65.0, "kind": "task_start", "entities": ["T013", "M05"], "value": null}, {"time": 65.0, "kind": "task_start", "entities": ["T014", "M05"], "value": null}, {"time": 65.0, "kind": "task_start", "entities": ["T016", "M06"], "value": null}, {"time": 65.0, "kind": "task_start", "entities": ["T017", "M06"], "value": null}]; extra (produced but not hidden): [{"time": 65.0, "kind": "task_start", "entities": ["T013", "M06"], "value": null}, {"time": 65.0, "kind": "task_start", "entities": ["T014", "M06"], "value": null}, {"time": 65.0, "kind": "task_start", "entities": ["T016", "M05"], "value": null}, {"time": 65.0, "kind": "task_start", "entities": ["T017", "M05"], "value": null}]
+- scope 'Cell window 27' (start 26.0): F1 0.521, 219 hidden outcomes, model produced 184; missed (hidden but not produced): [{"time": 408.0, "kind": "task_start", "entities": ["T046", "M05"], "value": null}, {"time": 408.0, "kind": "task_start", "entities": ["T047", "M05"], "value": null}, {"time": 408.0, "kind": "task_start", "entities": ["T048", "M05"], "value": null}, {"time": 408.0, "kind": "task_start", "entities": ["T050", "M06"], "value": null}]; extra (produced but not hidden): [{"time": 408.0, "kind": "task_start", "entities": ["T046", "M04"], "value": null}, {"time": 408.0, "kind": "task_start", "entities": ["T047", "M04"], "value": null}, {"time": 408.0, "kind": "task_start", "entities": ["T048", "M04"], "value": null}, {"time": 408.0, "kind": "task_start", "entities": ["T050", "M05"], "value": null}]
+- scope 'Cell window 30' (start -6.0): F1 0.75, 290 hidden outcomes, model produced 249; missed (hidden but not produced): [{"time": 742.0, "kind": "task_start", "entities": ["T105", "M04"], "value": null}, {"time": 743.0, "kind": "task_start", "entities": ["T088", "M03"], "value": null}, {"time": 744.0, "kind": "task_start", "entities": ["T090", "M08"], "value": null}, {"time": 749.0, "kind": "task_start", "entities": ["T091", "M08"], "value": null}]; extra (produced but not hidden): [{"time": 740.0, "kind": "task_start", "entities": ["T088", "M04"], "value": null}, {"time": 742.0, "kind": "task_start", "entities": ["T090", "M04"], "value": null}, {"time": 743.0, "kind": "task_start", "entities": ["T091", "M03"], "value": null}, {"time": 743.0, "kind": "task_start", "entities": ["T092", "M04"], "value": null}]
+simulator conversation 1: best F1 0.679

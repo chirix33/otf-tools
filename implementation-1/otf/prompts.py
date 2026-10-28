@@ -80,7 +80,9 @@ within the recorded period, and point `src` at real rows, columns and lines. The
 in which the outcomes are hidden (their cells and lines, and every timed row or line after the first outcome
 that no input was read from; hidden cells become empty strings "" and hidden rows and lines are removed): on
 that copy inputs() must return exactly the same records, and outcomes() must find almost none of the hidden
-ones.
+ones. Value-less records that only occur at regularly spaced times (for example one record per entity at every
+sample time) mark that a row exists, not something the process produces: the check ignores them, so return the
+events the process produces and the result quantities with their values.
 {feedback}"""
 
 SIMULATOR_USER = """{context}
@@ -195,18 +197,25 @@ Reply with only JSON: {{"target": <number of the outcome the question is about>,
 Use null when a candidate is not something that can be taken away by changing inputs (for example another
 outcome)."""
 
+RECORD_AND_TOOL = ("Below are the document's own sections for this scope, then a TOOL RESULT computed with a model "
+                   "of the process. Take recorded facts and figures from the sections; take what the model computes "
+                   "(a forecast, or what changes under a hypothetical change) from the tool result. Where the tool result "
+                   "cannot check something (for example a condition it cannot take away), decide it from the "
+                   "sections.")
+
 ANSWER = {
     "descriptive": "Answer from the document sections below (the question's scope).",
     "explanatory": "Answer using the recorded outcomes, the dependency table and the choice checks below. In the "
                    "table, taking an entity's inputs away and re-running a model of the process (checked against "
-                   "the record) makes the listed outcomes disappear. A choice check re-runs the process without that "
-                   "cause. Something is responsible for an outcome when the outcome would not have happened "
+                   "the record) makes the listed outcomes disappear. A choice check re-runs the process with and without "
+                   "that cause and applies the difference to the record. Something is responsible for an outcome when the outcome would not have happened "
                    "without it.",
     "predictive": "Answer using the outcomes the model predicts after the recorded period ends (listed below), run "
                   "forward from the last recorded states and the document's own future inputs, if any, together with "
                   "the recorded outcomes.",
     "counterfactual": "Answer using the counterfactual run below: the record is kept until the change can first "
-                      "matter, then a model of the process, checked against the record, is re-run with the change. "
+                      "matter; from there a model of the process, checked against the record, is run twice, with and "
+                      "without the change, and only what differs between the two runs is applied to the record. "
                       "Outcomes in the counterfactual run happen; recorded outcomes that are not in it would not "
                       "happen. DIFFERENCES lists what the change alters.",
 }

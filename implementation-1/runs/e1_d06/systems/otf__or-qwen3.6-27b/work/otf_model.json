@@ -1,0 +1,172 @@
+{
+ "key": {
+  "pdf_sha": "39a32ac088d0e5e0",
+  "model": "or-qwen3.6-27b",
+  "max_tries": 3,
+  "version": "v3"
+ },
+ "model": {
+  "code": "import re\nfrom typing import List, Dict, Optional\n\ndef entities(doc, scope) -> List[Dict[str, str]]:\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n    \n    children_nodes = [node_by_id(doc, cid) for cid in scope_node.get(\"children\", [])]\n    objects_node = None\n    for node in children_nodes:\n        if node.get(\"kind\") == \"list\" and \": Objects\" in node.get(\"title\", \"\"):\n            objects_node = node\n            break\n            \n    if not objects_node:\n        return []\n    \n    result = []\n    lines = objects_node.get(\"lines\", [])\n    for line_idx, line in enumerate(lines):\n        match = re.match(r\"Object (\\d+):\\s*(.+)\", line)\n        if match:\n            obj_id = f\"Object {match.group(1)}\"\n            result.append({\n                \"id\": obj_id,\n                \"description\": line\n            })\n    return result\n\ndef recorded_end(doc, scope) -> Optional[float]:\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return None\n    \n    children_nodes = [node_by_id(doc, cid) for cid in scope_node.get(\"children\", [])]\n    \n    max_frame = -1\n    found_any = False\n    \n    motion_node = None\n    events_node = None\n    for node in children_nodes:\n        title = node.get(\"title\", \"\")\n        if \": Motion log\" in title:\n            motion_node = node\n        elif \": Events\" in title:\n            events_node = node\n            \n    if motion_node and motion_node.get(\"kind\") == \"table\":\n        rows = table_rows(motion_node)\n        for row_idx, row_data in rows:\n            frame_str = row_data.get(\"frame\", \"\")\n            try:\n                frame = float(frame_str)\n                if frame > max_frame:\n                    max_frame = frame\n                found_any = True\n            except ValueError:\n                pass\n                \n    if events_node and events_node.get(\"kind\") == \"list\":\n        lines = events_node.get(\"lines\", [])\n        for line in lines:\n            match = re.match(r\"Frame (\\d+):\", line)\n            if match:\n                frame = float(match.group(1))\n                if frame > max_frame:\n                    max_frame = frame\n                found_any = True\n                \n    return max_frame if found_any else None\n\ndef inputs(doc, scope) -> List[Dict]:\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n        \n    children_nodes = [node_by_id(doc, cid) for cid in scope_node.get(\"children\", [])]\n    \n    objects_node = None\n    events_node = None\n    motion_node = None\n    \n    for node in children_nodes:\n        title = node.get(\"title\", \"\")\n        if \": Objects\" in title:\n            objects_node = node\n        elif \": Events\" in title:\n            events_node = node\n        elif \": Motion log\" in title:\n            motion_node = node\n            \n    inputs_list = []\n    \n    # 1. Object Properties\n    if objects_node and objects_node.get(\"kind\") == \"list\":\n        lines = objects_node.get(\"lines\", [])\n        for line_idx, line in enumerate(lines):\n            match = re.match(r\"Object (\\d+):\\s*(.+)\", line)\n            if match:\n                obj_id = f\"Object {match.group(1)}\"\n                fields = {}\n                for m in re.finditer(r'(\\w+)=(\\w+)', match.group(2)):\n                    fields[m.group(1)] = m.group(2)\n                \n                inputs_list.append({\n                    \"id\": f\"prop_{obj_id}\",\n                    \"time\": None,\n                    \"kind\": \"Object Properties\",\n                    \"entities\": [obj_id],\n                    \"fields\": fields,\n                    \"src\": [[objects_node.get(\"node_id\"), line_idx]]\n                })\n\n    # 2. Entries and Initial Views from Events\n    if events_node and events_node.get(\"kind\") == \"list\":\n        lines = events_node.get(\"lines\", [])\n        for line_idx, line in enumerate(lines):\n            match = re.match(r\"Frame (\\d+):\\s*Object (\\d+).*?(enters the scene|is in view when the video begins)\", line)\n            if match:\n                frame = float(match.group(1))\n                obj_id = f\"Object {match.group(2)}\"\n                event_type = match.group(3)\n                inputs_list.append({\n                    \"id\": f\"entry_{obj_id}_{int(frame)}\",\n                    \"time\": frame,\n                    \"kind\": \"Entry\" if \"enters\" in event_type else \"Initial View\",\n                    \"entities\": [obj_id],\n                    \"fields\": {\"event\": event_type},\n                    \"src\": [[events_node.get(\"node_id\"), line_idx]]\n                })\n\n    # 3. Initial States from Motion Log (frame 0)\n    if motion_node and motion_node.get(\"kind\") == \"table\":\n        rows = table_rows(motion_node)\n        for row_idx, row_data in rows:\n            frame_val = float(row_data.get(\"frame\", \"-1\"))\n            if frame_val == 0:\n                obj_col = row_data.get(\"object\", \"\")\n                obj_match = re.match(r\"(\\d+)\", obj_col)\n                if obj_match:\n                    obj_id = f\"Object {obj_match.group(1)}\"\n                    fields = {}\n                    for col in ['x', 'y', 'vx', 'vy', 'speed']:\n                        val = row_data.get(col, \"\")\n                        try:\n                            fields[col] = float(val)\n                        except ValueError:\n                            pass\n                    inputs_list.append({\n                        \"id\": f\"init_state_{obj_id}\",\n                        \"time\": 0.0,\n                        \"kind\": \"Initial State\",\n                        \"entities\": [obj_id],\n                        \"fields\": fields,\n                        \"src\": [[motion_node.get(\"node_id\"), row_idx]]\n                    })\n                    \n    return inputs_list\n\ndef outcomes(doc, scope) -> List[Dict]:\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n        \n    children_nodes = [node_by_id(doc, cid) for cid in scope_node.get(\"children\", [])]\n    events_node = None\n    for node in children_nodes:\n        if \": Events\" in node.get(\"title\", \"\"):\n            events_node = node\n            break\n            \n    outcomes_list = []\n    \n    if events_node and events_node.get(\"kind\") == \"list\":\n        lines = events_node.get(\"lines\", [])\n        for line_idx, line in enumerate(lines):\n            # Collision\n            col_match = re.match(r\"Frame (\\d+):\\s*(Object \\d+).*collides with (Object \\d+)\", line)\n            if col_match:\n                outcomes_list.append({\n                    \"time\": float(col_match.group(1)),\n                    \"kind\": \"Collision\",\n                    \"entities\": [col_match.group(2), col_match.group(3)],\n                    \"value\": None,\n                    \"src\": [[events_node.get(\"node_id\"), line_idx]]\n                })\n                continue\n                \n            # Exit\n            exit_match = re.match(r\"Frame (\\d+):\\s*(Object \\d+).*exits the scene\", line)\n            if exit_match:\n                outcomes_list.append({\n                    \"time\": float(exit_match.group(1)),\n                    \"kind\": \"Exit\",\n                    \"entities\": [exit_match.group(2)],\n                    \"value\": None,\n                    \"src\": [[events_node.get(\"node_id\"), line_idx]]\n                })\n                continue\n\n    return outcomes_list\n\ndef params(doc, scope) -> Dict[str, float]:\n    return {}\n\n\n# ---- step 2: forward model ----\nimport math\nimport re\n\ndef simulate(doc, scope, inputs, params, start=None, horizon=None):\n    if start is None:\n        start = 0.0\n    if horizon is None:\n        rec_end = recorded_end(doc, scope)\n        horizon = rec_end if rec_end is not None else 127.0\n        \n    SCALE = 36.0\n    COLLISION_THRESHOLD_SQ = 0.44**2\n    RESTITUTION = 0.25\n    \n    properties = {}\n    entries = {}\n    \n    for inp in inputs:\n        kind = inp.get(\"kind\")\n        t = inp.get(\"time\")\n        entities = inp.get(\"entities\", [])\n        if not entities:\n            continue\n        obj_id = entities[0]\n        \n        if kind == \"Object Properties\":\n            properties[obj_id] = inp.get(\"fields\", {})\n        elif kind in (\"Entry\", \"Initial View\"):\n            if t is not None:\n                entries[obj_id] = t\n    \n    # Read motion log from document\n    scope_node = node_by_title(doc, scope)\n    if not scope_node:\n        return []\n    children_nodes = [node_by_id(doc, cid) for cid in scope_node.get(\"children\", [])]\n    motion_node = None\n    for node in children_nodes:\n        if \": Motion log\" in node.get(\"title\", \"\"):\n            motion_node = node\n            break\n            \n    motion_rows = []\n    if motion_node:\n        motion_rows = table_rows(motion_node)\n        \n    # Pre-process motion rows by object\n    motion_by_obj = {}\n    for row_idx, row_data in motion_rows:\n        frame = float(row_data.get(\"frame\", \"-1\"))\n        obj_col = row_data.get(\"object\", \"\")\n        match = re.match(r\"(\\d+)\", obj_col)\n        if match:\n            obj_id = f\"Object {match.group(1)}\"\n            if obj_id not in motion_by_obj:\n                motion_by_obj[obj_id] = []\n            motion_by_obj[obj_id].append((frame, row_data))\n        \n    def get_latest_state(obj_id, max_frame):\n        rows = motion_by_obj.get(obj_id, [])\n        best = None\n        for frame_val, row_data in rows:\n            if frame_val <= max_frame:\n                if best is None or frame_val > best[0]:\n                    best = (frame_val, row_data)\n        if best:\n            return {\n                \"x\": float(best[1].get(\"x\", 0)),\n                \"y\": float(best[1].get(\"y\", 0)),\n                \"vx\": float(best[1].get(\"vx\", 0)),\n                \"vy\": float(best[1].get(\"vy\", 0))\n            }\n        return None\n        \n    # Build state at start from motion log\n    state = {}\n    for obj_id, entry_frame in entries.items():\n        if start >= entry_frame:\n            s = get_latest_state(obj_id, start)\n            if s:\n                state[obj_id] = s\n                \n    outcomes = []\n    current_frame = int(start)\n    \n    while current_frame <= int(horizon):\n        # Check for new entries at this frame\n        for obj_id, entry_frame in entries.items():\n            if int(entry_frame) == current_frame and obj_id not in state:\n                s = get_latest_state(obj_id, current_frame)\n                if s:\n                    state[obj_id] = s\n                    \n        collided_this_frame = set()\n        \n        # Check collisions first (at current state)\n        obj_ids = list(state.keys())\n        for i in range(len(obj_ids)):\n            for j in range(i+1, len(obj_ids)):\n                oid1, oid2 = obj_ids[i], obj_ids[j]\n                s1, s2 = state[oid1], state[oid2]\n                \n                dx = s2[\"x\"] - s1[\"x\"]\n                dy = s2[\"y\"] - s1[\"y\"]\n                dist_sq = dx*dx + dy*dy\n                \n                if dist_sq < COLLISION_THRESHOLD_SQ and dist_sq > 1e-6:\n                    dist = math.sqrt(dist_sq)\n                    nx, ny = dx/dist, dy/dist\n                    \n                    dvx = s1[\"vx\"] - s2[\"vx\"]\n                    dvy = s1[\"vy\"] - s2[\"vy\"]\n                    v_rel_n = dvx*nx + dvy*ny\n                    \n                    if v_rel_n > 0:\n                        impulse = (1 + RESTITUTION) / 2 * v_rel_n\n                        s1[\"vx\"] -= impulse * nx\n                        s1[\"vy\"] -= impulse * ny\n                        s2[\"vx\"] += impulse * nx\n                        s2[\"vy\"] += impulse * ny\n                        \n                        pair = tuple(sorted([oid1, oid2]))\n                        if pair not in collided_this_frame:\n                            collided_this_frame.add(pair)\n                            outcomes.append({\n                                \"time\": float(current_frame),\n                                \"kind\": \"Collision\",\n                                \"entities\": [oid1, oid2],\n                                \"value\": None,\n                                \"src\": None\n                            })\n                        \n        # Update positions and apply friction\n        for obj_id, s in state.items():\n            speed_sq = s[\"vx\"]**2 + s[\"vy\"]**2\n            if speed_sq < 0.01:\n                s[\"vx\"], s[\"vy\"] = 0.0, 0.0\n                continue\n                \n            mat = properties.get(obj_id, {}).get(\"material\", \"metal\")\n            shape = properties.get(obj_id, {}).get(\"shape\", \"sphere\")\n            \n            fc = 0.005 if mat == \"metal\" else 0.002\n            if shape == \"cylinder\":\n                fc *= 1.5\n                \n            s[\"x\"] += s[\"vx\"] / SCALE\n            s[\"y\"] += s[\"vy\"] / SCALE\n            s[\"vx\"] *= (1 - fc)\n            s[\"vy\"] *= (1 - fc)\n            \n        current_frame += 1\n        \n    return outcomes\n",
+  "passed": true,
+  "mean_f1": 0.683,
+  "tries": 0,
+  "attempts": [
+   {
+    "step": "library",
+    "report": {
+     "scopes": [
+      {
+       "scope": "Video 10046",
+       "start": 48.73,
+       "f1": 0.5,
+       "hidden": 3,
+       "predicted": 1,
+       "missed": [
+        {
+         "time": 103.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 0",
+          "Object 2"
+         ],
+         "value": null
+        },
+        {
+         "time": 117.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 1",
+          "Object 3"
+         ],
+         "value": null
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Video 10460",
+       "start": 37.73,
+       "f1": 0.667,
+       "hidden": 3,
+       "predicted": 3,
+       "missed": [
+        {
+         "time": 117.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 1",
+          "Object 2"
+         ],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 78.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 0",
+          "Object 1"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Video 11060",
+       "start": 49.73,
+       "f1": 0.667,
+       "hidden": 1,
+       "predicted": 2,
+       "missed": [],
+       "extra": [
+        {
+         "time": 123.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 0",
+          "Object 2"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Video 11641",
+       "start": 56.73,
+       "f1": 0.8,
+       "hidden": 2,
+       "predicted": 3,
+       "missed": [],
+       "extra": [
+        {
+         "time": 124.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 0",
+          "Object 3"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Video 11687",
+       "start": 43.73,
+       "f1": 0.8,
+       "hidden": 2,
+       "predicted": 3,
+       "missed": [],
+       "extra": [
+        {
+         "time": 127.0,
+         "kind": "Collision",
+         "entities": [
+          "Object 1",
+          "Object 3"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Video 12212",
+       "start": 17.73,
+       "f1": 0.667,
+       "hidden": 2,
+       "predicted": 1,
+       "missed": [
+        {
+         "time": 78.0,
+         "kind": "Exit",
+         "entities": [
+          "Object 1"
+         ],
+         "value": null
+        }
+       ],
+       "extra": []
+      }
+     ],
+     "mean_f1": 0.683,
+     "passed": true,
+     "error": null,
+     "sensitive": true,
+     "schedule_kinds": []
+    },
+    "source": "e1_d01"
+   }
+  ],
+  "failed_step": null,
+  "reused_from": "e1_d01"
+ },
+ "latency_s": 3.6698262691497803,
+ "usage": {
+  "input_tokens": 0,
+  "cached_input_tokens": 0,
+  "output_tokens": 0,
+  "reasoning_tokens": 0,
+  "llm_calls": 0,
+  "total_tokens": 0
+ }
+}

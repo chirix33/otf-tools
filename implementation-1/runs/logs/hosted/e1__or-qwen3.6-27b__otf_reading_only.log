@@ -1,0 +1,255 @@
+
+=== 2026-10-26T19:22:29 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system otf --model or-qwen3.6-27b --workers 6 --system-arg ablation=reading_only
+[otf_reading_only] setup: 173898 tokens, 2204.3s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.736, 'model_tries': 10, 'model_reused_from': None, 'cached_model': True}
+[otf_reading_only] 0 already answered, 148 to go
+[otf_reading_only] 10/148  correct=8  errors=0  61s
+[otf_reading_only] 20/148  correct=16  errors=0  115s
+[otf_reading_only] 30/148  correct=22  errors=0  175s
+[otf_reading_only] 40/148  correct=28  errors=0  228s
+[otf_reading_only] 50/148  correct=37  errors=0  289s
+[otf_reading_only] 60/148  correct=45  errors=0  331s
+[otf_reading_only] 70/148  correct=51  errors=0  398s
+[otf_reading_only] 80/148  correct=57  errors=0  472s
+[otf_reading_only] 90/148  correct=65  errors=0  546s
+[otf_reading_only] 100/148  correct=71  errors=0  622s
+[otf_reading_only] 110/148  correct=78  errors=0  661s
+[otf_reading_only] 120/148  correct=86  errors=0  702s
+[otf_reading_only] 130/148  correct=95  errors=0  760s
+[otf_reading_only] 140/148  correct=103  errors=0  800s
+[otf_reading_only] 148/148  correct=111  errors=0  882s
+[otf_reading_only] setup: 0 tokens, 3.7s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.628, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 141 to go
+[otf_reading_only] 10/141  correct=10  errors=0  68s
+[otf_reading_only] 20/141  correct=15  errors=0  134s
+[otf_reading_only] 30/141  correct=22  errors=0  192s
+[otf_reading_only] 40/141  correct=30  errors=0  264s
+[otf_reading_only] 50/141  correct=38  errors=0  316s
+[otf_reading_only] 60/141  correct=44  errors=0  399s
+[otf_reading_only] 70/141  correct=53  errors=0  461s
+[otf_reading_only] 80/141  correct=60  errors=0  511s
+[otf_reading_only] 90/141  correct=69  errors=0  565s
+[otf_reading_only] 100/141  correct=78  errors=0  619s
+[otf_reading_only] 110/141  correct=85  errors=0  660s
+[otf_reading_only] 120/141  correct=92  errors=0  713s
+[otf_reading_only] 130/141  correct=98  errors=0  761s
+[otf_reading_only] 140/141  correct=104  errors=0  898s
+[otf_reading_only] 141/141  correct=104  errors=0  917s
+[otf_reading_only] setup: 0 tokens, 3.3s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.681, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 132 to go
+[otf_reading_only] 10/132  correct=9  errors=0  51s
+[otf_reading_only] 20/132  correct=17  errors=0  106s
+[otf_reading_only] 30/132  correct=27  errors=0  144s
+[otf_reading_only] 40/132  correct=35  errors=0  202s
+[otf_reading_only] 50/132  correct=42  errors=0  282s
+[otf_reading_only] 60/132  correct=50  errors=0  339s
+[otf_reading_only] 70/132  correct=55  errors=0  373s
+[otf_reading_only] 80/132  correct=64  errors=0  429s
+[otf_reading_only] 90/132  correct=72  errors=0  506s
+[otf_reading_only] 100/132  correct=78  errors=0  555s
+[otf_reading_only] 110/132  correct=84  errors=0  636s
+[otf_reading_only] 120/132  correct=91  errors=0  696s
+[otf_reading_only] 130/132  correct=95  errors=0  765s
+[otf_reading_only] 132/132  correct=95  errors=0  791s
+[otf_reading_only] setup: 0 tokens, 3.7s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.456, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 139 to go
+[otf_reading_only] 10/139  correct=10  errors=0  74s
+[otf_reading_only] 20/139  correct=19  errors=0  111s
+[otf_reading_only] 30/139  correct=26  errors=0  153s
+[otf_reading_only] 40/139  correct=30  errors=0  251s
+[otf_reading_only] 50/139  correct=38  errors=0  289s
+[otf_reading_only] 60/139  correct=46  errors=0  336s
+[otf_reading_only] 70/139  correct=53  errors=0  414s
+[otf_reading_only] 80/139  correct=58  errors=0  454s
+[otf_reading_only] 90/139  correct=64  errors=0  512s
+[otf_reading_only] 100/139  correct=73  errors=0  557s
+[otf_reading_only] 110/139  correct=81  errors=0  626s
+[otf_reading_only] 120/139  correct=87  errors=0  681s
+[otf_reading_only] 130/139  correct=92  errors=0  732s
+[otf_reading_only] 139/139  correct=98  errors=0  861s
+[otf_reading_only] setup: 0 tokens, 4.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.723, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 134 to go
+[otf_reading_only] 10/134  correct=8  errors=0  55s
+[otf_reading_only] 20/134  correct=13  errors=0  113s
+[otf_reading_only] 30/134  correct=22  errors=0  149s
+[otf_reading_only] 40/134  correct=30  errors=0  215s
+[otf_reading_only] 50/134  correct=36  errors=0  282s
+[otf_reading_only] 60/134  correct=46  errors=0  330s
+[otf_reading_only] 70/134  correct=53  errors=0  386s
+[otf_reading_only] 80/134  correct=61  errors=0  444s
+[otf_reading_only] 90/134  correct=69  errors=0  519s
+[otf_reading_only] 100/134  correct=76  errors=0  581s
+[otf_reading_only] 110/134  correct=84  errors=0  664s
+[otf_reading_only] 120/134  correct=92  errors=0  710s
+[otf_reading_only] 130/134  correct=101  errors=0  764s
+[otf_reading_only] 134/134  correct=103  errors=0  866s
+[otf_reading_only] setup: 0 tokens, 3.7s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.683, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 149 to go
+[otf_reading_only] 10/149  correct=10  errors=0  42s
+[otf_reading_only] 20/149  correct=16  errors=0  136s
+[otf_reading_only] 30/149  correct=24  errors=0  185s
+[otf_reading_only] 40/149  correct=30  errors=0  233s
+[otf_reading_only] 50/149  correct=38  errors=0  294s
+[otf_reading_only] 60/149  correct=42  errors=0  339s
+[otf_reading_only] 70/149  correct=47  errors=0  395s
+[otf_reading_only] 80/149  correct=54  errors=0  442s
+[otf_reading_only] 90/149  correct=61  errors=0  493s
+[otf_reading_only] 100/149  correct=69  errors=0  550s
+[otf_reading_only] 110/149  correct=79  errors=0  606s
+[otf_reading_only] 120/149  correct=86  errors=0  653s
+[otf_reading_only] 130/149  correct=93  errors=0  746s
+[otf_reading_only] 140/149  correct=102  errors=0  824s
+[otf_reading_only] 149/149  correct=106  errors=0  934s
+[otf_reading_only] setup: 0 tokens, 2.9s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.644, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 155 to go
+[otf_reading_only] 10/155  correct=9  errors=0  74s
+[otf_reading_only] 20/155  correct=15  errors=0  145s
+[otf_reading_only] 30/155  correct=24  errors=0  198s
+[otf_reading_only] 40/155  correct=31  errors=0  252s
+[otf_reading_only] 50/155  correct=38  errors=0  297s
+[otf_reading_only] 60/155  correct=46  errors=0  377s
+[otf_reading_only] 70/155  correct=54  errors=0  434s
+[otf_reading_only] 80/155  correct=60  errors=0  488s
+[otf_reading_only] 90/155  correct=69  errors=0  518s
+[otf_reading_only] 100/155  correct=78  errors=0  568s
+[otf_reading_only] 110/155  correct=85  errors=0  618s
+[otf_reading_only] 120/155  correct=92  errors=0  676s
+[otf_reading_only] 130/155  correct=97  errors=0  738s
+[otf_reading_only] 140/155  correct=102  errors=0  796s
+[otf_reading_only] 150/155  correct=109  errors=0  847s
+[otf_reading_only] 155/155  correct=113  errors=0  969s
+[otf_reading_only] setup: 0 tokens, 3.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.645, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 160 to go
+[otf_reading_only] 10/160  correct=8  errors=0  44s
+[otf_reading_only] 20/160  correct=17  errors=0  85s
+[otf_reading_only] 30/160  correct=24  errors=0  153s
+[otf_reading_only] 40/160  correct=30  errors=0  228s
+[otf_reading_only] 50/160  correct=37  errors=0  290s
+[otf_reading_only] 60/160  correct=45  errors=0  364s
+[otf_reading_only] 70/160  correct=53  errors=0  424s
+[otf_reading_only] 80/160  correct=60  errors=0  488s
+[otf_reading_only] 90/160  correct=67  errors=0  561s
+[otf_reading_only] 100/160  correct=74  errors=0  605s
+[otf_reading_only] 110/160  correct=83  errors=0  671s
+[otf_reading_only] 120/160  correct=91  errors=0  711s
+[otf_reading_only] 130/160  correct=100  errors=0  750s
+[otf_reading_only] 140/160  correct=106  errors=0  814s
+[otf_reading_only] 150/160  correct=114  errors=0  870s
+[otf_reading_only] 160/160  correct=119  errors=0  925s
+[otf_reading_only] setup: 0 tokens, 3.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.472, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 147 to go
+[otf_reading_only] 10/147  correct=7  errors=0  48s
+[otf_reading_only] 20/147  correct=15  errors=0  102s
+[otf_reading_only] 30/147  correct=21  errors=0  163s
+[otf_reading_only] 40/147  correct=30  errors=0  220s
+[otf_reading_only] 50/147  correct=38  errors=0  279s
+[otf_reading_only] 60/147  correct=45  errors=0  332s
+[otf_reading_only] 70/147  correct=53  errors=0  385s
+[otf_reading_only] 80/147  correct=60  errors=0  442s
+[otf_reading_only] 90/147  correct=68  errors=0  501s
+[otf_reading_only] 100/147  correct=74  errors=0  552s
+[otf_reading_only] 110/147  correct=82  errors=0  603s
+[otf_reading_only] 120/147  correct=91  errors=0  646s
+[otf_reading_only] 130/147  correct=97  errors=0  732s
+[otf_reading_only] 140/147  correct=103  errors=0  799s
+[otf_reading_only] 147/147  correct=107  errors=0  922s
+[otf_reading_only] setup: 0 tokens, 3.2s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.494, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 158 to go
+[otf_reading_only] 10/158  correct=8  errors=0  71s
+[otf_reading_only] 20/158  correct=13  errors=0  122s
+[otf_reading_only] 30/158  correct=19  errors=0  180s
+[otf_reading_only] 40/158  correct=25  errors=0  236s
+[otf_reading_only] 50/158  correct=33  errors=0  297s
+[otf_reading_only] 60/158  correct=39  errors=0  345s
+[otf_reading_only] 70/158  correct=47  errors=0  396s
+[otf_reading_only] 80/158  correct=55  errors=0  449s
+[otf_reading_only] 90/158  correct=61  errors=0  532s
+[otf_reading_only] 100/158  correct=70  errors=0  565s
+[otf_reading_only] 110/158  correct=77  errors=0  615s
+[otf_reading_only] 120/158  correct=84  errors=0  688s
+[otf_reading_only] 130/158  correct=90  errors=0  750s
+[otf_reading_only] 140/158  correct=98  errors=0  794s
+[otf_reading_only] 150/158  correct=106  errors=0  844s
+[otf_reading_only] 158/158  correct=110  errors=0  939s
+[otf_reading_only] setup: 0 tokens, 3.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.439, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 149 to go
+[otf_reading_only] 10/149  correct=9  errors=0  49s
+[otf_reading_only] 20/149  correct=18  errors=0  85s
+[otf_reading_only] 30/149  correct=25  errors=0  126s
+[otf_reading_only] 40/149  correct=32  errors=0  167s
+[otf_reading_only] 50/149  correct=39  errors=0  217s
+[otf_reading_only] 60/149  correct=47  errors=0  268s
+[otf_reading_only] 70/149  correct=56  errors=0  331s
+[otf_reading_only] 80/149  correct=65  errors=0  388s
+[otf_reading_only] 90/149  correct=72  errors=0  464s
+[otf_reading_only] 100/149  correct=81  errors=0  499s
+[otf_reading_only] 110/149  correct=87  errors=0  547s
+[otf_reading_only] 120/149  correct=95  errors=0  617s
+[otf_reading_only] 130/149  correct=103  errors=0  676s
+[otf_reading_only] 140/149  correct=110  errors=0  729s
+[otf_reading_only] 149/149  correct=115  errors=0  842s
+[otf_reading_only] setup: 0 tokens, 3.1s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.528, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 124 to go
+[otf_reading_only] 10/124  correct=9  errors=0  46s
+[otf_reading_only] 20/124  correct=16  errors=0  103s
+[otf_reading_only] 30/124  correct=24  errors=0  172s
+[otf_reading_only] 40/124  correct=30  errors=0  227s
+[otf_reading_only] 50/124  correct=39  errors=0  303s
+[otf_reading_only] 60/124  correct=45  errors=0  349s
+[otf_reading_only] 70/124  correct=52  errors=0  421s
+[otf_reading_only] 80/124  correct=60  errors=0  480s
+[otf_reading_only] 90/124  correct=67  errors=0  535s
+[otf_reading_only] 100/124  correct=73  errors=0  587s
+[otf_reading_only] 110/124  correct=79  errors=0  641s
+[otf_reading_only] 120/124  correct=85  errors=0  704s
+[otf_reading_only] 124/124  correct=86  errors=0  753s
+[otf_reading_only] setup: 0 tokens, 2.9s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.611, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 141 to go
+[otf_reading_only] 10/141  correct=9  errors=0  61s
+[otf_reading_only] 20/141  correct=16  errors=0  117s
+[otf_reading_only] 30/141  correct=24  errors=0  155s
+[otf_reading_only] 40/141  correct=32  errors=0  205s
+[otf_reading_only] 50/141  correct=41  errors=0  254s
+[otf_reading_only] 60/141  correct=49  errors=0  314s
+[otf_reading_only] 70/141  correct=56  errors=0  364s
+[otf_reading_only] 80/141  correct=65  errors=0  420s
+[otf_reading_only] 90/141  correct=71  errors=0  484s
+[otf_reading_only] 100/141  correct=76  errors=0  549s
+[otf_reading_only] 110/141  correct=84  errors=0  594s
+[otf_reading_only] 120/141  correct=94  errors=0  665s
+[otf_reading_only] 130/141  correct=101  errors=0  722s
+[otf_reading_only] 140/141  correct=106  errors=0  793s
+[otf_reading_only] 141/141  correct=107  errors=0  821s
+[otf_reading_only] setup: 0 tokens, 3.0s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.466, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 147 to go
+[otf_reading_only] 10/147  correct=7  errors=0  60s
+[otf_reading_only] 20/147  correct=15  errors=0  127s
+[otf_reading_only] 30/147  correct=23  errors=0  175s
+[otf_reading_only] 40/147  correct=30  errors=0  229s
+[otf_reading_only] 50/147  correct=38  errors=0  278s
+[otf_reading_only] 60/147  correct=44  errors=0  319s
+[otf_reading_only] 70/147  correct=53  errors=0  393s
+[otf_reading_only] 80/147  correct=61  errors=0  458s
+[otf_reading_only] 90/147  correct=69  errors=0  517s
+[otf_reading_only] 100/147  correct=77  errors=0  561s
+[otf_reading_only] 110/147  correct=86  errors=0  611s
+[otf_reading_only] 120/147  correct=94  errors=0  668s
+[otf_reading_only] 130/147  correct=102  errors=0  732s
+[otf_reading_only] 140/147  correct=109  errors=0  808s
+[otf_reading_only] 147/147  correct=112  errors=0  927s
+[otf_reading_only] setup: 0 tokens, 3.2s {'nodes': 81, 'scopes': 20, 'model_passed': True, 'model_f1': 0.695, 'model_tries': 0, 'model_reused_from': 'e1_d01', 'cached_model': True}
+[otf_reading_only] 0 already answered, 142 to go
+[otf_reading_only] 10/142  correct=9  errors=0  57s
+[otf_reading_only] 20/142  correct=17  errors=0  111s
+[otf_reading_only] 30/142  correct=26  errors=0  166s
+[otf_reading_only] 40/142  correct=34  errors=0  208s
+[otf_reading_only] 50/142  correct=43  errors=0  250s
+[otf_reading_only] 60/142  correct=48  errors=0  302s
+[otf_reading_only] 70/142  correct=56  errors=0  369s
+[otf_reading_only] 80/142  correct=64  errors=0  426s
+[otf_reading_only] 90/142  correct=72  errors=0  505s
+[otf_reading_only] 100/142  correct=81  errors=0  569s
+[otf_reading_only] 110/142  correct=89  errors=0  636s
+[otf_reading_only] 120/142  correct=95  errors=0  702s
+[otf_reading_only] 130/142  correct=102  errors=0  747s
+[otf_reading_only] 140/142  correct=110  errors=0  866s
+[otf_reading_only] 142/142  correct=110  errors=0  914s

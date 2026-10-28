@@ -1,0 +1,73 @@
+library model 1 (from itops_d02): inputs('Cell window 20') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmp_7aprqg_\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 218, in inputs
+ValueError: could not convert string to float: 'never'
+parsers attempt 1: passed
+explore 1: ok, 3000 chars
+explore 2: ok, 818 chars
+explore 3: ok, 839 chars
+explore 4: ok, 383 chars
+explore 5: ok, 286 chars
+simulate attempt 1 (after 5 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 02' (start -11.77): F1 0.0, 172 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 0.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T002", "M02"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T003", "M02"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T004", "M02"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 03' (start 36.0): F1 0.0, 153 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 48.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 94.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 94.0, "kind": "start", "entities": ["T003", "M02"], "value": null}, {"time": 97.0, "kind": "start", "entities": ["T004", "M03"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 20' (start 71.0): F1 0.0, 145 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 83.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T004", "M01"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 23' (start -10.83): F1 0.0, 319 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 1.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T004", "M01"], "value": null}]; extra (produced but not hidden): []
+- scope 'Cell window 26' (start -0.98): F1 0.0, 249 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 11.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 13.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 13.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 13.0, "kind": "start", "entities": ["T004", "M01"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 2 (after 5 explore runs): simulate('Cell window 02', start=-11.77) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp8tsi5rws\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 335, in simulate
+UnboundLocalError: cannot access local variable 'recorded_end' where it is not associated with a value
+simulate attempt 3 (after 5 explore runs): simulate('Cell window 02', start=-11.77) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpr8xw7kvn\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 329, in simulate
+NameError: name 'math' is not defined. Did you forget to import 'math'?
+simulate attempt 4 (after 5 explore runs): simulate('Cell window 02', start=-11.77) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpfq27890u\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 390, in simulate
+KeyError: None
+simulate attempt 5 (after 5 explore runs): simulate('Cell window 20', start=71.0) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpzax8jggu\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 524, in simulate
+TypeError: '>' not supported between instances of 'str' and 'int'
+simulator conversation 1: best F1 0.0
+explore 1: ok, 741 chars
+explore 2: ok, 142 chars
+simulator conversation 2: best F1 0.0
+explore 1: ok, 157 chars
+explore 2: ok, 266 chars
+explore 3: ok, 97 chars
+simulate attempt 1 (after 3 explore runs): simulate('Cell window 02', start=-11.77) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpn3a51k7a\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 319, in simulate
+AttributeError: 'NoneType' object has no attribute 'id' and no __dict__ for setting new attributes
+simulate attempt 2 (after 3 explore runs): simulate('Cell window 02', start=-11.77) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp2kc72l3h\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 502, in simulate
+  File "<string>", line 502, in <lambda>
+KeyError: 'fail'
+simulate attempt 3 (after 3 explore runs): simulate('Cell window 20', start=71.0) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp2wll40vs\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 315, in simulate
+ValueError: could not convert string to float: 'never'
+simulate attempt 4 (after 3 explore runs): mean record-match F1 = 0.062 (need 0.4)
+- scope 'Cell window 02' (start -11.77): F1 0.047, 172 hidden outcomes, model produced 165; missed (hidden but not produced): [{"time": 0.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T002", "M02"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T003", "M02"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T004", "M02"], "value": null}]; extra (produced but not hidden): [{"time": 0.0, "kind": "start", "entities": ["T065", "M01"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T067", "M02"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T075", "M02"], "value": null}, {"time": 0.0, "kind": "start", "entities": ["T076", "M03"], "value": null}]
+- scope 'Cell window 03' (start 36.0): F1 0.059, 153 hidden outcomes, model produced 220; missed (hidden but not produced): [{"time": 94.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 94.0, "kind": "start", "entities": ["T003", "M02"], "value": null}, {"time": 97.0, "kind": "start", "entities": ["T004", "M03"], "value": null}, {"time": 100.0, "kind": "start", "entities": ["T005", "M03"], "value": null}]; extra (produced but not hidden): [{"time": 48.0, "kind": "start", "entities": ["T032", "M02"], "value": null}, {"time": 48.0, "kind": "start", "entities": ["T035", "M03"], "value": null}, {"time": 48.0, "kind": "start", "entities": ["T047", "M04"], "value": null}, {"time": 48.0, "kind": "start", "entities": ["T021", "M05"], "value": null}]
+- scope 'Cell window 20' (start 71.0): F1 0.047, 145 hidden outcomes, model produced 242; missed (hidden but not produced): [{"time": 83.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T004", "M01"], "value": null}]; extra (produced but not hidden): [{"time": 83.0, "kind": "start", "entities": ["T042", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T046", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T052", "M01"], "value": null}, {"time": 83.0, "kind": "start", "entities": ["T071", "M03"], "value": null}]
+- scope 'Cell window 23' (start -10.83): F1 0.07, 319 hidden outcomes, model produced 539; missed (hidden but not produced): [{"time": 1.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T004", "M01"], "value": null}]; extra (produced but not hidden): [{"time": 1.0, "kind": "start", "entities": ["T008", "M01"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T114", "M02"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T121", "M03"], "value": null}, {"time": 1.0, "kind": "start", "entities": ["T068", "M04"], "value": null}]
+- scope 'Cell window 26' (start -0.98): F1 0.088, 249 hidden outcomes, model produced 390; missed (hidden but not produced): [{"time": 11.0, "kind": "start", "entities": ["T001", "M01"], "value": null}, {"time": 13.0, "kind": "start", "entities": ["T002", "M01"], "value": null}, {"time": 13.0, "kind": "start", "entities": ["T003", "M01"], "value": null}, {"time": 13.0, "kind": "start", "entities": ["T004", "M01"], "value": null}]; extra (produced but not hidden): [{"time": 11.0, "kind": "start", "entities": ["T066", "M01"], "value": null}, {"time": 11.0, "kind": "start", "entities": ["T090", "M06"], "value": null}, {"time": 11.0, "kind": "start", "entities": ["T102", "M02"], "value": null}, {"time": 11.0, "kind": "start", "entities": ["T137", "M03"], "value": null}]
+simulate attempt 5 (after 3 explore runs): simulate('Cell window 20', start=71.0) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp8x4ojwa3\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 323, in simulate
+ValueError: could not convert string to float: 'never'
+simulator conversation 3: best F1 0.062

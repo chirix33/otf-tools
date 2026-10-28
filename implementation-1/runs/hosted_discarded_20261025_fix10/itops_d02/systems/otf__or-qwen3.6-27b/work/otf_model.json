@@ -1,0 +1,407 @@
+{
+ "key": {
+  "pdf_sha": "01080bcc71600fb7",
+  "model": "or-qwen3.6-27b",
+  "max_tries": 3,
+  "version": "v3"
+ },
+ "model": {
+  "code": "import re\n\ndef _safe_int(val):\n    if isinstance(val, str) and val.strip() in ('-', 'never', ''):\n        return None\n    try:\n        return int(float(val))\n    except (ValueError, TypeError):\n        return None\n\ndef entities(doc, scope):\n    scope_nodes_list = scope_nodes(doc, scope)\n    result = []\n    seen = set()\n    for node in scope_nodes_list:\n        if node['kind'] == 'table' and 'Machines' in node['title']:\n            for _, cells in table_rows(node):\n                m = cells['machine']\n                if m not in seen:\n                    seen.add(m)\n                    desc = f\"Machine {m}, CPU={cells['CPU']}, memory={cells['memory']}\"\n                    fa = cells['fails at']\n                    ra = cells['returns at']\n                    if _safe_int(fa) is not None:\n                        desc += f\", fails_at={fa}\"\n                    if _safe_int(ra) is not None:\n                        desc += f\", returns_at={ra}\"\n                    result.append({\"id\": m, \"description\": desc})\n        if node['kind'] == 'table' and 'Task log' in node['title']:\n            for _, cells in table_rows(node):\n                t = cells['task']\n                if t not in seen:\n                    seen.add(t)\n                    result.append({\n                        \"id\": t,\n                        \"description\": (f\"Task {t}, job={cells['job']}, priority={cells['priority']}, \"\n                                       f\"CPU={cells['CPU']}, memory={cells['memory']}, run_time={cells['run time']}s\")\n                    })\n    return result\n\ndef recorded_end(doc, scope):\n    scope_nodes_list = scope_nodes(doc, scope)\n    for node in scope_nodes_list:\n        if node['kind'] == 'text' and 'Cell window' in node['title']:\n            m = re.search(r'Times 0 to (\\d+)', node['text'])\n            if m:\n                return float(m.group(1))\n    return 1200.0\n\ndef inputs(doc, scope):\n    scope_nodes_list = scope_nodes(doc, scope)\n    result = []\n    for node in scope_nodes_list:\n        if node['kind'] == 'table' and 'Machines' in node['title']:\n            for ri, cells in table_rows(node):\n                m = cells['machine']\n                fa = cells['fails at']\n                ra = cells['returns at']\n                fa_val = _safe_int(fa)\n                ra_val = _safe_int(ra)\n                \n                result.append({\n                    \"id\": f\"machine_{m}\",\n                    \"time\": 0,\n                    \"kind\": \"machine_spec\",\n                    \"entities\": [m],\n                    \"fields\": {\n                        \"CPU\": int(cells['CPU']),\n                        \"memory\": int(cells['memory']),\n                        \"fails_at\": fa_val,\n                        \"returns_at\": ra_val,\n                    },\n                    \"src\": [[node['node_id'], ri, ['machine', 'CPU', 'memory', 'fails at', 'returns at']]]\n                })\n                \n                if fa_val is not None:\n                    result.append({\n                        \"id\": f\"machine_fail_{m}\",\n                        \"time\": fa_val,\n                        \"kind\": \"machine_failure\",\n                        \"entities\": [m],\n                        \"fields\": {},\n                        \"src\": [[node['node_id'], ri, ['machine', 'fails at']]]\n                    })\n                if ra_val is not None:\n                    result.append({\n                        \"id\": f\"machine_return_{m}\",\n                        \"time\": ra_val,\n                        \"kind\": \"machine_return\",\n                        \"entities\": [m],\n                        \"fields\": {},\n                        \"src\": [[node['node_id'], ri, ['machine', 'returns at']]]\n                    })\n                    \n        if node['kind'] == 'table' and 'Task log' in node['title']:\n            for ri, cells in table_rows(node):\n                if cells['event'] == 'submit':\n                    t = cells['task']\n                    result.append({\n                        \"id\": f\"submit_{t}\",\n                        \"time\": int(cells['time']),\n                        \"kind\": \"task_submission\",\n                        \"entities\": [t],\n                        \"fields\": {\n                            \"job\": cells['job'],\n                            \"priority\": int(cells['priority']),\n                            \"CPU\": int(cells['CPU']),\n                            \"memory\": int(cells['memory']),\n                            \"run_time\": int(cells['run time']),\n                        },\n                        \"src\": [[node['node_id'], ri, ['time', 'task', 'job', 'priority', 'CPU', 'memory', 'run time', 'event', 'machine']]]\n                    })\n    return result\n\ndef outcomes(doc, scope):\n    scope_nodes_list = scope_nodes(doc, scope)\n    result = []\n    for node in scope_nodes_list:\n        if node['kind'] == 'table' and 'Task log' in node['title']:\n            for ri, cells in table_rows(node):\n                ev = cells['event']\n                if ev in ('start', 'finish', 'evict', 'fail'):\n                    t = cells['task']\n                    mc = cells['machine']\n                    ents = [t]\n                    if mc != '-':\n                        ents.append(mc)\n                    result.append({\n                        \"time\": int(cells['time']),\n                        \"kind\": ev,\n                        \"entities\": ents,\n                        \"value\": None,\n                        \"src\": [[node['node_id'], ri, ['time', 'task', 'job', 'priority', 'CPU', 'memory', 'run time', 'event', 'machine']]]\n                    })\n                    \n        if node['kind'] == 'table' and 'Queue at window end' in node['title']:\n            for ri, cells in table_rows(node):\n                t = cells['task']\n                mc = cells['machine']\n                ents = [t]\n                if mc != '-':\n                    ents.append(mc)\n                rem = cells['remaining']\n                result.append({\n                    \"time\": 1200,\n                    \"kind\": \"queue_state\",\n                    \"entities\": ents,\n                    \"value\": _safe_int(rem),\n                    \"src\": [[node['node_id'], ri, ['task', 'job', 'priority', 'CPU', 'memory', 'machine', 'started', 'remaining']]]\n                })\n                \n        if node['kind'] == 'list' and 'Events' in node['title']:\n            for i, line in enumerate(node['lines']):\n                tm = re.match(r'Time (\\d+):', line)\n                t = int(tm.group(1)) if tm else None\n                ents = []\n                for x in re.findall(r'(?:M|T)\\d+', line):\n                    if x not in ents:\n                        ents.append(x)\n                val = None\n                wm = re.search(r'longest wait.*?(\\d+)s?', line)\n                if wm:\n                    val = int(wm.group(1))\n                result.append({\n                    \"time\": t,\n                    \"kind\": \"event_narrative\",\n                    \"entities\": ents,\n                    \"value\": val,\n                    \"src\": [[node['node_id'], i]]\n                })\n    return result\n\ndef params(doc, scope):\n    return {\"window_length\": 1200, \"num_machines\": 8}\n\n\n# ---- step 2: forward model ----\nimport heapq\n\ndef simulate(doc, scope, inputs, params, start=None, horizon=None):\n    machines = {}\n    sub_events = {}\n    fail_events = {}\n    ret_events = {}\n    \n    for inp in inputs:\n        k, t = inp['kind'], inp['time']\n        if k == 'machine_spec':\n            mid = inp['entities'][0]\n            machines[mid] = {'cap_cpu': inp['fields']['CPU'], 'cap_mem': inp['fields']['memory'], 'free_cpu': inp['fields']['CPU'], 'free_mem': inp['fields']['memory'], 'up': True}\n        elif k == 'task_submission':\n            sub_events.setdefault(t, []).append({'id': inp['entities'][0], 'priority': inp['fields']['priority'], 'cpu': inp['fields']['CPU'], 'mem': inp['fields']['memory'], 'run_time': inp['fields']['run_time'], 'submit_time': t, 'start_time': None, 'finish_time': None})\n        elif k == 'machine_failure':\n            fail_events.setdefault(t, []).append(inp['entities'][0])\n        elif k == 'machine_return':\n            ret_events.setdefault(t, []).append(inp['entities'][0])\n            \n    queue = []\n    running = {m: [] for m in machines}\n    outcomes = []\n    end_time = horizon if horizon is not None else params.get('window_length', 1200)\n    \n    pq = []\n    for t in list(sub_events.keys()) + list(fail_events.keys()) + list(ret_events.keys()):\n        heapq.heappush(pq, t)\n        \n    def add_finish(time):\n        heapq.heappush(pq, time)\n        \n    def task_key(tk):\n        return (-tk['priority'], tk['submit_time'], int(tk['id'][1:]))\n        \n    def evict_key(tk):\n        return (tk['priority'], -tk['start_time'], -int(tk['id'][1:]))\n\n    while pq:\n        t = heapq.heappop(pq)\n        while pq and pq[0] == t:\n            heapq.heappop(pq)\n            \n        if t > end_time:\n            if not queue and not any(running.values()):\n                break\n            continue\n            \n        # 1. Finishes\n        for m_id in list(running.keys()):\n            new_t = []\n            for tk in running[m_id]:\n                if tk['finish_time'] == t:\n                    outcomes.append({'time': t, 'kind': 'finish', 'entities': [tk['id'], m_id], 'value': None, 'src': None})\n                    machines[m_id]['free_cpu'] += tk['cpu']\n                    machines[m_id]['free_mem'] += tk['mem']\n                else:\n                    new_t.append(tk)\n            running[m_id] = new_t\n            \n        # 2. Failures\n        if t in fail_events:\n            for m_id in fail_events[t]:\n                if m_id in machines and machines[m_id]['up']:\n                    machines[m_id]['up'] = False\n                    for tk in running[m_id]:\n                        outcomes.append({'time': t, 'kind': 'fail', 'entities': [tk['id'], m_id], 'value': None, 'src': None})\n                        queue.append(tk)\n                    running[m_id] = []\n                    \n        # 3. Returns\n        if t in ret_events:\n            for m_id in ret_events[t]:\n                if m_id in machines and not machines[m_id]['up']:\n                    machines[m_id]['up'] = True\n                    machines[m_id]['free_cpu'] = machines[m_id]['cap_cpu']\n                    machines[m_id]['free_mem'] = machines[m_id]['cap_mem']\n                    running[m_id] = []\n                    \n        # 4. Submissions\n        if t in sub_events:\n            queue.extend(sub_events[t])\n            \n        # 5. Scheduling round\n        if queue:\n            queue.sort(key=task_key)\n            reservation = None\n            \n            i = 0\n            while i < len(queue):\n                task = queue[i]\n                started = False\n                \n                # a. First fit\n                for m_id in sorted(machines.keys()):\n                    m = machines[m_id]\n                    if not m['up'] or m['free_cpu'] < task['cpu'] or m['free_mem'] < task['mem']:\n                        continue\n                    \n                    if reservation and m_id == reservation[0]:\n                        avail_c = reservation[4] - reservation[2] - reservation[6]\n                        avail_m = reservation[5] - reservation[3] - reservation[7]\n                        if not ((t + task['run_time'] <= reservation[1]) or (task['cpu'] <= avail_c and task['mem'] <= avail_m)):\n                            continue\n                            \n                    outcomes.append({'time': t, 'kind': 'start', 'entities': [task['id'], m_id], 'value': None, 'src': None})\n                    m['free_cpu'] -= task['cpu']\n                    m['free_mem'] -= task['mem']\n                    if reservation and m_id == reservation[0]:\n                        reservation = (reservation[0], reservation[1], reservation[2], reservation[3], reservation[4], reservation[5], reservation[6] + task['cpu'], reservation[7] + task['mem'])\n                    task['finish_time'] = t + task['run_time']\n                    task['start_time'] = t\n                    running[m_id].append(task)\n                    add_finish(task['finish_time'])\n                    started = True\n                    break\n                    \n                if not started:\n                    # b. Preemption\n                    if not reservation and task['priority'] >= 9:\n                        for m_id in sorted(machines.keys()):\n                            m = machines[m_id]\n                            if not m['up']:\n                                continue\n                            cands = sorted([tk for tk in running[m_id] if tk['priority'] <= 1], key=evict_key)\n                            if not cands:\n                                continue\n                            tmp_c, tmp_m, to_ev = m['free_cpu'], m['free_mem'], []\n                            for c in cands:\n                                if tmp_c >= task['cpu'] and tmp_m >= task['mem']:\n                                    break\n                                tmp_c += c['cpu']\n                                tmp_m += c['mem']\n                                to_ev.append(c)\n                                \n                            if tmp_c >= task['cpu'] and tmp_m >= task['mem']:\n                                for ev in to_ev:\n                                    outcomes.append({'time': t, 'kind': 'evict', 'entities': [ev['id'], m_id], 'value': None, 'src': None})\n                                    m['free_cpu'] += ev['cpu']\n                                    m['free_mem'] += ev['mem']\n                                    running[m_id].remove(ev)\n                                    queue.append(ev)\n                                outcomes.append({'time': t, 'kind': 'start', 'entities': [task['id'], m_id], 'value': None, 'src': None})\n                                m['free_cpu'] -= task['cpu']\n                                m['free_mem'] -= task['mem']\n                                task['finish_time'] = t + task['run_time']\n                                task['start_time'] = t\n                                running[m_id].append(task)\n                                add_finish(task['finish_time'])\n                                started = True\n                                break\n                                \n                if not started:\n                    # c. Reservation\n                    if not reservation:\n                        best_t, best_m = None, None\n                        for mid in sorted(machines.keys()):\n                            mm = machines[mid]\n                            if not mm['up'] or mm['cap_cpu'] < task['cpu'] or mm['cap_mem'] < task['mem']:\n                                continue\n                            fc, fm = mm['free_cpu'], mm['free_mem']\n                            if fc >= task['cpu'] and fm >= task['mem']:\n                                avail = t\n                            else:\n                                evts = sorted([(rk['finish_time'], rk['cpu'], rk['mem']) for rk in running[mid]])\n                                avail = None\n                                for ft, frc, frm in evts:\n                                    fc += frc\n                                    fm += frm\n                                    if fc >= task['cpu'] and fm >= task['mem']:\n                                        avail = ft\n                                        break\n                                if avail is None:\n                                    avail = evts[-1][0] if evts else t + 999999\n                            if best_t is None or avail < best_t:\n                                best_t, best_m = avail, mid\n                            elif avail == best_t and (best_m is None or mid < best_m):\n                                best_m = mid\n                                \n                        if best_m is not None:\n                            mm = machines[best_m]\n                            cap_c = mm['free_cpu'] + sum(rk['cpu'] for rk in running[best_m] if rk['finish_time'] <= best_t)\n                            cap_m = mm['free_mem'] + sum(rk['mem'] for rk in running[best_m] if rk['finish_time'] <= best_t)\n                            reservation = (best_m, best_t, task['cpu'], task['mem'], cap_c, cap_m, 0, 0)\n                            \n                if started:\n                    queue.pop(i)\n                else:\n                    i += 1\n                    \n    lower = start if start is not None else -1\n    upper = end_time if end_time is not None else float('inf')\n    return [o for o in outcomes if lower < o['time'] <= upper]\n",
+  "passed": true,
+  "mean_f1": 0.751,
+  "tries": 0,
+  "attempts": [
+   {
+    "step": "library",
+    "report": {
+     "scopes": [
+      {
+       "scope": "Cell window 10",
+       "start": -9.0,
+       "f1": 0.615,
+       "hidden": 400,
+       "predicted": 348,
+       "missed": [
+        {
+         "time": 349,
+         "kind": "event_narrative",
+         "entities": [
+          "M06",
+          "T033",
+          "T034"
+         ],
+         "value": null
+        },
+        {
+         "time": 349,
+         "kind": "event_narrative",
+         "entities": [
+          "T033",
+          "M04"
+         ],
+         "value": null
+        },
+        {
+         "time": 349,
+         "kind": "event_narrative",
+         "entities": [
+          "T034",
+          "M08"
+         ],
+         "value": null
+        },
+        {
+         "time": 372,
+         "kind": "event_narrative",
+         "entities": [
+          "M06"
+         ],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 529,
+         "kind": "start",
+         "entities": [
+          "T073",
+          "M07"
+         ],
+         "value": null
+        },
+        {
+         "time": 532,
+         "kind": "start",
+         "entities": [
+          "T086",
+          "M07"
+         ],
+         "value": null
+        },
+        {
+         "time": 572,
+         "kind": "start",
+         "entities": [
+          "T056",
+          "M03"
+         ],
+         "value": null
+        },
+        {
+         "time": 651,
+         "kind": "finish",
+         "entities": [
+          "T073",
+          "M07"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Cell window 14",
+       "start": -12.0,
+       "f1": 0.705,
+       "hidden": 367,
+       "predicted": 300,
+       "missed": [
+        {
+         "time": 359,
+         "kind": "start",
+         "entities": [
+          "T085",
+          "M07"
+         ],
+         "value": null
+        },
+        {
+         "time": 359,
+         "kind": "start",
+         "entities": [
+          "T072",
+          "M03"
+         ],
+         "value": null
+        },
+        {
+         "time": 359,
+         "kind": "event_narrative",
+         "entities": [
+          "T095",
+          "T072",
+          "M01"
+         ],
+         "value": null
+        },
+        {
+         "time": 359,
+         "kind": "event_narrative",
+         "entities": [
+          "T095",
+          "T073",
+          "M01"
+         ],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 359,
+         "kind": "start",
+         "entities": [
+          "T077",
+          "M03"
+         ],
+         "value": null
+        },
+        {
+         "time": 359,
+         "kind": "start",
+         "entities": [
+          "T075",
+          "M07"
+         ],
+         "value": null
+        },
+        {
+         "time": 377,
+         "kind": "start",
+         "entities": [
+          "T085",
+          "M04"
+         ],
+         "value": null
+        },
+        {
+         "time": 426,
+         "kind": "start",
+         "entities": [
+          "T111",
+          "M07"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Cell window 19",
+       "start": 34.0,
+       "f1": 0.861,
+       "hidden": 238,
+       "predicted": 180,
+       "missed": [
+        {
+         "time": 525,
+         "kind": "event_narrative",
+         "entities": [
+          "M06",
+          "T018",
+          "T030"
+         ],
+         "value": null
+        },
+        {
+         "time": 649,
+         "kind": "event_narrative",
+         "entities": [
+          "T018",
+          "M04"
+         ],
+         "value": null
+        },
+        {
+         "time": 649,
+         "kind": "event_narrative",
+         "entities": [
+          "T030",
+          "M04"
+         ],
+         "value": null
+        },
+        {
+         "time": 650,
+         "kind": "event_narrative",
+         "entities": [
+          "T045",
+          "T033",
+          "M02"
+         ],
+         "value": null
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Cell window 21",
+       "start": 4.0,
+       "f1": 0.844,
+       "hidden": 206,
+       "predicted": 154,
+       "missed": [
+        {
+         "time": 206,
+         "kind": "start",
+         "entities": [
+          "T034",
+          "M04"
+         ],
+         "value": null
+        },
+        {
+         "time": 206,
+         "kind": "event_narrative",
+         "entities": [
+          "T051",
+          "T021",
+          "M06"
+         ],
+         "value": null
+        },
+        {
+         "time": 206,
+         "kind": "event_narrative",
+         "entities": [
+          "T051",
+          "T029",
+          "M06"
+         ],
+         "value": null
+        },
+        {
+         "time": 206,
+         "kind": "event_narrative",
+         "entities": [
+          "T051",
+          "T034",
+          "M06"
+         ],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 206,
+         "kind": "start",
+         "entities": [
+          "T045",
+          "M04"
+         ],
+         "value": null
+        },
+        {
+         "time": 208,
+         "kind": "evict",
+         "entities": [
+          "T045",
+          "M04"
+         ],
+         "value": null
+        }
+       ]
+      },
+      {
+       "scope": "Cell window 24",
+       "start": -9.0,
+       "f1": 0.73,
+       "hidden": 376,
+       "predicted": 361,
+       "missed": [
+        {
+         "time": 338,
+         "kind": "event_narrative",
+         "entities": [
+          "M05",
+          "T005"
+         ],
+         "value": null
+        },
+        {
+         "time": 338,
+         "kind": "event_narrative",
+         "entities": [
+          "T005",
+          "M03"
+         ],
+         "value": null
+        },
+        {
+         "time": 664,
+         "kind": "start",
+         "entities": [
+          "T072",
+          "M01"
+         ],
+         "value": null
+        },
+        {
+         "time": 664,
+         "kind": "start",
+         "entities": [
+          "T052",
+          "M07"
+         ],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 664,
+         "kind": "start",
+         "entities": [
+          "T052",
+          "M01"
+         ],
+         "value": null
+        },
+        {
+         "time": 664,
+         "kind": "start",
+         "entities": [
+          "T072",
+          "M03"
+         ],
+         "value": null
+        },
+        {
+         "time": 668,
+         "kind": "start",
+         "entities": [
+          "T125",
+          "M06"
+         ],
+         "value": null
+        },
+        {
+         "time": 669,
+         "kind": "start",
+         "entities": [
+          "T126",
+          "M07"
+         ],
+         "value": null
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.751,
+     "passed": true,
+     "error": null,
+     "sensitive": true,
+     "schedule_kinds": []
+    },
+    "source": "itops_d01"
+   }
+  ],
+  "failed_step": null,
+  "reused_from": "itops_d01"
+ },
+ "latency_s": 5.046534299850464,
+ "usage": {
+  "input_tokens": 0,
+  "cached_input_tokens": 0,
+  "output_tokens": 0,
+  "reasoning_tokens": 0,
+  "llm_calls": 0,
+  "total_tokens": 0
+ }
+}

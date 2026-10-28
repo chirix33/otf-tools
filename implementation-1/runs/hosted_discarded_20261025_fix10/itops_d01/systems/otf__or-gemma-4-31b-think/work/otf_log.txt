@@ -1,0 +1,17 @@
+parsers attempt 1: entities('Cell window 04') returned no entities; entities('Cell window 07') returned no entities; entities('Cell window 11') returned no entities; entities('Cell window 18') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Cell window 04': 0 entities (first: []), recorded_end = 1200.0, 0 inputs (first: []), 0 outcomes (first: []), params = {"window_length": 1200, "num_machines": 8}
+- 8 of 8 rows of table 'Cell window 04: Machines' are not the src of any input or outcome
+- 208 of 208 rows of table 'Cell window 04: Task log' are not the src of any input or outcome
+- 18 of 18 lines of 'Cell window 04: Events' are not the src of any input or outcome, e.g.: 'Time 428: machine M08 failed; task T003 stopped and went back to the queue.' | 'Time 819: task T050 (priority 9) evicted task T010 (priority 0) from machine M01.' | 'Time 892: task T052 (priority 9) evicted task T030 (priority 1) from machine M04.' | 'Time 892: task T052 (priority 9) evicted task T031 (priority 1) from machine M04.'
+- 12 of 12 rows of table 'Cell window 04: Queue at window end' are not the src of any input or outcome
+parsers attempt 2: entities('Cell window 04') returned no entities; entities('Cell window 07') returned no entities; entities('Cell window 11') returned no entities; entities('Cell window 18') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Cell window 04': 0 entities (first: []), recorded_end = 1200.0, 0 inputs (first: []), 0 outcomes (first: []), params = {"window_length": 1200, "num_machines": 8}
+- 8 of 8 rows of table 'Cell window 04: Machines' are not the src of any input or outcome
+- 208 of 208 rows of table 'Cell window 04: Task log' are not the src of any input or outcome
+- 18 of 18 lines of 'Cell window 04: Events' are not the src of any input or outcome, e.g.: 'Time 428: machine M08 failed; task T003 stopped and went back to the queue.' | 'Time 819: task T050 (priority 9) evicted task T010 (priority 0) from machine M01.' | 'Time 892: task T052 (priority 9) evicted task T030 (priority 1) from machine M04.' | 'Time 892: task T052 (priority 9) evicted task T031 (priority 1) from machine M04.'
+- 12 of 12 rows of table 'Cell window 04: Queue at window end' are not the src of any input or outcome
+parsers attempt 3: inputs('Cell window 04') failed: File "C:\Users\aashraf\AppData\Local\Temp\tmpl4bn7mz_\runner.py", line 29, in <module>
+    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])
+                                            ~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 72, in inputs
+ValueError: could not convert string to float: 'never'

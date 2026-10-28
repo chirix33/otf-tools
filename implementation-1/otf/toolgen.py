@@ -45,6 +45,19 @@ class ReadError(Exception):
     pass
 
 
+_NAV_CACHE: dict = {}
+
+
+def _nav_index(map_path: Path) -> dict:
+    """node_id -> node of the map file, cached by path and modification time."""
+    p = Path(map_path)
+    key = (str(p.resolve()), p.stat().st_mtime_ns)
+    if key not in _NAV_CACHE:
+        _NAV_CACHE.clear()
+        _NAV_CACHE[key] = {n["node_id"]: n for n in json.loads(p.read_text())["nodes"]}
+    return _NAV_CACHE[key]
+
+
 def read_scope(code: str, map_path: Path, scope: str) -> dict:
     """Run the reading functions on one scope: {entities, end, inputs, outcomes, params, t0, period}."""
     funcs = [f for f in READERS if f != "params" or "def params(" in code]
@@ -67,14 +80,17 @@ def read_scope(code: str, map_path: Path, scope: str) -> dict:
         raise ReadError(f"malformed output on '{scope}': {type(e).__name__}: {e}")
     times = [t for t in (records.rtime(r) for r in ins + outs) if t is not None]
     t0 = min(times) if times else 0.0
+    sched = records.schedule_kinds(outs, _nav_index(map_path))
     return {"entities": ents, "end": end, "inputs": ins, "outcomes": outs, "params": prm, "t0": t0,
-            "period": max((end - t0) if end is not None else 1.0, 1e-9)}
+            "period": max((end - t0) if end is not None else 1.0, 1e-9), "schedule_kinds": sched,
+            "informative": records.drop_kinds(outs, sched)}
 
 
 def hidden_outcomes(r: dict, cut: float | None) -> list[dict]:
+    """The informative outcomes the check hides (schedule-like kinds are not scored)."""
     if r["end"] is None:
-        return r["outcomes"]
-    return [o for o in r["outcomes"] if records.rtime(o) is None or (cut is not None and records.rtime(o) > cut)]
+        return r["informative"]
+    return [o for o in r["informative"] if records.rtime(o) is None or (cut is not None and records.rtime(o) > cut)]
 
 
 def after(recs: list[dict], cut: float | None) -> list[dict]:
@@ -83,12 +99,17 @@ def after(recs: list[dict], cut: float | None) -> list[dict]:
 
 def blinded_map(nav: dict, map_path: Path, scope: str, r: dict, cut: float | None) -> Path:
     p = map_path.with_name(f"blind_{abs(hash(scope)) % 10**8}.json")
-    p.write_text(json.dumps(records.blind(nav, scope, r["inputs"], r["outcomes"], cut)))
+    span = (r["t0"], r["end"]) if r.get("end") is not None and r.get("t0") is not None else None
+    p.write_text(json.dumps(records.blind(nav, scope, r["inputs"], r["outcomes"], cut, span)))
     return p
 
 
 def _cut(r: dict) -> float | None:
-    return records.first_outcome_cut(r["outcomes"], r["t0"], r["end"])
+    return records.first_outcome_cut(r["informative"], r["t0"], r["end"])
+
+
+SCHEDULE_NOTE = ("outcome kinds {kinds} have no value and occur at regularly spaced times (like one record per entity "
+                 "at every sample time); they only mark that a row exists, so the check ignores them")
 
 
 def diagnose(nav: dict, scope: str, r: dict) -> str:
@@ -122,7 +143,7 @@ def check_parsers(code: str, nav: dict, map_path: Path, n_scopes: int = 4) -> di
     """Step-1 check. On a few scopes: the functions run; ids agree; outcome times lie in the recorded range;
     every src points to a real cell or line; and on the blinded copy the inputs read the same while the
     outcomes are no longer found. A failure report shows what the functions returned on one scope."""
-    problems, n_out, first = [], 0, None
+    problems, n_out, first, sched = [], 0, None, set()
     idx = {n["node_id"]: n for n in nav["nodes"]}
     for sc in scopes(nav)[:n_scopes]:
         try:
@@ -133,7 +154,8 @@ def check_parsers(code: str, nav: dict, map_path: Path, n_scopes: int = 4) -> di
         ids = {e["id"] for e in r["entities"]}
         if not ids:
             problems.append(f"entities('{sc}') returned no entities")
-        n_out += len(r["outcomes"])
+        n_out += len(r["informative"])
+        sched |= r["schedule_kinds"]
         for fn, recs in (("inputs", r["inputs"]), ("outcomes", r["outcomes"])):
             for x in recs:
                 bad = [e for e in x["entities"] if e not in ids]
@@ -180,8 +202,8 @@ def check_parsers(code: str, nav: dict, map_path: Path, n_scopes: int = 4) -> di
         try:
             for x in b_out:
                 x["entities"] = [str(e) for e in x.get("entities") or []]
-            f1, _, _ = records.record_f1(hidden, after(b_out, cut), TIME_TOL_FRAC * r["period"],
-                                         records.value_tols(r["outcomes"]))
+            f1, _, _ = records.record_f1(hidden, records.drop_kinds(after(b_out, cut), r["schedule_kinds"]),
+                                         TIME_TOL_FRAC * r["period"], records.value_tols(r["outcomes"]))
         except (TypeError, ValueError, AttributeError):
             f1 = 0.0
         if f1 > REPLAY_MAX_F1:
@@ -189,7 +211,8 @@ def check_parsers(code: str, nav: dict, map_path: Path, n_scopes: int = 4) -> di
                             "still shows them, so some outcome data is being read from cells marked as inputs, or "
                             "outcomes are read from cells not listed in their src")
     if n_out == 0:
-        problems.append("outcomes() found no records in any checked scope; parse what the process produces")
+        problems.append("outcomes() found no records in any checked scope; parse what the process produces"
+                        + (f" ({SCHEDULE_NOTE.format(kinds=sorted(sched))})" if sched else ""))
     if not problems:
         return {"passed": True, "error": None}
     return {"passed": False, "error": "; ".join(problems[:6]) + ("\n" + diagnose(nav, *first) if first else "")}
@@ -200,7 +223,8 @@ def check_model(code: str, nav: dict, map_path: Path, n_scopes: int = 6, max_sca
     outcome (blinded copy, inputs kept), run simulate from the cut with the recorded inputs, and compare its
     outcomes with the hidden ones. Timeless scopes hide every outcome and must recompute them. simulate must
     also react to its inputs (sensitivity guard)."""
-    report = {"scopes": [], "mean_f1": 0.0, "passed": False, "error": None, "sensitive": False}
+    report = {"scopes": [], "mean_f1": 0.0, "passed": False, "error": None, "sensitive": False,
+              "schedule_kinds": []}
     for sc in scopes(nav)[:max_scan]:
         if len(report["scopes"]) >= n_scopes:
             break
@@ -209,6 +233,7 @@ def check_model(code: str, nav: dict, map_path: Path, n_scopes: int = 6, max_sca
         except ReadError as e:
             report["error"] = str(e)
             return report
+        report["schedule_kinds"] = sorted(set(report["schedule_kinds"]) | r["schedule_kinds"])
         cut = _cut(r)
         hidden = hidden_outcomes(r, cut)
         if not hidden:
@@ -228,7 +253,7 @@ def check_model(code: str, nav: dict, map_path: Path, n_scopes: int = 6, max_sca
                 report["error"] = (f"simulate('{sc}') returned entities {bad[:5]} that are not ids from entities() "
                                    f"(the ids are {sorted(ids)[:12]}); use the same ids")
                 return report
-            pred = after(sim, cut)
+            pred = records.drop_kinds(after(sim, cut), r["schedule_kinds"])
             f1, missed, extra = records.record_f1(hidden, pred, TIME_TOL_FRAC * r["period"],
                                                   records.value_tols(r["outcomes"]))
             if not report["sensitive"]:
@@ -242,7 +267,9 @@ def check_model(code: str, nav: dict, map_path: Path, n_scopes: int = 6, max_sca
                                  "hidden": len(hidden), "predicted": len(pred),
                                  "missed": records.strip_src(missed[:4]), "extra": records.strip_src(extra[:4])})
     if not report["scopes"]:
-        report["error"] = "outcomes() returned no records for any checked scope, so the model cannot be checked."
+        report["error"] = ("outcomes() returned no records for any checked scope, so the model cannot be checked."
+                           + (f" ({SCHEDULE_NOTE.format(kinds=report['schedule_kinds'])})"
+                              if report["schedule_kinds"] else ""))
         return report
     report["mean_f1"] = round(sum(s["f1"] for s in report["scopes"]) / len(report["scopes"]), 3)
     report["passed"] = report["mean_f1"] >= PASS_F1 and report["sensitive"]
@@ -267,13 +294,16 @@ def _reacts(code: str, bp: Path, sc: str, r: dict, hidden: list[dict], kw: dict,
     ok, sim2 = sandbox.run(code, "simulate", bp, [sc], {**kw, "inputs": changed})
     if not ok or not isinstance(sim2, list):
         return True                    # it failed on the changed inputs, so it does read them
-    return records.canon(sim2) != records.canon(sim)
+    sk = r["schedule_kinds"]
+    return records.canon(records.drop_kinds(sim2, sk)) != records.canon(records.drop_kinds(sim, sk))
 
 
 def short_report(rep: dict) -> str:
     if rep["error"]:
         return rep["error"]
     lines = [f"mean record-match F1 = {rep['mean_f1']} (need {PASS_F1})"]
+    if rep.get("schedule_kinds"):
+        lines.append("Note: " + SCHEDULE_NOTE.format(kinds=rep["schedule_kinds"]) + ".")
     if not rep.get("sensitive", True):
         lines.append("simulate ignores its `inputs` argument: changing the inputs did not change its output "
                      "on any checked scope. Read the given inputs only from the `inputs` argument.")

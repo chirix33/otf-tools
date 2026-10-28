@@ -1,0 +1,25 @@
+parsers attempt 1: the code does not run: rejected: syntax error: invalid syntax (<unknown>, line 152)
+parsers attempt 2: passed
+explore 1: ok, 1944 chars
+explore 2: ok, 269 chars
+explore 3: ok, 298 chars
+explore 4: ok, 376 chars
+simulate attempt 1 (after 4 explore runs): mean record-match F1 = 0.911 (need 0.4)
+- scope 'Video 10331' (start 22.73): F1 0.8, 3 hidden outcomes, model produced 2; missed (hidden but not produced): [{"time": 42.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 10776' (start 15.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 11140' (start 40.73): F1 1.0, 3 hidden outcomes, model produced 3; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 11144' (start 33.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 11789' (start 16.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 62.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12052' (start 39.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.911
+parsers attempt 1: the code does not run: rejected: syntax error: invalid syntax (<unknown>, line 166)
+parsers attempt 2: entities('Video 10331') returned no entities; entities('Video 10776') returned no entities; entities('Video 11140') returned no entities; entities('Video 11144') returned no entities; outcomes() found no records in any checked scope; parse what the process produces
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10331': 0 entities (first: []), recorded_end = None, 0 inputs (first: []), 0 outcomes (first: []), params = {}
+- 4 of 4 lines of 'Video 10331: Objects' are not the src of any input or outcome, e.g.: 'Object 0: brown metal sphere (color=brown, material=metal, shape=sphere)' | 'Object 1: cyan rubber sphere (color=cyan, material=rubber, shape=sphere)' | 'Object 2: green rubber cube (color=green, material=rubber, shape=cube)' | 'Object 3: purple metal sphere (color=purple, material=metal, shape=sphere)'
+- 8 of 8 lines of 'Video 10331: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 1 (cyan rubber sphere) is in view when the video begins.' | 'Frame 0: Object 2 (green rubber cube) is in view when the video begins.' | 'Frame 14: Object 0 (brown metal sphere) enters the scene.' | 'Frame 24: Object 0 (brown metal sphere) collides with Object 1 (cyan rubber sphere).'
+- 53 of 53 rows of table 'Video 10331: Motion log' are not the src of any input or outcome
+parsers attempt 3: 'Video 10331': bad src: loc 'node' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Video 10776': bad src: loc 'node' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Video 11140': bad src: loc 'node' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]; 'Video 11144': bad src: loc 'node' is not [node_id, row] / [node_id, row, [columns]] / [node_id, line]
+WHAT YOUR FUNCTIONS RETURNED on scope 'Video 10331': 4 entities (first: [{"id": "obj_0", "description": "brown metal sphere (color=brown, material=metal, shape=sphere)"}]), recorded_end = 127.0, 4 inputs (first: [{"id": "in_obj_0_arrival", "time": 14.0, "kind": "arrival", "entities": ["obj_0"], "fields": {}}]), 3 outcomes (first: [{"time": 24.0, "kind": "collision", "entities": ["obj_0", "obj_1"], "value": null}]), params = {}
+- 4 of 4 lines of 'Video 10331: Objects' are not the src of any input or outcome, e.g.: 'Object 0: brown metal sphere (color=brown, material=metal, shape=sphere)' | 'Object 1: cyan rubber sphere (color=cyan, material=rubber, shape=sphere)' | 'Object 2: green rubber cube (color=green, material=rubber, shape=cube)' | 'Object 3: purple metal sphere (color=purple, material=metal, shape=sphere)'
+- 8 of 8 lines of 'Video 10331: Events' are not the src of any input or outcome, e.g.: 'Frame 0: Object 1 (cyan rubber sphere) is in view when the video begins.' | 'Frame 0: Object 2 (green rubber cube) is in view when the video begins.' | 'Frame 14: Object 0 (brown metal sphere) enters the scene.' | 'Frame 24: Object 0 (brown metal sphere) collides with Object 1 (cyan rubber sphere).'
+- 53 of 53 rows of table 'Video 10331: Motion log' are not the src of any input or outcome

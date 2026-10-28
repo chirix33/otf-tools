@@ -8,6 +8,9 @@ three kinds:
          edge they fall under (left-aligned text tables, also across pages when the header repeats);
   list:  one entry per line (enumerations, logs, item lists);
   text:  free prose.
+A leaf holding ruled tables and its own text lines (captions) is split: each ruled table, with its
+continuations, becomes a sibling node titled "<leaf title>: <the line just before it>", and the leaf keeps the
+other lines (post-freeze bug fix 10: before, only the first table was kept and later ones fell into unread text).
 Front matter before the first outline entry is kept as `intro_text` (documents usually explain their own
 data there). Without an outline the whole document is a single text node.
 """
@@ -179,6 +182,26 @@ def _parse_block(lines: list[dict]) -> dict:
     return {"kind": kind, "lines": texts} if kind == "list" else {"kind": "text", "text": "\n".join(texts)}
 
 
+def _captioned_tables(body: list[dict]) -> list[tuple[str, list[dict]]] | None:
+    """For a leaf with ruled tables and text lines of its own: [(caption, table lines)] per table (a table
+    continues while no text line intervenes and the width stays the same), else None."""
+    if not any(l.get("tbl") for l in body) or all(l.get("tbl") for l in body):
+        return None
+    groups, last_text, prev = [], None, None
+    for l in body:
+        t = l.get("tbl")
+        if t is None:
+            last_text, prev = l["text"], None
+            continue
+        width = len(t["rows"][0])
+        if prev is not None and (prev is t or len(prev["rows"][0]) == width):
+            groups[-1][1].append(l)
+        else:
+            groups.append((last_text, [l]))
+        prev = t
+    return groups
+
+
 def build_map(pdf_path: Path) -> dict:
     lines = _lines(pdf_path)
     outline = _outline(pdf_path)
@@ -198,13 +221,23 @@ def build_map(pdf_path: Path) -> dict:
         end = marks[idx + 1][0] if idx + 1 < len(marks) else len(lines)
         stack = stack[:o["level"]]
         parent = stack[-1] if stack else None
-        node_id = f"n{idx:04d}"
+        node_id = f"n{len(nodes):04d}"
         body = lines[k + 1:end]
         node = {"node_id": node_id, "title": o["title"], "level": o["level"], "parent_id": parent,
                 "file": pdf_path.name, "pages": [lines[k]["page"], (body[-1]["page"] if body else lines[k]["page"])]}
-        node.update(_parse_block(body) if body else {"kind": "text", "text": ""})
+        split = _captioned_tables(body) if idx + 1 < len(marks) and marks[idx + 1][1]["level"] <= o["level"] or             idx + 1 == len(marks) else None                        # leaves only
+        if split:
+            node.update(_parse_block([l for l in body if not l.get("tbl")]))
+        else:
+            node.update(_parse_block(body) if body else {"kind": "text", "text": ""})
         nodes.append(node)
         stack.append(node_id)
+        for j, (caption, tlines) in enumerate(split or [], start=1):
+            name = (caption or "").strip().rstrip(":").strip() or f"table {j}"
+            tnode = {"node_id": f"n{len(nodes):04d}", "title": f"{o['title']}: {name}", "level": o["level"],
+                     "parent_id": parent, "file": pdf_path.name, "pages": [tlines[0]["page"], tlines[-1]["page"]]}
+            tnode.update(_ruled_block(tlines))
+            nodes.append(tnode)
     if not marks:
         nodes = [{"node_id": "n0000", "title": pdf_path.stem, "level": 0, "parent_id": None,
                   "file": pdf_path.name, "pages": [1, lines[-1]["page"] if lines else 1], "kind": "text",

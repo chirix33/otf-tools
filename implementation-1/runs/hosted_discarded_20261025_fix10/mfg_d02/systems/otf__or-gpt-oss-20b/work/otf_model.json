@@ -1,0 +1,472 @@
+{
+ "key": {
+  "pdf_sha": "fadb2a114304d3e2",
+  "model": "or-gpt-oss-20b",
+  "max_tries": 3,
+  "version": "v3"
+ },
+ "model": {
+  "code": "import re\nfrom typing import List, Dict, Any, Tuple, Set\n\n# ------------------------------------------------------------------\n#  SURVIVAL IN CLIENT CODE  (helpers available in the test harness)\n# ------------------------------------------------------------------\ndef node_by_title(doc, title):\n    for node in doc.get(\"nodes\", []):\n        if node.get(\"title\") == title:\n            return node\n    return None\n\ndef node_by_id(doc, node_id):\n    for node in doc.get(\"nodes\", []):\n        if node.get(\"node_id\") == node_id:\n            return node\n    return None\n\ndef children(doc, node):\n    for child_id in node.get(\"children\", []):\n        child = node_by_id(doc, child_id)\n        if child:\n            yield child\n\ndef scope_nodes(doc, scope_title):\n    scope_node = node_by_title(doc, scope_title)\n    if not scope_node:\n        return []\n    return [_ for _ in children(doc, scope_node)]\n\ndef table_rows(node):\n    rows = []\n    tbl = node.get(\"table\", {})\n    cols = tbl.get(\"columns\", [])\n    for idx, row in enumerate(tbl.get(\"rows\", [])):\n        rows.append((idx, dict(zip(cols, row))))\n    return rows\n\n# ------------------------------------------------------------------\n#  HELPERS FOR PARSING / SRC CREATION\n# ------------------------------------------------------------------\ndef numeric_cell(cell):\n    if cell is None:\n        return None\n    cell = cell.strip()\n    if not cell:\n        return None\n    try:\n        return int(cell.replace(\",\", \"\"))\n    except ValueError:\n        return None\n\ndef make_input_id(kind: str, prod: str, day: int, suffix: str = \"\") -> str:\n    return f\"{kind}_{prod}_{day}_{suffix}\".replace(\" \", \"_\")\n\ndef node_col_src(node_id: str, row_idx: int, cols: List[str]) -> List[Tuple[str, int, List[str]]]:\n    \"\"\"Return src list for chosen columns in a table row.\"\"\"\n    return [[node_id, row_idx, cols]] if cols else []\n\n# ------------------------------------------------------------------\n#  MAIN PUBLIC API\n# ------------------------------------------------------------------\ndef entities(doc: dict, scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Return all entities that appear in the scope.\"\"\"\n    ents: List[Dict[str, Any]] = []\n\n    # Plant itself\n    m = re.search(r\"Plant\\s+(\\d+)\", scope)\n    if m:\n        plant_id = m.group(1)\n        ents.append({\"id\": plant_id, \"description\": f\"Plant {plant_id}\"})\n\n    # Products\n    prod_node = node_by_title(doc, f\"{scope}: Products\")\n    if prod_node and prod_node.get(\"kind\") == \"table\":\n        for _, row in table_rows(prod_node):\n            prod_code = row.get(\"product\")\n            if prod_code:\n                group = row.get(\"group\", \"\")\n                sub = row.get(\"sub-group\", \"\")\n                desc = f\"{prod_code} ({group}{sub})\"\n                ents.append({\"id\": prod_code, \"description\": desc})\n\n    return ents\n\n\ndef recorded_end(doc: dict, scope: str) -> float or None:\n    \"\"\"Return the last day number recorded in the Daily ledger table.\"\"\"\n    ledger_node = node_by_title(doc, f\"{scope}: Daily ledger\")\n    if ledger_node and ledger_node.get(\"kind\") == \"table\":\n        last_day = 0\n        for _, row in table_rows(ledger_node):\n            day = numeric_cell(row.get(\"day\"))\n            if day and day > last_day:\n                last_day = day\n        return float(last_day) if last_day else None\n    return None\n\n\ndef inputs(doc: dict, scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Collect all external inputs that feed the process in this scope.\"\"\"\n    out: List[Dict[str, Any]] = []\n\n    prod_node = node_by_title(doc, f\"{scope}: Products\")\n    ledger_node = node_by_title(doc, f\"{scope}: Daily ledger\")\n    ob_node = node_by_title(doc, f\"{scope}: Order book\")\n\n    prod_id = None\n    prod_node_id = prod_node.get(\"node_id\") if prod_node else \"\"\n\n    # === Opening stock for each product (day 1) ===\n    if prod_node and prod_node.get(\"kind\") == \"table\":\n        for row_idx, row in table_rows(prod_node):\n            prod_code = row.get(\"product\")\n            if not prod_code:\n                continue\n            qty = numeric_cell(row.get(\"opening stock\"))\n            if qty is None:\n                continue\n            out.append({\n                \"id\": make_input_id(\"opening\", prod_code, 1),\n                \"time\": 1.0,\n                \"kind\": \"opening stock\",\n                \"entities\": [prod_code],\n                \"fields\": {\"quantity\": qty},\n                \"src\": node_col_src(prod_node_id, row_idx, [\"product\", \"opening stock\"])\n            })\n\n    # === Daily Production & Orders from ledger ===\n    if ledger_node and ledger_node.get(\"kind\") == \"table\":\n        for row_idx, row in table_rows(ledger_node):\n            day = numeric_cell(row.get(\"day\"))\n            if day is None:\n                continue\n            prod_code = row.get(\"product\")\n            if not prod_code:\n                continue\n\n            # Production\n            prod_qty = numeric_cell(row.get(\"produced\"))\n            if prod_qty is not None:\n                out.append({\n                    \"id\": make_input_id(\"production\", prod_code, day),\n                    \"time\": float(day),\n                    \"kind\": \"production\",\n                    \"entities\": [prod_code],\n                    \"fields\": {\"quantity\": prod_qty},\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"produced\"]\n                    ),\n                })\n\n            # Order placed that day\n            ord_qty = numeric_cell(row.get(\"ordered\"))\n            if ord_qty is not None:\n                out.append({\n                    \"id\": make_input_id(\"order\", prod_code, day),\n                    \"time\": float(day),\n                    \"kind\": \"order\",\n                    \"entities\": [prod_code],\n                    \"fields\": {\"quantity\": ord_qty},\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"ordered\"]\n                    ),\n                })\n\n    # === Order book (future events, planned production & orders) ===\n    if ob_node and ob_node.get(\"kind\") == \"table\":\n        ob_tbl = ob_node.get(\"table\", {})\n        cols = ob_tbl.get(\"columns\", [])\n        is_bulk_format = \"units still open\" in cols  # second format\n        for row_idx, row in table_rows(ob_node):\n            if is_bulk_format:\n                # Columns: product, day placed, units still open\n                prod_code = row.get(\"product\")\n                day_val = numeric_cell(row.get(\"day placed\"))\n                qty = numeric_cell(row.get(\"units still open\"))\n                if prod_code and day_val is not None and qty is not None:\n                    out.append({\n                        \"id\": make_input_id(\"future_open\", prod_code, day_val),\n                        \"time\": float(day_val),\n                        \"kind\": \"future open\",\n                        \"entities\": [prod_code],\n                        \"fields\": {\"quantity\": qty},\n                        \"src\": node_col_src(\n                            ob_node.get(\"node_id\", \"\"), row_idx, [\"product\", \"day placed\", \"units still open\"]\n                        ),\n                    })\n            else:\n                # Columns: day, date, product, planned production, ordered\n                prod_code = row.get(\"product\")\n                day_val = numeric_cell(row.get(\"day\"))\n                if prod_code and day_val is not None:\n                    # Planned production\n                    plan_qty = numeric_cell(row.get(\"planned production\"))\n                    if plan_qty is not None:\n                        out.append({\n                            \"id\": make_input_id(\"planned_prod\", prod_code, day_val),\n                            \"time\": float(day_val),\n                            \"kind\": \"planned production\",\n                            \"entities\": [prod_code],\n                            \"fields\": {\"quantity\": plan_qty},\n                            \"src\": node_col_src(\n                                ob_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"planned production\"]\n                            ),\n                        })\n                    # Order (future)\n                    ord_qty = numeric_cell(row.get(\"ordered\"))\n                    if ord_qty is not None:\n                        out.append({\n                            \"id\": make_input_id(\"future_order\", prod_code, day_val),\n                            \"time\": float(day_val),\n                            \"kind\": \"future order\",\n                            \"entities\": [prod_code],\n                            \"fields\": {\"quantity\": ord_qty},\n                            \"src\": node_col_src(\n                                ob_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"ordered\"]\n                            ),\n                        })\n\n    return out\n\n\ndef outcomes(doc: dict, scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Collect all outcomes recorded in this scope.\"\"\"\n    out: List[Dict[str, Any]] = []\n\n    ledger_node = node_by_title(doc, f\"{scope}: Daily ledger\")\n    events_node = node_by_title(doc, f\"{scope}: Events\")\n\n    # === Ledger values (shipped, backordered, stock) ===\n    if ledger_node and ledger_node.get(\"kind\") == \"table\":\n        for row_idx, row in table_rows(ledger_node):\n            day = numeric_cell(row.get(\"day\"))\n            if day is None:\n                continue\n            prod_code = row.get(\"product\")\n            if not prod_code:\n                continue\n\n            # shipped\n            shipped = numeric_cell(row.get(\"shipped\"))\n            if shipped is not None:\n                out.append({\n                    \"time\": float(day),\n                    \"kind\": \"recorded shipped\",\n                    \"entities\": [prod_code],\n                    \"value\": shipped,\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"shipped\"]\n                    ),\n                })\n            # backordered\n            back = numeric_cell(row.get(\"backordered\"))\n            if back is not None:\n                out.append({\n                    \"time\": float(day),\n                    \"kind\": \"recorded backordered\",\n                    \"entities\": [prod_code],\n                    \"value\": back,\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"backordered\"]\n                    ),\n                })\n            # stock\n            stk = numeric_cell(row.get(\"stock\"))\n            if stk is not None:\n                out.append({\n                    \"time\": float(day),\n                    \"kind\": \"recorded stock\",\n                    \"entities\": [prod_code],\n                    \"value\": stk,\n                    \"src\": node_col_src(\n                        ledger_node.get(\"node_id\", \"\"), row_idx, [\"day\", \"product\", \"stock\"]\n                    ),\n                })\n\n    # === Events list ===\n    if events_node and events_node.get(\"kind\") == \"list\":\n        for line_idx, line in enumerate(events_node.get(\"lines\", [])):\n            m = re.search(r\"Day\\s+(\\d+)\", line)\n            day_num = float(m.group(1)) if m else None\n            out.append({\n                \"time\": day_num,\n                \"kind\": \"event\",\n                \"entities\": [],\n                \"value\": None,\n                \"src\": [[events_node.get(\"node_id\", \"\"), line_idx]]\n            })\n\n    return out\n\n\ndef params(doc: dict, scope: str) -> Dict[str, Any]:\n    \"\"\"Return constants declared in the scope's heading text.\"\"\"\n    txt_node = node_by_title(doc, scope)\n    if not txt_node or txt_node.get(\"kind\") != \"text\":\n        return {}\n\n    txt = txt_node.get(\"text\", \"\")\n\n    cap_match = re.search(r\"Daily dispatch capacity:\\s*([\\d,]+)\\s*kg\", txt)\n    dispatch_capacity = int(cap_match.group(1).replace(\",\", \"\")) if cap_match else None\n\n    res: Dict[str, Any] = {}\n    if dispatch_capacity is not None:\n        res[\"dispatch_capacity\"] = dispatch_capacity\n    return res\n\n\n# ---- step 2: forward model ----\nimport math\nimport re\nfrom collections import defaultdict\nfrom typing import List, Dict, Any\n\n# ------------------------------------------------------------------\n# Existing helpers (already provided by the framework):\n# ------------------------------------------------------------------\n# node_by_title, node_by_id, children, scope_nodes, table_rows, numeric_cell,\n# make_input_id, node_col_src, entities, recorded_end, inputs,\n# outcomes, params\n\n# ------------------------------------------------------------------\n# Local helper functions\n# ------------------------------------------------------------------\ndef product_weight_map(doc: dict) -> Dict[str, int]:\n    \"\"\"\n    Returns a mapping from product code to its weight (kg per unit)\n    by scanning all :Products tables in the document.\n    \"\"\"\n    prod_map: Dict[str, int] = {}\n    for node in doc.get(\"nodes\", []):\n        if node.get(\"title\", \"\").endswith(\": Products\"):\n            for _, row in table_rows(node):\n                code = row.get(\"product\")\n                kg = numeric_cell(row.get(\"kg per unit\"))\n                if code and kg is not None:\n                    prod_map[code] = kg\n    return prod_map\n\n\ndef scope_products(doc: dict, scope: str) -> set:\n    \"\"\"\n    Return the set of product codes that belong to the requested scope.\n    \"\"\"\n    prod_set = set()\n    node = node_by_title(doc, f\"{scope}: Products\")\n    if node:\n        for _, row in table_rows(node):\n            if row.get(\"product\"):\n                prod_set.add(row.get(\"product\"))\n    return prod_set\n\n\n# ------------------------------------------------------------------\n# Main simulation function\n# ------------------------------------------------------------------\ndef simulate(doc: dict,\n             scope: str,\n             inputs: List[Dict[str, Any]],\n             params: Dict[str, Any],\n             start: float = None,\n             horizon: float = None) -> List[Dict[str, Any]]:\n\n    \"\"\"\n    Forward model of the plant dispatch process described in the\n    document.\n\n    Parameters\n    ----------\n    doc : dict\n        Full document (used only to read product weights).\n    scope : str\n        Scope title, e.g. \"Plant 1912, Period 15\".\n    inputs : List[Dict]\n        External inputs produced by the `inputs()` function.\n    params : Dict\n        Constant values extracted from the heading (at least\n        `dispatch_capacity`).\n    start : float, optional\n        Day on which to start writing outcomes (inclusive).  If None,\n        simulation starts at the first input day.\n    horizon : float, optional\n        Final day of simulation (inclusive).  If None, equals the last\n        input day.\n\n    Returns\n    -------\n    List[Dict]\n        Outcome records with kinds:\n        * `recorded shipped`\n        * `recorded backordered`\n        * `recorded stock`\n    \"\"\"\n    # ------------------------------------------------------------------\n    # 1.  Gather constants\n    # ------------------------------------------------------------------\n    weight_map = product_weight_map(doc)\n    scope_prods = scope_products(doc, scope)\n\n    # ------------------------------------------------------------------\n    # 2.  Parse the input list\n    # ------------------------------------------------------------------\n    min_day = max_day = None\n    # Maps: day -> product -> quantity\n    production_by_day = defaultdict(lambda: defaultdict(int))\n    order_by_day = defaultdict(lambda: defaultdict(int))\n    opening_stock: Dict[str, int] = {}\n\n    for inp in inputs:\n        kind = inp[\"kind\"]\n        prod = inp[\"entities\"][0]\n        day = int(inp[\"time\"])\n        qty = inp[\"fields\"][\"quantity\"]\n\n        if kind == \"opening stock\":\n            opening_stock[prod] = qty\n        elif kind == \"production\":\n            production_by_day[day][prod] = qty\n        elif kind == \"order\":\n            order_by_day[day][prod] = qty\n\n        if min_day is None or day < min_day:\n            min_day = day\n        if max_day is None or day > max_day:\n            max_day = day\n\n    if min_day is None:           # nothing to simulate\n        return []\n\n    if start is None:\n        start = min_day\n    if horizon is None:\n        horizon = max_day\n\n    # ------------------------------------------------------------------\n    # 3.  Initialise state\n    # ------------------------------------------------------------------\n    stock: Dict[str, int] = {p: opening_stock.get(p, 0) for p in scope_prods}\n    # Active orders queue\n    # Each entry: {'product', 'remaining', 'day', 'shipped_today'}\n    orders_queue: List[Dict[str, Any]] = []\n\n    dispatch_capacity = params.get(\"dispatch_capacity\", 0)\n\n    # ------------------------------------------------------------------\n    # 4.  Helper: add new orders for a day\n    # ------------------------------------------------------------------\n    def add_orders(day: int) -> None:\n        for prod, qty in order_by_day.get(day, {}).items():\n            if prod not in scope_prods:\n                continue\n            orders_queue.append({\n                \"product\": prod,\n                \"remaining\": qty,\n                \"day\": day,\n                \"shipped_today\": 0,\n            })\n\n    # ------------------------------------------------------------------\n    # 5.  Simulation loop\n    # ------------------------------------------------------------------\n    outcomes: List[Dict[str, Any]] = []\n\n    for day in range(min_day, int(horizon) + 1):\n        # 5.1 production arrives\n        for prod, qty in production_by_day.get(day, {}).items():\n            if prod not in scope_prods:\n                continue\n            stock[prod] += qty\n\n        # 5.2 orders placed today\n        add_orders(day)\n\n        # 5.3 dispatch logic\n        orders_queue.sort(key=lambda o: (o[\"day\"], o[\"remaining\"], o[\"product\"]))\n        cap_remaining = dispatch_capacity\n        for order in orders_queue:\n            prod = order[\"product\"]\n            if prod not in scope_prods:\n                continue\n            if order[\"remaining\"] <= 0 or stock[prod] <= 0:\n                continue\n\n            unit_wt = weight_map.get(prod, 1)\n            max_by_cap = cap_remaining // unit_wt\n            if max_by_cap <= 0:\n                break   # capacity exhausted\n\n            ship_qty = min(order[\"remaining\"],\n                           stock[prod],\n                           max_by_cap)\n\n            # apply shipment\n            order[\"remaining\"] -= ship_qty\n            order[\"shipped_today\"] += ship_qty\n            stock[prod] -= ship_qty\n            cap_remaining -= ship_qty * unit_wt\n\n            if cap_remaining <= 0:\n                break   # no more capacity today\n\n        # 5.4 record outcomes for each product\n        for prod in scope_prods:\n            shipped = sum(o[\"shipped_today\"]\n                          for o in orders_queue if o[\"product\"] == prod)\n            backordered = sum(o[\"remaining\"]\n                              for o in orders_queue if o[\"product\"] == prod)\n            stash = stock[prod]\n\n            outcomes.append({\n                \"time\": float(day),\n                \"kind\": \"recorded shipped\",\n                \"entities\": [prod],\n                \"value\": shipped,\n                \"src\": [],\n            })\n            outcomes.append({\n                \"time\": float(day),\n                \"kind\": \"recorded backordered\",\n                \"entities\": [prod],\n                \"value\": backordered,\n                \"src\": [],\n            })\n            outcomes.append({\n                \"time\": float(day),\n                \"kind\": \"recorded stock\",\n                \"entities\": [prod],\n                \"value\": stash,\n                \"src\": [],\n            })\n\n        # 5.5 purge completed orders\n        orders_queue = [o for o in orders_queue if o[\"remaining\"] > 0]\n\n    # ------------------------------------------------------------------\n    # 6.  Return outcomes from the specified start day onward\n    # ------------------------------------------------------------------\n    return [o for o in outcomes if o[\"time\"] >= start]\n",
+  "passed": true,
+  "mean_f1": 0.884,
+  "tries": 3,
+  "attempts": [
+   {
+    "step": "parsers",
+    "try": 1,
+    "report": {
+     "passed": false,
+     "error": "'Plant 2103, Period 02': inputs() fails on the copy in which the outcomes are hidden (hidden cells are empty strings '', hidden rows and lines are removed); read only the cells your src lists. Error: File \"C:\\Users\\aashraf\\AppData\\Local\\Temp\\tmpf3jud7a0\\runner.py\", line 29, in <module>\n    out.append([True, json.loads(json.dumps(ns[f](doc, *a, **kw), default=str))])\n                                            ~~~~~^^^^^^^^^^^^^^^\n  File \"<string>\", line 126, in inputs\nValueError: invalid literal for int() with base 10: ''\nWHAT YOUR FUNCTIONS RETURNED on scope 'Plant 2103, Period 02': 13 entities (first: [{\"id\": \"POP001L12P-A\", \"description\": \"POP001L12P-A: group P, sub-group POP, storage 330, 10.92 kg, opening stock 2849\"}]), recorded_end = 28.0, 461 inputs (first: [{\"id\": \"POP001L12P-A-opening-stock\", \"time\": null, \"kind\": \"initial_state\", \"entities\": [\"POP001L12P-A\"], \"fields\": {\"opening_stock\": 2849}}]), 576 outcomes (first: [{\"time\": 15, \"kind\": \"shipped\", \"entities\": [\"POP001L12P-A\"], \"value\": 2126}]), params = {\"dispatch_capacity\": 407700}"
+    },
+    "code": "import re\nfrom statistics import mean\n\n# ------------------------------------------------------------------\n# Helper functions (assumed provided by the environment)\n# ------------------------------------------------------------------\n# node_by_title(doc, title) -> node dict\n# node_by_id(doc, node_id) -> node dict\n# children(doc, node) -> list of child node dicts\n# table_rows(node) -> list of (row_index, {column_name: cell_str})\n\n# ------------------------------------------------------------------\n# Reading functions -------------------------------------------------\n# ------------------------------------------------------------------\ndef entities(doc, scope):\n    \"\"\"\n    Return a list of entities in the given scope.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    # Find the Products table under the scope\n    prod_node = None\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'table' and ch['title'].endswith(': Products'):\n            prod_node = ch\n            break\n    if not prod_node:\n        return []\n\n    rows = table_rows(prod_node)\n    entities_list = []\n    for row_index, row in rows:\n        prod_id = row['product']\n        description = (f\"{prod_id}: group {row['group']}, \"\n                       f\"sub-group {row['sub-group']}, \"\n                       f\"storage {row['storage location']}, \"\n                       f\"{row['kg per unit']} kg, opening stock {row['opening stock']}\")\n        entities_list.append({'id': prod_id, 'description': description})\n    return entities_list\n\n\ndef recorded_end(doc, scope):\n    \"\"\"\n    Return the last day number covered by the scope (int) or None.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'table' and ch['title'].endswith(': Daily ledger'):\n            ledger_node = ch\n            break\n    if not ledger_node:\n        return None\n\n    last_day = None\n    for row_index, row in table_rows(ledger_node):\n        try:\n            day = int(row['day'])\n            if last_day is None or day > last_day:\n                last_day = day\n        except ValueError:\n            continue\n    return last_day\n\n\ndef _parse_plan_book_rows(book_node, plant_id, kind):\n    \"\"\"\n    Helper: create input records from Order book table rows.\n    kind: 'planned_production' or 'planned_order'\n    \"\"\"\n    inputs = []\n    rows = table_rows(book_node)\n    for row_index, row in rows:\n        product = row['product']\n        day = int(row['day'])\n        qty = int(row[('planned production' if kind == 'planned_production' else 'ordered')])\n        inp_id = f\"{product}-{kind}-day{day}\"\n        inp = {\n            'id': inp_id,\n            'time': day,\n            'kind': kind,\n            'entities': [product],\n            'fields': {'quantity': qty},\n            'src': [[book_node['node_id'], row_index, [('planned production' if kind == 'planned_production' else 'ordered')]]]\n        }\n        inputs.append(inp)\n    return inputs\n\n\ndef inputs(doc, scope):\n    \"\"\"\n    Return a list of input records for the scope.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n    plant_id = re.search(r'Plant (\\d+)', scope).group(1)\n\n    inputs_list = []\n\n    # 1. Opening stock (initial state)\n    prod_node = None\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'table' and ch['title'].endswith(': Products'):\n            prod_node = ch\n            break\n    if prod_node:\n        for row_index, row in table_rows(prod_node):\n            prod_id = row['product']\n            ini_qty = int(row['opening stock'])\n            inputs_list.append({\n                'id': f'{prod_id}-opening-stock',\n                'time': None,\n                'kind': 'initial_state',\n                'entities': [prod_id],\n                'fields': {'opening_stock': ini_qty},\n                'src': [[prod_node['node_id'], row_index, ['opening stock']]]\n            })\n\n    # 2. Daily Production and Orders (from ledger)\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'table' and ch['title'].endswith(': Daily ledger'):\n            ledger_node = ch\n            break\n    if ledger_node:\n        for row_index, row in table_rows(ledger_node):\n            prod_id = row['product']\n            day = int(row['day'])\n            # production input\n            produced_qty = int(row['produced'])\n            if produced_qty > 0:\n                inputs_list.append({\n                    'id': f'{prod_id}-produce-day{day}',\n                    'time': day,\n                    'kind': 'production',\n                    'entities': [prod_id],\n                    'fields': {'quantity': produced_qty},\n                    'src': [[ledger_node['node_id'], row_index, ['produced']]]\n                })\n            # orders input\n            order_qty = int(row['ordered'])\n            if order_qty > 0:\n                inputs_list.append({\n                    'id': f'{prod_id}-order-day{day}',\n                    'time': day,\n                    'kind': 'sales_order',\n                    'entities': [prod_id],\n                    'fields': {'quantity': order_qty},\n                    'src': [[ledger_node['node_id'], row_index, ['ordered']]]\n                })\n\n    # 3. Planned production & orders (future)\n    # There may be multiple Order book tables with different titles\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'table' and 'Order book' in ch['title']:\n            # Determine which columns exist\n            cols = ch['table']['columns']\n            # If columns include 'planned production' and 'ordered', treat as order book\n            if 'planned production' in cols or 'planned production' in cols:\n                # parse planned production rows\n                inputs_list.extend(_parse_plan_book_rows(ch, plant_id, 'planned_production'))\n                if 'ordered' in cols:\n                    inputs_list.extend(_parse_plan_book_rows(ch, plant_id, 'planned_order'))\n\n    # 4. Dispatch capacity (constant, but not time\u2011dependent)\n    # Not added to inputs here \u2013 handled in params\n\n    return inputs_list\n\n\ndef _parse_event_line(line):\n    \"\"\"\n    Parse an event line into (day, kind)\n    \"\"\"\n    day_match = re.search(r'Day (\\d+)', line)\n    if not day_match:\n        return None, None\n    day = int(day_match.group(1))\n\n    if 'dispatch capacity reached' in line:\n        return day, 'dispatch_capacity_reached'\n    if 'runs out of stock' in line:\n        return day, 'runs_out_of_stock'\n    if 'fully backordered' in line:\n        return day, 'order_fully_backordered'\n    if 'backlog cleared' in line:\n        return day, 'backlog_cleared'\n    if 'ships in full' in line:\n        return day, 'order_shipped_in_full'\n\n    return day, 'unknown_event'\n\n\ndef outcomes(doc, scope):\n    \"\"\"\n    Return a list of outcome records for the scope.\n    \"\"\"\n    scope_node = node_by_title(doc, scope)\n\n    outcomes_list = []\n\n    # 1. Ledger result quantities: shipped, backordered, stock\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'table' and ch['title'].endswith(': Daily ledger'):\n            ledger_node = ch\n            break\n    if ledger_node:\n        for row_index, row in table_rows(ledger_node):\n            prod_id = row['product']\n            day = int(row['day'])\n            for kind in ['shipped', 'backordered', 'stock']:\n                val = int(row[kind])\n                outcomes_list.append({\n                    'time': day,\n                    'kind': kind,\n                    'entities': [prod_id],\n                    'value': val,\n                    'src': [[ledger_node['node_id'], row_index, [kind]]]\n                })\n\n    # 2. Events\n    for ch in children(doc, scope_node):\n        if ch['kind'] == 'list' and 'Events' in ch['title']:\n            for line_index, line in enumerate(ch['lines']):\n                day, kind = _parse_event_line(line)\n                if day is not None and kind:\n                    outcomes_list.append({\n                        'time': day,\n                        'kind': kind,\n                        'entities': [],\n                        'value': None,\n                        'src': [[ch['node_id'], line_index]]\n                    })\n            break\n\n    return outcomes_list\n\n\ndef params(doc, scope):\n    \"\"\"\n    Return any constants that are explicitly stated in the scope.\n    \"\"\"\n    # Dispatch capacity value is in the scope title text\n    # Find the scope node to read the dispatch capacity\n    scope_node = node_by_title(doc, scope)\n    capacity = None\n    if 'Daily dispatch capacity:' in scope_node['text']:\n        m = re.search(r'Daily dispatch capacity:\\s*([0-9,]+)\\s*kg', scope_node['text'])\n        if m:\n            capacity = int(m.group(1).replace(',', ''))\n\n    if capacity is not None:\n        return {'dispatch_capacity': capacity}\n    return {}\n"
+   },
+   {
+    "step": "parsers",
+    "try": 2,
+    "report": {
+     "passed": false,
+     "error": "inputs('Plant 2103, Period 05') failed: File \"<string>\", line 172, in inputs\n  File \"<string>\", line 64, in _parse_order_book_row\nKeyError: 'day'"
+    },
+    "code": "import re\n\n# Assume the helper functions mentioned in the prompt are available:\n# node_by_title(doc, title) -> node dict\n# node_by_id(doc, node_id) -> node dict\n# children(doc, node) -> list of child node dicts\n# table_rows(node) -> list of (row_index, {column_name: cell_str})\n\n\ndef _safe_int(s, src=None):\n    \"\"\"Convert a cell to int, return None if empty or invalid.\"\"\"\n    try:\n        return int(s)\n    except (ValueError, TypeError):\n        return None\n\n\ndef entities(doc, scope):\n    \"\"\"Return all product entities in the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    prod_node = None\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"table\" and ch[\"title\"].endswith(\": Products\"):\n            prod_node = ch\n            break\n    if not prod_node:\n        return []\n\n    lst = []\n    for idx, row in table_rows(prod_node):\n        pid = row[\"product\"]\n        lst.append(\n            {\n                \"id\": pid,\n                \"description\": f\"{pid}: group {row['group']}, sub-group \"\n                f\"{row['sub-group']}, storage {row['storage location']}, \"\n                f\"{row['kg per unit']} kg, opening stock {row['opening stock']}\",\n            }\n        )\n    return lst\n\n\ndef recorded_end(doc, scope):\n    \"\"\"Return last day number recorded in the ledger.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"table\" and ch[\"title\"].endswith(\": Daily ledger\"):\n            ledger_node = ch\n            break\n    if not ledger_node:\n        return None\n    last_day = None\n    for idx, row in table_rows(ledger_node):\n        d = _safe_int(row[\"day\"])\n        if d is not None and (last_day is None or d > last_day):\n            last_day = d\n    return last_day\n\n\ndef _parse_order_book_row(node, idx, row):\n    \"\"\"Parse a single row of an Order book table.\"\"\"\n    product = row[\"product\"]\n    day = _safe_int(row[\"day\"])\n    if day is None:\n        return None\n\n    inputs = []\n\n    if \"planned production\" in row and row[\"planned production\"]:\n        qty = _safe_int(row[\"planned production\"])\n        if qty is not None and qty > 0:\n            inputs.append(\n                {\n                    \"id\": f\"{product}-planned-production-day{day}\",\n                    \"time\": day,\n                    \"kind\": \"planned_production\",\n                    \"entities\": [product],\n                    \"fields\": {\"quantity\": qty},\n                    \"src\": [[node[\"node_id\"], idx, [\"planned production\"]]],\n                }\n            )\n    if \"ordered\" in row and row[\"ordered\"]:\n        qty = _safe_int(row[\"ordered\"])\n        if qty is not None and qty > 0:\n            inputs.append(\n                {\n                    \"id\": f\"{product}-planned-order-day{day}\",\n                    \"time\": day,\n                    \"kind\": \"planned_order\",\n                    \"entities\": [product],\n                    \"fields\": {\"quantity\": qty},\n                    \"src\": [[node[\"node_id\"], idx, [\"ordered\"]]],\n                }\n            )\n    return inputs\n\n\ndef inputs(doc, scope):\n    \"\"\"Return the list of input records for the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    pid_match = re.search(r\"Plant (\\d+)\", scope)\n    plant_id = pid_match.group(1) if pid_match else None\n\n    all_inputs = []\n\n    # 1. Initial opening stock\n    prod_node = None\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"table\" and ch[\"title\"].endswith(\": Products\"):\n            prod_node = ch\n            break\n    if prod_node:\n        for idx, row in table_rows(prod_node):\n            pid = row[\"product\"]\n            open_stock = _safe_int(row[\"opening stock\"])\n            if open_stock is not None:\n                all_inputs.append(\n                    {\n                        \"id\": f\"{pid}-opening-stock\",\n                        \"time\": None,\n                        \"kind\": \"initial_state\",\n                        \"entities\": [pid],\n                        \"fields\": {\"opening_stock\": open_stock},\n                        \"src\": [[prod_node[\"node_id\"], idx, [\"opening stock\"]]],\n                    }\n                )\n\n    # 2. Daily production & orders from ledger\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"table\" and ch[\"title\"].endswith(\": Daily ledger\"):\n            ledger_node = ch\n            break\n    if ledger_node:\n        for idx, row in table_rows(ledger_node):\n            pid = row[\"product\"]\n            day = _safe_int(row[\"day\"])\n            if day is None:\n                continue\n\n            produced_val = _safe_int(row[\"produced\"])\n            if produced_val is not None and produced_val > 0:\n                all_inputs.append(\n                    {\n                        \"id\": f\"{pid}-production-day{day}\",\n                        \"time\": day,\n                        \"kind\": \"production\",\n                        \"entities\": [pid],\n                        \"fields\": {\"quantity\": produced_val},\n                        \"src\": [[ledger_node[\"node_id\"], idx, [\"produced\"]]],\n                    }\n                )\n\n            ordered_val = _safe_int(row[\"ordered\"])\n            if ordered_val is not None and ordered_val > 0:\n                all_inputs.append(\n                    {\n                        \"id\": f\"{pid}-sales-order-day{day}\",\n                        \"time\": day,\n                        \"kind\": \"sales_order\",\n                        \"entities\": [pid],\n                        \"fields\": {\"quantity\": ordered_val},\n                        \"src\": [[ledger_node[\"node_id\"], idx, [\"ordered\"]]],\n                    }\n                )\n\n    # 3. Future planned orders from any Order book tables\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"table\" and \"Order book\" in ch[\"title\"]:\n            for idx, row in table_rows(ch):\n                row_inputs = _parse_order_book_row(ch, idx, row)\n                if row_inputs:\n                    all_inputs.extend(row_inputs)\n\n    # 4. Dispatch capacity constant \u2013 handled in params()\n    return all_inputs\n\n\ndef _parse_event_line(line):\n    \"\"\"Parse an event line to extract day, kind and (optionally) product.\"\"\"\n    day_match = re.search(r\"Day (\\d+)\", line)\n    if not day_match:\n        return None, None, None\n    day = int(day_match.group(1))\n\n    # Product may appear after colon\n    prod_match = re.search(r\":\\s*(?P<prod>[\\w\\-]+)\", line)\n    product = prod_match.group(\"prod\") if prod_match else None\n\n    if \"dispatch capacity reached\" in line:\n        return day, \"dispatch_capacity_reached\", product\n    if \"runs out of stock\" in line:\n        return day, \"runs_out_of_stock\", product\n    if \"fully backordered\" in line:\n        return day, \"order_fully_backordered\", product\n    if \"backlog cleared\" in line:\n        return day, \"backlog_cleared\", product\n    if \"ships in full\" in line:\n        return day, \"order_shipped_in_full\", product\n    return day, \"unknown_event\", product\n\n\ndef outcomes(doc, scope):\n    \"\"\"Return the list of outcome records for the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n\n    out = []\n\n    # 1. Ledger results: shipped, backordered, stock\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"table\" and ch[\"title\"].endswith(\": Daily ledger\"):\n            ledger_node = ch\n            break\n    if ledger_node:\n        for idx, row in table_rows(ledger_node):\n            pid = row[\"product\"]\n            day = _safe_int(row[\"day\"])\n            if day is None:\n                continue\n            for kind in (\"shipped\", \"backordered\", \"stock\"):\n                val = _safe_int(row.get(kind, \"\"))\n                if val is None:\n                    continue\n                out.append(\n                    {\n                        \"time\": day,\n                        \"kind\": kind,\n                        \"entities\": [pid],\n                        \"value\": val,\n                        \"src\": [[ledger_node[\"node_id\"], idx, [kind]]],\n                    }\n                )\n\n    # 2. Events list\n    for ch in children(doc, scope_node):\n        if ch[\"kind\"] == \"list\" and \"Events\" in ch[\"title\"]:\n            for idx, line in enumerate(ch[\"lines\"]):\n                day, kind, prod = _parse_event_line(line)\n                if day is None or kind is None:\n                    continue\n                ents = [prod] if prod else []\n                out.append(\n                    {\n                        \"time\": day,\n                        \"kind\": kind,\n                        \"entities\": ents,\n                        \"value\": None,\n                        \"src\": [[ch[\"node_id\"], idx]],\n                    }\n                )\n            break\n\n    return out\n\n\ndef params(doc, scope):\n    \"\"\"Return constant parameters stated in the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n\n    # Dispatch capacity is written in the scope node's text\n    if \"Daily dispatch capacity:\" in scope_node[\"text\"]:\n        m = re.search(r\"Daily dispatch capacity:\\s*([\\d,]+)\" r\"\\s*kg\", scope_node[\"text\"])\n        if m:\n            cap = int(m.group(1).replace(\",\", \"\"))\n            return {\"dispatch_capacity\": cap}\n    return {}\n"
+   },
+   {
+    "step": "parsers",
+    "try": 3,
+    "report": {
+     "passed": false,
+     "error": "'Plant 2103, Period 02': inputs() reads differently once the outcomes are hidden (cells after time 14.87 not listed in any input's src are hidden). Include in `src` every cell your inputs() reads, also its time and entity cells\nWHAT YOUR FUNCTIONS RETURNED on scope 'Plant 2103, Period 02': 13 entities (first: [{\"id\": \"POP001L12P-A\", \"description\": \"POP001L12P-A: group P, sub-group POP, storage 330, 10.92 kg, opening stock 2849\"}]), recorded_end = 28.0, 414 inputs (first: [{\"id\": \"POP001L12P-A-opening-stock\", \"time\": null, \"kind\": \"initial_state\", \"entities\": [\"POP001L12P-A\"], \"fields\": {\"opening_stock\": 2849}}]), 576 outcomes (first: [{\"time\": 15, \"kind\": \"shipped\", \"entities\": [\"POP001L12P-A\"], \"value\": 2126}]), params = {\"dispatch_capacity\": 407700}\n- 4 of 91 rows of table 'Plant 2103, Period 02: Order book' are not the src of any input or outcome"
+    },
+    "code": "import re\nfrom typing import Dict, List, Any, Tuple\n\n# helper functions assumed from the environment\n# node_by_title(doc, title) -> node dict\n# node_by_id(doc, node_id) -> node dict\n# children(doc, node) -> list of child node dicts\n# table_rows(node) -> list of (row_index, {column_name: cell_str}) or []\n\n\ndef _safe_int(val: Any) -> int | None:\n    \"\"\"Return int from a string or None if conversion fails or string is empty.\"\"\"\n    if not isinstance(val, str):\n        return None\n    val = val.strip()\n    if val == \"\":\n        return None\n    try:\n        return int(val)\n    except ValueError:\n        return None\n\n\ndef entities(doc: Dict[str, Any], scope: str) -> List[Dict[str, str]]:\n    \"\"\"Return all product entities in the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    prod_node = None\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"table\" and ch.get(\"title\", \"\").endswith(\": Products\"):\n            prod_node = ch\n            break\n    if not prod_node:\n        return []\n\n    ents: List[Dict[str, str]] = []\n    for row_index, row in table_rows(prod_node):\n        pid = row.get(\"product\")\n        if not pid:\n            continue\n        desc = (\n            f\"{pid}: group {row.get('group')}, sub-group {row.get('sub-group')}, \"\n            f\"storage {row.get('storage location')}, {row.get('kg per unit')} kg, \"\n            f\"opening stock {row.get('opening stock')}\"\n        )\n        ents.append({\"id\": pid, \"description\": desc})\n    return ents\n\n\ndef recorded_end(doc: Dict[str, Any], scope: str) -> int | None:\n    \"\"\"Return last day number recorded in the ledger.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"table\" and ch.get(\"title\", \"\").endswith(\": Daily ledger\"):\n            ledger_node = ch\n            break\n    if not ledger_node:\n        return None\n\n    last_day: int | None = None\n    for row_index, row in table_rows(ledger_node):\n        d = _safe_int(row.get(\"day\"))\n        if d is not None and (last_day is None or d > last_day):\n            last_day = d\n    return last_day\n\n\ndef _parse_order_book_row(\n    node: Dict[str, Any], row_index: int, row: Dict[str, str]\n) -> List[Dict[str, Any]]:\n    \"\"\"Parse a row from an Order book table and return list of input records.\"\"\"\n    col_names = node.get(\"table\", {}).get(\"columns\", [])\n    # Variant 1: columns include 'day' (new orders and planned production)\n    if \"day\" in col_names:\n        product = row.get(\"product\")\n        day = _safe_int(row.get(\"day\"))\n        if product is None or day is None:\n            return []\n\n        inputs: List[Dict[str, Any]] = []\n\n        # Planned production (if present)\n        if \"planned production\" in col_names:\n            qty = _safe_int(row.get(\"planned production\"))\n            if qty is not None and qty > 0:\n                inputs.append(\n                    {\n                        \"id\": f\"{product}-planned-production-day{day}\",\n                        \"time\": day,\n                        \"kind\": \"planned_production\",\n                        \"entities\": [product],\n                        \"fields\": {\"quantity\": qty},\n                        \"src\": [[node[\"node_id\"], row_index, [\"planned production\"]]],\n                    }\n                )\n\n        # Sales order placed that day\n        if \"ordered\" in col_names:\n            qty = _safe_int(row.get(\"ordered\"))\n            if qty is not None and qty > 0:\n                inputs.append(\n                    {\n                        \"id\": f\"{product}-sales-order-day{day}\",\n                        \"time\": day,\n                        \"kind\": \"sales_order\",\n                        \"entities\": [product],\n                        \"fields\": {\"quantity\": qty},\n                        \"src\": [[node[\"node_id\"], row_index, [\"ordered\"]]],\n                    }\n                )\n        return inputs\n\n    # Variant 2: columns include 'day placed' and 'units still open'\n    if \"day placed\" in col_names and \"units still open\" in col_names:\n        product = row.get(\"product\")\n        day_plc = _safe_int(row.get(\"day placed\"))\n        units_open = _safe_int(row.get(\"units still open\"))\n        if product is None or day_plc is None or units_open is None:\n            return []\n\n        return [\n            {\n                \"id\": f\"{product}-open-order-day{day_plc}\",\n                \"time\": day_plc,\n                \"kind\": \"open_order\",\n                \"entities\": [product],\n                \"fields\": {\"quantity\": units_open},\n                \"src\": [\n                    [node[\"node_id\"], row_index, [\"units still open\"]],\n                    [node[\"node_id\"], row_index, [\"day placed\"]],\n                ],\n            }\n        ]\n\n    return []\n\n\ndef inputs(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Return list of input records for the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    pid_match = re.search(r\"Plant (\\d+)\", scope)\n    # plant_id = pid_match.group(1) if pid_match else None  # not used further\n\n    all_inputs: List[Dict[str, Any]] = []\n\n    # 1. Opening stock (initial state)\n    prod_node = None\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"table\" and ch.get(\"title\", \"\").endswith(\": Products\"):\n            prod_node = ch\n            break\n    if prod_node:\n        for row_index, row in table_rows(prod_node):\n            pid = row.get(\"product\")\n            if not pid:\n                continue\n            open_stock = _safe_int(row.get(\"opening stock\"))\n            if open_stock is None:\n                continue\n            all_inputs.append(\n                {\n                    \"id\": f\"{pid}-opening-stock\",\n                    \"time\": None,\n                    \"kind\": \"initial_state\",\n                    \"entities\": [pid],\n                    \"fields\": {\"opening_stock\": open_stock},\n                    \"src\": [[prod_node[\"node_id\"], row_index, [\"opening stock\"]]],\n                }\n            )\n\n    # 2. Daily production and sales orders from ledger\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"table\" and ch.get(\"title\", \"\").endswith(\": Daily ledger\"):\n            ledger_node = ch\n            break\n    if ledger_node:\n        for row_index, row in table_rows(ledger_node):\n            pid = row.get(\"product\")\n            day = _safe_int(row.get(\"day\"))\n            if pid is None or day is None:\n                continue\n\n            produced = _safe_int(row.get(\"produced\"))\n            if produced is not None and produced > 0:\n                all_inputs.append(\n                    {\n                        \"id\": f\"{pid}-production-day{day}\",\n                        \"time\": day,\n                        \"kind\": \"production\",\n                        \"entities\": [pid],\n                        \"fields\": {\"quantity\": produced},\n                        \"src\": [[ledger_node[\"node_id\"], row_index, [\"produced\"]]],\n                    }\n                )\n\n            ordered = _safe_int(row.get(\"ordered\"))\n            if ordered is not None and ordered > 0:\n                all_inputs.append(\n                    {\n                        \"id\": f\"{pid}-sales-order-day{day}\",\n                        \"time\": day,\n                        \"kind\": \"sales_order\",\n                        \"entities\": [pid],\n                        \"fields\": {\"quantity\": ordered},\n                        \"src\": [[ledger_node[\"node_id\"], row_index, [\"ordered\"]]],\n                    }\n                )\n\n    # 3. Future planned production/orders from Order book tables\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"table\" and \"Order book\" in ch.get(\"title\", \"\"):\n            for row_index, row in table_rows(ch):\n                row_inputs = _parse_order_book_row(ch, row_index, row)\n                if row_inputs:\n                    all_inputs.extend(row_inputs)\n\n    # 4. Dispatch capacity (in params)\n    return all_inputs\n\n\ndef _parse_event_line(line: str) -> Tuple[int | None, str | None, str | None]:\n    \"\"\"Extract day, event kind, and product name (if present) from an event line.\"\"\"\n    day_m = re.search(r\"Day (\\d+)\", line)\n    if not day_m:\n        return None, None, None\n    day = int(day_m.group(1))\n\n    # Product may follow colon\n    prod_m = re.search(r\":\\s*([A-Z0-9\\-]+)\", line)\n    product = prod_m.group(1) if prod_m else None\n\n    if \"dispatch capacity reached\" in line:\n        return day, \"dispatch_capacity_reached\", product\n    if \"runs out of stock\" in line:\n        return day, \"runs_out_of_stock\", product\n    if \"fully backordered\" in line:\n        return day, \"order_fully_backordered\", product\n    if \"backlog cleared\" in line:\n        return day, \"backlog_cleared\", product\n    if \"ships in full\" in line:\n        return day, \"order_shipped_in_full\", product\n    return day, \"unknown_event\", product\n\n\ndef outcomes(doc: Dict[str, Any], scope: str) -> List[Dict[str, Any]]:\n    \"\"\"Return list of outcome records for the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    out: List[Dict[str, Any]] = []\n\n    # 1. Ledger results (shipped, backordered, stock)\n    ledger_node = None\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"table\" and ch.get(\"title\", \"\").endswith(\": Daily ledger\"):\n            ledger_node = ch\n            break\n    if ledger_node:\n        for row_index, row in table_rows(ledger_node):\n            pid = row.get(\"product\")\n            day = _safe_int(row.get(\"day\"))\n            if pid is None or day is None:\n                continue\n            for kind in (\"shipped\", \"backordered\", \"stock\"):\n                val = _safe_int(row.get(kind))\n                if val is None:\n                    continue\n                out.append(\n                    {\n                        \"time\": day,\n                        \"kind\": kind,\n                        \"entities\": [pid],\n                        \"value\": val,\n                        \"src\": [[ledger_node[\"node_id\"], row_index, [kind]]],\n                    }\n                )\n\n    # 2. Events\n    for ch in children(doc, scope_node):\n        if ch.get(\"kind\") == \"list\" and \"Events\" in ch.get(\"title\", \"\"):\n            for line_index, line in enumerate(ch.get(\"lines\", [])):\n                day, kind, prod = _parse_event_line(line)\n                if day is None or kind is None:\n                    continue\n                ents = [prod] if prod else []\n                out.append(\n                    {\n                        \"time\": day,\n                        \"kind\": kind,\n                        \"entities\": ents,\n                        \"value\": None,\n                        \"src\": [[ch[\"node_id\"], line_index]],\n                    }\n                )\n            break\n\n    return out\n\n\ndef params(doc: Dict[str, Any], scope: str) -> Dict[str, Any]:\n    \"\"\"Return constant parameters stated in the scope.\"\"\"\n    scope_node = node_by_title(doc, scope)\n    params: Dict[str, Any] = {}\n\n    text = scope_node.get(\"text\", \"\")\n    # Dispatch capacity\n    cap_m = re.search(r\"Daily dispatch capacity:\\s*([\\d,]+)\\s*kg\", text)\n    if cap_m:\n        cap = int(cap_m.group(1).replace(\",\", \"\"))\n        params[\"dispatch_capacity\"] = cap\n\n    return params\n"
+   },
+   {
+    "step": "library_second_pass",
+    "report": {
+     "scopes": [
+      {
+       "scope": "Plant 2103, Period 02",
+       "start": 14.73,
+       "f1": 0.954,
+       "hidden": 576,
+       "predicted": 546,
+       "missed": [
+        {
+         "time": 15.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 8104
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 8040
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 36722
+        },
+        {
+         "time": 15.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 15.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 16144
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 28682
+        },
+        {
+         "time": 16.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 7141
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2114, Period 02",
+       "start": 14.73,
+       "f1": 0.958,
+       "hidden": 218,
+       "predicted": 210,
+       "missed": [
+        {
+         "time": 15.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 9659
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 2908
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 18681
+        },
+        {
+         "time": 15.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 15.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 12567
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 15.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 15773
+        },
+        {
+         "time": 16.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 5958
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2103, Period 05",
+       "start": 56.31,
+       "f1": 0.895,
+       "hidden": 607,
+       "predicted": 546,
+       "missed": [
+        {
+         "time": 57.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 12014
+        },
+        {
+         "time": 57.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 1627
+        },
+        {
+         "time": 57.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 58.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 10269
+        }
+       ],
+       "extra": [
+        {
+         "time": 57.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 13641
+        },
+        {
+         "time": 57.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 58.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 8642
+        },
+        {
+         "time": 60.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 14023
+        }
+       ]
+      },
+      {
+       "scope": "Plant 1914, Period 06",
+       "start": 70.17,
+       "f1": 0.985,
+       "hidden": 303,
+       "predicted": 294,
+       "missed": [
+        {
+         "time": 73.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 75.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 75.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        },
+        {
+         "time": 77.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": []
+      },
+      {
+       "scope": "Plant 2114, Period 06",
+       "start": 70.17,
+       "f1": 0.633,
+       "hidden": 267,
+       "predicted": 210,
+       "missed": [
+        {
+         "time": 71.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 8453
+        },
+        {
+         "time": 71.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 16571
+        },
+        {
+         "time": 71.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 30887
+        },
+        {
+         "time": 71.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 71.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 25024
+        },
+        {
+         "time": 71.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 71.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS005L04P"
+         ],
+         "value": 14316
+        },
+        {
+         "time": 72.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS003L04P"
+         ],
+         "value": 0
+        }
+       ]
+      },
+      {
+       "scope": "Plant 2103, Period 08",
+       "start": 97.89,
+       "f1": 0.881,
+       "hidden": 614,
+       "predicted": 585,
+       "missed": [
+        {
+         "time": 99.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 4440
+        },
+        {
+         "time": 99.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 15018
+        },
+        {
+         "time": 99.0,
+         "kind": "recorded stock",
+         "entities": [
+          "SOS001L12P"
+         ],
+         "value": 36489
+        },
+        {
+         "time": 99.0,
+         "kind": "event",
+         "entities": [],
+         "value": null
+        }
+       ],
+       "extra": [
+        {
+         "time": 98.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "POP500M24P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 98.0,
+         "kind": "recorded backordered",
+         "entities": [
+          "POP500M24P"
+         ],
+         "value": 0
+        },
+        {
+         "time": 98.0,
+         "kind": "recorded stock",
+         "entities": [
+          "POP500M24P"
+         ],
+         "value": 507
+        },
+        {
+         "time": 98.0,
+         "kind": "recorded shipped",
+         "entities": [
+          "POP001L12P-B"
+         ],
+         "value": 0
+        }
+       ]
+      }
+     ],
+     "mean_f1": 0.884,
+     "passed": true,
+     "error": null,
+     "sensitive": true,
+     "schedule_kinds": []
+    },
+    "source": "mfg_d03"
+   }
+  ],
+  "failed_step": null,
+  "first_pass": {
+   "passed": false,
+   "mean_f1": 0.0,
+   "failed_step": "parsers"
+  },
+  "reused_from": "mfg_d03",
+  "second_pass": true
+ },
+ "latency_s": 80.58168530464172,
+ "usage": {
+  "input_tokens": 13805,
+  "cached_input_tokens": 3200,
+  "output_tokens": 10717,
+  "reasoning_tokens": 4783,
+  "llm_calls": 3,
+  "total_tokens": 24522
+ }
+}

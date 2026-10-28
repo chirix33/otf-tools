@@ -16,7 +16,7 @@ import time
 from openai import OpenAI
 
 from ..data import QAItem
-from ..llm import chat_sampling, chat_usage, endpoint_key
+from ..llm import chat_sampling, chat_usage, endpoint_key, request_timeout, with_backoff
 from ..render import extract_pdf_pages
 from .base import Document, Prediction, QASystem, SetupResult, Usage
 
@@ -43,7 +43,7 @@ class FullContextSystem(QASystem):
         self.doc_mode = doc_mode
         self.name = f"full_context_{doc_mode}"
         if self.spec.is_local:
-            self.client = OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=1800)
+            self.client = OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=request_timeout(self.spec))
         else:
             self.client = OpenAI(max_retries=6, timeout=600)
 
@@ -106,7 +106,8 @@ class FullContextSystem(QASystem):
 
     def _answer_chat(self, instructions: str, prompt: str) -> Prediction:
         t = time.time()
-        resp = self.client.chat.completions.create(
+        resp = with_backoff(
+            self.client.chat.completions.create,
             model=self.spec.served_name,
             messages=[{"role": "system", "content": instructions},
                       {"role": "user", "content": self.doc_text + "\n\n" + prompt}],

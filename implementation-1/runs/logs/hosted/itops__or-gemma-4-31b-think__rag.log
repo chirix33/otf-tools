@@ -1,0 +1,68 @@
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 6
+[rag] setup: 0 tokens, 62.5s {'chunks': 110, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] error on itops-w04-03: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on itops-w04-01: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on itops-w07-01: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 10/60  correct=1  errors=8  2099s
+[rag] 20/60  correct=1  errors=18  2101s
+[rag] 30/60  correct=1  errors=28  2104s
+[rag] 40/60  correct=3  errors=32  2478s
+
+=== 2026-10-26T14:50:16 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 4
+[rag] setup: 0 tokens, 0.0s {'chunks': 110, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 8 already answered, 52 to go
+[rag] 10/52  correct=3  errors=0  564s
+[rag] 20/52  correct=7  errors=0  1076s
+[rag] 30/52  correct=8  errors=0  1753s
+[rag] 40/52  correct=9  errors=0  2677s
+[rag] 50/52  correct=11  errors=0  3561s
+[rag] 52/52  correct=12  errors=0  3627s
+[rag] setup: 0 tokens, 7.2s {'chunks': 124, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=1  errors=0  751s
+[rag] 20/60  correct=4  errors=0  1762s
+[rag] error on itops-w14-04: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 30/60  correct=5  errors=1  3113s
+[rag] 40/60  correct=7  errors=1  3788s
+[rag] 50/60  correct=12  errors=1  4641s
+[rag] 60/60  correct=12  errors=2  6494s
+[rag] error on itops-w24-07: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] setup: 0 tokens, 4.7s {'chunks': 109, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=1  errors=0  883s
+[rag] 20/60  correct=2  errors=0  1852s
+[rag] 30/60  correct=4  errors=0  3113s
+[rag] 40/60  correct=7  errors=0  3860s
+[rag] 50/60  correct=12  errors=0  4770s
+[rag] 60/60  correct=13  errors=0  5661s
+[rag] setup: 0 tokens, 6.4s {'chunks': 104, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=4  errors=0  604s
+[rag] 20/60  correct=7  errors=0  1344s
+[rag] 30/60  correct=7  errors=0  2140s
+[rag] 40/60  correct=11  errors=0  3093s
+[rag] 50/60  correct=12  errors=0  3661s
+[rag] 60/60  correct=15  errors=0  4360s
+[rag] setup: 0 tokens, 5.1s {'chunks': 105, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=3  errors=0  674s
+[rag] 20/60  correct=5  errors=0  1851s
+[rag] 30/60  correct=8  errors=0  2354s
+[rag] 40/60  correct=13  errors=0  2854s
+[rag] 50/60  correct=16  errors=0  3385s
+[rag] 60/60  correct=18  errors=0  4339s
+
+=== 2026-10-27T12:06:21 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 4
+[rag] setup: 0 tokens, 0.1s {'chunks': 110, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 124, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 58 already answered, 2 to go
+[rag] 2/2  correct=1  errors=0  131s
+[rag] setup: 0 tokens, 0.0s {'chunks': 109, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 104, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 105, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go

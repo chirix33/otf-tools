@@ -1,0 +1,322 @@
+
+=== 2026-10-25T15:05:56 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-qwen3.6-27b --workers 8
+[rag] setup: 0 tokens, 78.6s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 148 to go
+[rag] 10/148  correct=6  errors=0  65s
+[rag] 20/148  correct=12  errors=0  97s
+[rag] 30/148  correct=14  errors=0  148s
+[rag] 40/148  correct=18  errors=0  176s
+[rag] 50/148  correct=22  errors=0  218s
+[rag] 60/148  correct=27  errors=0  260s
+[rag] 70/148  correct=31  errors=0  311s
+[rag] 80/148  correct=36  errors=0  372s
+[rag] 90/148  correct=39  errors=0  431s
+[rag] 100/148  correct=42  errors=0  484s
+[rag] 110/148  correct=47  errors=0  520s
+
+=== 2026-10-25T15:28:28 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 118 already answered, 30 to go
+[rag] 10/30  correct=3  errors=0  78s
+[rag] 20/30  correct=10  errors=0  126s
+[rag] 30/30  correct=14  errors=0  229s
+[rag] setup: 0 tokens, 8.5s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 141 to go
+[rag] 10/141  correct=3  errors=0  235s
+[rag] 20/141  correct=7  errors=0  395s
+[rag] 30/141  correct=12  errors=0  481s
+[rag] 40/141  correct=16  errors=0  576s
+[rag] 50/141  correct=21  errors=0  620s
+[rag] 60/141  correct=24  errors=0  695s
+[rag] 70/141  correct=29  errors=0  738s
+[rag] 80/141  correct=36  errors=0  780s
+[rag] 90/141  correct=42  errors=0  850s
+[rag] 100/141  correct=51  errors=0  901s
+[rag] 110/141  correct=57  errors=0  990s
+[rag] 120/141  correct=63  errors=0  1026s
+[rag] 130/141  correct=69  errors=0  1082s
+[rag] 140/141  correct=76  errors=0  1195s
+[rag] 141/141  correct=76  errors=0  1200s
+[rag] setup: 0 tokens, 6.9s {'chunks': 186, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 132 to go
+[rag] 10/132  correct=7  errors=0  347s
+[rag] 20/132  correct=12  errors=0  440s
+[rag] 30/132  correct=20  errors=0  494s
+[rag] 40/132  correct=26  errors=0  558s
+[rag] 50/132  correct=34  errors=0  611s
+[rag] 60/132  correct=40  errors=0  685s
+[rag] 70/132  correct=46  errors=0  745s
+[rag] 80/132  correct=53  errors=0  799s
+[rag] 90/132  correct=58  errors=0  833s
+[rag] 100/132  correct=63  errors=0  912s
+[rag] 110/132  correct=65  errors=0  969s
+[rag] 120/132  correct=69  errors=0  1047s
+[rag] 130/132  correct=71  errors=0  1102s
+[rag] 132/132  correct=71  errors=0  1110s
+[rag] setup: 0 tokens, 12.3s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 139 to go
+[rag] 10/139  correct=6  errors=0  536s
+[rag] 20/139  correct=14  errors=0  672s
+[rag] 30/139  correct=20  errors=0  823s
+[rag] 40/139  correct=24  errors=0  990s
+[rag] 50/139  correct=29  errors=0  1117s
+[rag] 60/139  correct=32  errors=0  1278s
+[rag] 70/139  correct=39  errors=0  1417s
+[rag] 80/139  correct=43  errors=0  1538s
+[rag] 90/139  correct=50  errors=0  1612s
+[rag] 100/139  correct=56  errors=0  1661s
+[rag] error on 13948-13: JSONDecodeError: Expecting value: line 25 column 1 (char 132)
+[rag] 110/139  correct=61  errors=1  1747s
+[rag] error on 14284-5: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on 14284-9: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 120/139  correct=63  errors=4  1783s
+[rag] 130/139  correct=64  errors=13  1787s
+[rag] 139/139  correct=64  errors=15  1881s
+
+=== 2026-10-25T22:34:47 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 148 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 141 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 186, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 132 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 124 already answered, 15 to go
+[rag] 10/15  correct=8  errors=0  49s
+[rag] 15/15  correct=10  errors=0  94s
+[rag] setup: 0 tokens, 0.0s {'chunks': 181, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 8 already answered, 126 to go
+[rag] 10/126  correct=6  errors=0  48s
+[rag] 20/126  correct=12  errors=0  99s
+[rag] 30/126  correct=20  errors=0  137s
+[rag] 40/126  correct=25  errors=0  220s
+[rag] 50/126  correct=33  errors=0  261s
+[rag] 60/126  correct=38  errors=0  327s
+[rag] 70/126  correct=44  errors=0  377s
+[rag] 80/126  correct=48  errors=0  452s
+[rag] 90/126  correct=54  errors=0  509s
+[rag] 100/126  correct=61  errors=0  555s
+[rag] 110/126  correct=63  errors=0  611s
+[rag] 120/126  correct=67  errors=0  646s
+[rag] 126/126  correct=68  errors=0  694s
+[rag] setup: 0 tokens, 6.7s {'chunks': 172, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 149 to go
+[rag] 10/149  correct=9  errors=0  63s
+[rag] 20/149  correct=16  errors=0  131s
+[rag] 30/149  correct=21  errors=0  176s
+[rag] 40/149  correct=27  errors=0  216s
+[rag] 50/149  correct=31  errors=0  277s
+[rag] 60/149  correct=36  errors=0  319s
+[rag] 70/149  correct=39  errors=0  381s
+[rag] 80/149  correct=44  errors=0  446s
+[rag] 90/149  correct=47  errors=0  498s
+[rag] 100/149  correct=53  errors=0  565s
+[rag] 110/149  correct=59  errors=0  614s
+[rag] 120/149  correct=65  errors=0  670s
+[rag] 130/149  correct=68  errors=0  746s
+[rag] 140/149  correct=73  errors=0  822s
+
+=== 2026-10-26T11:10:08 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 148 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 141 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 186, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 132 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 139 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 181, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 134 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 172, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 146 already answered, 3 to go
+[rag] 3/3  correct=2  errors=0  144s
+[rag] setup: 0 tokens, 8.9s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 155 to go
+[rag] 10/155  correct=5  errors=0  80s
+[rag] 20/155  correct=10  errors=0  129s
+[rag] 30/155  correct=17  errors=0  186s
+[rag] 40/155  correct=21  errors=0  235s
+[rag] 50/155  correct=26  errors=0  272s
+[rag] 60/155  correct=29  errors=0  346s
+[rag] 70/155  correct=34  errors=0  382s
+[rag] 80/155  correct=38  errors=0  446s
+[rag] 90/155  correct=45  errors=0  485s
+[rag] 100/155  correct=50  errors=0  544s
+[rag] 110/155  correct=55  errors=0  598s
+[rag] 120/155  correct=60  errors=0  649s
+[rag] 130/155  correct=64  errors=0  734s
+[rag] 140/155  correct=69  errors=0  782s
+[rag] 150/155  correct=75  errors=0  829s
+[rag] 155/155  correct=76  errors=0  874s
+[rag] setup: 0 tokens, 8.7s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 160 to go
+[rag] 10/160  correct=7  errors=0  49s
+[rag] 20/160  correct=11  errors=0  110s
+[rag] 30/160  correct=17  errors=0  164s
+[rag] 40/160  correct=21  errors=0  215s
+[rag] 50/160  correct=27  errors=0  259s
+[rag] 60/160  correct=30  errors=0  358s
+[rag] 70/160  correct=36  errors=0  406s
+[rag] 80/160  correct=40  errors=0  469s
+[rag] 90/160  correct=45  errors=0  546s
+[rag] 100/160  correct=51  errors=0  584s
+[rag] 110/160  correct=56  errors=0  633s
+[rag] 120/160  correct=61  errors=0  676s
+[rag] 130/160  correct=68  errors=0  748s
+[rag] 140/160  correct=73  errors=0  785s
+[rag] 150/160  correct=78  errors=0  844s
+[rag] 160/160  correct=83  errors=0  899s
+[rag] setup: 0 tokens, 7.4s {'chunks': 175, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 147 to go
+[rag] 10/147  correct=5  errors=0  49s
+[rag] 20/147  correct=10  errors=0  89s
+[rag] 30/147  correct=15  errors=0  144s
+[rag] 40/147  correct=20  errors=0  224s
+[rag] 50/147  correct=25  errors=0  347s
+[rag] 60/147  correct=32  errors=0  416s
+[rag] 70/147  correct=35  errors=0  474s
+[rag] 80/147  correct=38  errors=0  528s
+[rag] 90/147  correct=44  errors=0  598s
+[rag] error on 12821-12: JSONDecodeError: Expecting value: line 59 column 1 (char 319)
+[rag] 100/147  correct=47  errors=1  668s
+[rag] 110/147  correct=54  errors=1  718s
+[rag] 120/147  correct=63  errors=1  755s
+[rag] 130/147  correct=67  errors=1  841s
+[rag] 140/147  correct=71  errors=1  887s
+[rag] 147/147  correct=76  errors=1  933s
+[rag] setup: 0 tokens, 8.4s {'chunks': 184, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 158 to go
+[rag] 10/158  correct=6  errors=0  51s
+[rag] 20/158  correct=10  errors=0  110s
+[rag] 30/158  correct=16  errors=0  154s
+[rag] 40/158  correct=22  errors=0  208s
+[rag] 50/158  correct=29  errors=0  274s
+[rag] 60/158  correct=32  errors=0  342s
+[rag] 70/158  correct=37  errors=0  375s
+[rag] 80/158  correct=43  errors=0  431s
+[rag] 90/158  correct=46  errors=0  500s
+[rag] 100/158  correct=52  errors=0  527s
+[rag] 110/158  correct=57  errors=0  592s
+[rag] 120/158  correct=60  errors=0  674s
+[rag] 130/158  correct=64  errors=0  739s
+[rag] 140/158  correct=69  errors=0  773s
+[rag] 150/158  correct=75  errors=0  816s
+[rag] 158/158  correct=77  errors=0  931s
+[rag] setup: 0 tokens, 7.9s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 149 to go
+[rag] 10/149  correct=8  errors=0  64s
+[rag] 20/149  correct=15  errors=0  107s
+[rag] 30/149  correct=23  errors=0  146s
+[rag] 40/149  correct=27  errors=0  206s
+[rag] 50/149  correct=34  errors=0  233s
+[rag] 60/149  correct=42  errors=0  284s
+[rag] 70/149  correct=45  errors=0  346s
+[rag] 80/149  correct=50  errors=0  407s
+[rag] 90/149  correct=57  errors=0  486s
+[rag] 100/149  correct=60  errors=0  564s
+[rag] 110/149  correct=64  errors=0  620s
+[rag] 120/149  correct=68  errors=0  674s
+[rag] 130/149  correct=74  errors=0  716s
+[rag] 140/149  correct=79  errors=0  761s
+[rag] 149/149  correct=81  errors=0  835s
+[rag] setup: 0 tokens, 7.7s {'chunks': 180, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 124 to go
+[rag] 10/124  correct=6  errors=0  64s
+[rag] 20/124  correct=11  errors=0  109s
+[rag] 30/124  correct=15  errors=0  174s
+[rag] 40/124  correct=20  errors=0  239s
+[rag] 50/124  correct=27  errors=0  298s
+[rag] 60/124  correct=31  errors=0  352s
+[rag] 70/124  correct=35  errors=0  415s
+[rag] 80/124  correct=44  errors=0  456s
+[rag] 90/124  correct=49  errors=0  502s
+[rag] 100/124  correct=55  errors=0  563s
+[rag] 110/124  correct=60  errors=0  613s
+[rag] 120/124  correct=63  errors=0  676s
+[rag] error on 14715-12: JSONDecodeError: Expecting value: line 63 column 1 (char 341)
+[rag] 124/124  correct=64  errors=1  712s
+[rag] setup: 0 tokens, 6.8s {'chunks': 166, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 141 to go
+[rag] 10/141  correct=6  errors=0  56s
+[rag] 20/141  correct=12  errors=0  107s
+[rag] 30/141  correct=19  errors=0  168s
+[rag] 40/141  correct=23  errors=0  225s
+[rag] 50/141  correct=31  errors=0  282s
+[rag] 60/141  correct=37  errors=0  339s
+[rag] 70/141  correct=41  errors=0  402s
+[rag] 80/141  correct=49  errors=0  450s
+[rag] 90/141  correct=52  errors=0  515s
+[rag] 100/141  correct=57  errors=0  579s
+[rag] 110/141  correct=62  errors=0  644s
+[rag] 120/141  correct=68  errors=0  704s
+[rag] 130/141  correct=74  errors=0  764s
+[rag] 140/141  correct=78  errors=0  816s
+[rag] 141/141  correct=79  errors=0  848s
+[rag] setup: 0 tokens, 7.6s {'chunks': 185, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 147 to go
+[rag] 10/147  correct=8  errors=0  60s
+[rag] 20/147  correct=14  errors=0  117s
+[rag] 30/147  correct=20  errors=0  173s
+[rag] 40/147  correct=24  errors=0  222s
+[rag] 50/147  correct=29  errors=0  273s
+[rag] 60/147  correct=34  errors=0  318s
+[rag] 70/147  correct=42  errors=0  367s
+[rag] 80/147  correct=47  errors=0  433s
+[rag] 90/147  correct=49  errors=0  506s
+[rag] 100/147  correct=53  errors=0  550s
+[rag] 110/147  correct=60  errors=0  605s
+[rag] 120/147  correct=68  errors=0  658s
+[rag] 130/147  correct=72  errors=0  711s
+[rag] 140/147  correct=78  errors=0  759s
+[rag] 147/147  correct=79  errors=0  842s
+[rag] setup: 0 tokens, 7.5s {'chunks': 180, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 142 to go
+[rag] 10/142  correct=7  errors=0  47s
+[rag] 20/142  correct=14  errors=0  109s
+[rag] 30/142  correct=20  errors=0  164s
+[rag] 40/142  correct=26  errors=0  233s
+[rag] 50/142  correct=30  errors=0  326s
+[rag] 60/142  correct=36  errors=0  435s
+[rag] 70/142  correct=39  errors=0  477s
+[rag] 80/142  correct=46  errors=0  523s
+[rag] 90/142  correct=51  errors=0  590s
+[rag] 100/142  correct=59  errors=0  638s
+[rag] 110/142  correct=63  errors=0  689s
+[rag] 120/142  correct=70  errors=0  736s
+[rag] 130/142  correct=73  errors=0  799s
+[rag] 140/142  correct=79  errors=0  894s
+[rag] 142/142  correct=79  errors=0  930s
+
+=== 2026-10-26T13:23:51 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 148 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 141 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 186, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 132 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 139 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 181, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 134 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 172, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 149 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 155 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 176, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 160 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 175, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 146 already answered, 1 to go
+[rag] 1/1  correct=0  errors=0  55s
+[rag] setup: 0 tokens, 0.0s {'chunks': 184, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 158 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 178, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 149 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 180, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 123 already answered, 1 to go
+[rag] 1/1  correct=1  errors=0  43s
+[rag] setup: 0 tokens, 0.0s {'chunks': 166, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 141 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 185, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 147 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 180, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 142 already answered, 0 to go

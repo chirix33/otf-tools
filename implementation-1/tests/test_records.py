@@ -196,6 +196,89 @@ def test_step1_probes_catch_mislabelled_readers():
         assert not rep["passed"], rep
 
 
+def test_schedule_rows_are_not_outcomes():
+    """Value-less records, one per row of a table at regular times, only mark that a row exists: a reader whose
+    only outcomes are such rows is rejected, and a model forecasting them cannot pass. Sparse events stay."""
+    nav = timed_nav()
+    idx = {n["node_id"]: n for n in nav["nodes"]}
+    log = next(n for n in nav["nodes"] if n["title"] == "Unit A: Log")["node_id"]
+    rows = [{"time": float(t), "kind": "row", "entities": ["A"], "value": None, "src": [[log, t - 1]]} for t in range(1, 9)]
+    assert records.schedule_kinds(rows, idx) == {"row"}
+    events = [{"time": 3.0, "kind": "peak", "entities": ["A"], "value": None, "src": [[log, 2]]},
+              {"time": 7.0, "kind": "peak", "entities": ["A"], "value": None, "src": [[log, 6]]}]
+    assert records.schedule_kinds(events + rows[:3], idx) == set()           # sparse, and too few rows
+    ticks = READERS_T.split("def outcomes")[0] + r'''
+def outcomes(doc, scope):
+    n = _log(doc, scope)
+    return [{"time": float(r["t"]), "kind": "row", "entities": [r["who"]], "value": None,
+             "src": [[n["node_id"], i, ["t", "who", "level"]]]} for i, r in table_rows(n)]
+'''
+    with tempfile.TemporaryDirectory() as d:
+        rep = toolgen.check_parsers(ticks, nav, _map(nav, d))
+        assert not rep["passed"] and "regularly spaced times" in rep["error"], rep
+
+
+def test_unread_trajectory_is_blinded():
+    """Post-freeze bug fix 9: a timed table no record is read from (here a track mirroring the levels) is hidden
+    after the cut too, so a simulator cannot forecast by reading it; tables without a time axis stay."""
+    nav = timed_nav()
+    for n in list(nav["nodes"]):
+        if n["kind"] == "table":
+            k = len(nav["nodes"])
+            track = {"node_id": f"t{k:04d}", "title": n["title"].replace("Log", "Track"), "level": 1,
+                     "parent_id": n["parent_id"], "kind": "table", "pages": [1, 1], "children": [],
+                     "table": {"columns": ["step", "reading"], "rows": [[r[0], r[3]] for r in n["table"]["rows"]]}}
+            static = {"node_id": f"s{k:04d}", "title": n["title"].replace("Log", "Spec"), "level": 1,
+                      "parent_id": n["parent_id"], "kind": "table", "pages": [1, 1], "children": [],
+                      "table": {"columns": ["part", "size"], "rows": [["p", "4"], ["q", "2"], ["r", "9"]]}}
+            nav["nodes"] += [track, static]
+            next(m for m in nav["nodes"] if m["node_id"] == n["parent_id"])["children"] += [track["node_id"],
+                                                                                          static["node_id"]]
+    peek = r'''
+def simulate(doc, scope, inputs, params, start=None, horizon=None):
+    return [{"time": float(r["step"]), "kind": "level", "entities": [scope[-1]], "value": float(r["reading"])}
+            for _, r in table_rows(node_by_title(doc, scope + ": Track")) if float(r["step"]) > (start or 0)]
+'''
+    with tempfile.TemporaryDirectory() as d:
+        mp = _map(nav, d)
+        r = toolgen.read_scope(READERS_T + SIM_HONEST, mp, "Unit A")
+        cut = toolgen._cut(r)
+        b = records.blind(nav, "Unit A", r["inputs"], r["outcomes"], cut, (r["t0"], r["end"]))
+        track = next(n for n in b["nodes"] if n["title"] == "Unit A: Track")["table"]["rows"]
+        assert len(track) < 8 and all(float(row[0]) <= cut for row in track)
+        assert next(n for n in b["nodes"] if n["title"] == "Unit A: Spec")["table"]["rows"] == [["p", "4"], ["q", "2"], ["r", "9"]]
+        assert toolgen.check_model(READERS_T + SIM_HONEST, nav, mp)["passed"]
+        assert toolgen.check_model(READERS_T + peek, nav, mp)["mean_f1"] == 0.0
+
+
+def test_paired_delta_cancels_model_error():
+    """v3.4: a what-if applies the difference between the model run without and with the change to the record. A
+    value the model gets wrong in both runs keeps its recorded value; an outcome the model reproduces late is still
+    recognised; one it never reproduces is judged by the changed run alone (as before v3.4)."""
+    rec = [{"time": 5.0, "kind": "hit", "entities": ["A", "B"], "value": None},
+           {"time": 7.0, "kind": "hit", "entities": ["B", "C"], "value": None},
+           {"time": 9.0, "kind": "level", "entities": ["C"], "value": 10.0},
+           {"time": 9.0, "kind": "stock", "entities": ["D"], "value": 500.0}]
+    base = [{"time": 6.5, "kind": "hit", "entities": ["A", "B"], "value": None},       # reproduced late
+            {"time": 9.0, "kind": "level", "entities": ["C"], "value": 10.0},
+            {"time": 9.0, "kind": "stock", "entities": ["D"], "value": 0.0}]           # wrong in both runs
+    new = [{"time": 9.0, "kind": "level", "entities": ["C"], "value": 12.0},            # A-B gone, level changes
+           {"time": 9.0, "kind": "stock", "entities": ["D"], "value": 0.0},
+           {"time": 8.0, "kind": "hit", "entities": ["A", "C"], "value": None}]
+    out = records.apply_delta(rec, base, new, 0.5, {}, None, 4.0, 10.0)
+    kinds = {(o["time"], o["kind"], tuple(o["entities"])): o.get("value") for o in out}
+    assert (5.0, "hit", ("A", "B")) not in kinds                                     # removed by the change
+    assert kinds[(9.0, "stock", ("D",))] == 500.0                                    # model error cancels out
+    assert (7.0, "hit", ("B", "C")) not in kinds                                     # never reproduced, not in new run
+    assert kinds[(9.0, "level", ("C",))] == 12.0 and (8.0, "hit", ("A", "C")) in kinds
+    # a small change is still a change, applied to the recorded value (the model's level is off by 100)
+    rec2 = [{"time": 9.0, "kind": "stock", "entities": ["E"], "value": 75.0}]
+    out2 = records.apply_delta(rec2, [{"time": 9.0, "kind": "stock", "entities": ["E"], "value": 175.0}],
+                               [{"time": 9.0, "kind": "stock", "entities": ["E"], "value": 230.0}], 0.5,
+                               {"stock": 1000.0}, None, 4.0, 10.0)
+    assert out2[0]["value"] == 130.0
+
+
 def test_timeless_check():
     nav = timeless_nav()
     with tempfile.TemporaryDirectory() as d:

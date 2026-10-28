@@ -1,0 +1,78 @@
+parsers attempt 1: passed
+explore 1: ok, 926 chars
+explore 2: ok, 695 chars
+explore 3: ok, 113 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 08' (start 15.08): F1 0.0, 136 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 27.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 27.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 43.0, "machine": "M01"}}, {"time": 46.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 46.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 62.0}}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 1.88): F1 0.0, 166 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 15.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 15.0, "machine": "M01"}}, {"time": 50.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 50.0}}, {"time": 62.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.07): F1 0.0, 194 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 38.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 38.0, "machine": "M01"}}, {"time": 98.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 98.0, "machine": "M02"}}, {"time": 99.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 99.0, "machine": "M01"}}, {"time": 100.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 100.0, "machine": "M03"}}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -5.97): F1 0.0, 260 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 6.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 6.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 43.0, "machine": "M02"}}, {"time": 44.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 44.0, "machine": "M01"}}, {"time": 45.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 45.0, "machine": "M03"}}]; extra (produced but not hidden): []
+simulate attempt 2 (after 3 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpu3vztc9_\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 662, in simulate
+  File "<string>", line 503, in process_submissions
+  File "<string>", line 374, in __init__
+KeyError: 'run_time'
+explore 4: ok, 272 chars
+explore 5: ok, 694 chars
+simulate attempt 3 (after 5 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpcdae9z0z\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 606, in simulate
+  File "<string>", line 468, in process_submissions
+  File "<string>", line 361, in __init__
+KeyError: 'run time'
+simulator conversation 1: best F1 0.0
+explore 1: ok, 3000 chars
+explore 2: ok, 317 chars
+explore 3: ok, 99 chars
+simulate attempt 1 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 08' (start 15.08): F1 0.0, 136 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 27.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 27.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 43.0, "machine": "M01"}}, {"time": 46.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 46.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 62.0}}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 1.88): F1 0.0, 166 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 15.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 15.0, "machine": "M01"}}, {"time": 50.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 50.0}}, {"time": 62.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.07): F1 0.0, 194 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 38.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 38.0, "machine": "M01"}}, {"time": 98.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 98.0, "machine": "M02"}}, {"time": 99.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 99.0, "machine": "M01"}}, {"time": 100.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 100.0, "machine": "M03"}}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -5.97): F1 0.0, 260 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 6.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 6.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 43.0, "machine": "M02"}}, {"time": 44.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 44.0, "machine": "M01"}}, {"time": 45.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 45.0, "machine": "M03"}}]; extra (produced but not hidden): []
+simulate attempt 2 (after 3 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpbpmizrjj\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 486, in simulate
+NameError: name 'queue' is not defined. Did you forget to import 'queue'?
+simulate attempt 3 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 08' (start 15.08): F1 0.0, 136 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 27.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 27.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 43.0, "machine": "M01"}}, {"time": 46.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 46.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 62.0}}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 1.88): F1 0.0, 166 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 15.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 15.0, "machine": "M01"}}, {"time": 50.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 50.0}}, {"time": 62.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.07): F1 0.0, 194 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 38.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 38.0, "machine": "M01"}}, {"time": 98.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 98.0, "machine": "M02"}}, {"time": 99.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 99.0, "machine": "M01"}}, {"time": 100.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 100.0, "machine": "M03"}}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -5.97): F1 0.0, 260 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 6.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 6.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 43.0, "machine": "M02"}}, {"time": 44.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 44.0, "machine": "M01"}}, {"time": 45.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 45.0, "machine": "M03"}}]; extra (produced but not hidden): []
+simulator conversation 2: best F1 0.0
+explore 1: ok, 504 chars
+explore 2: error, 83 chars
+explore 3: ok, 360 chars
+simulate attempt 1 (after 3 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpz9w_hg8u\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 402, in simulate
+KeyError: 'task'
+simulate attempt 2 (after 3 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpwklwugng\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 400, in simulate
+KeyError: 'task'
+simulate attempt 3 (after 3 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmp9gj74140\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 389, in simulate
+KeyError: 'task'
+simulate attempt 4 (after 3 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Cell window 08' (start 15.08): F1 0.0, 136 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 27.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 27.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 43.0, "machine": "M01"}}, {"time": 46.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 46.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 62.0}}]; extra (produced but not hidden): []
+- scope 'Cell window 17' (start 1.88): F1 0.0, 166 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 15.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 15.0, "machine": "M01"}}, {"time": 50.0, "kind": "task_finish", "entities": ["T001", "M01"], "value": null, "fields": {"time": 50.0}}, {"time": 62.0, "kind": "task_start", "entities": ["T002", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}, {"time": 62.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 62.0, "machine": "M01"}}]; extra (produced but not hidden): []
+- scope 'Cell window 27' (start 26.07): F1 0.0, 194 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 38.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 38.0, "machine": "M01"}}, {"time": 98.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 98.0, "machine": "M02"}}, {"time": 99.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 99.0, "machine": "M01"}}, {"time": 100.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 100.0, "machine": "M03"}}]; extra (produced but not hidden): []
+- scope 'Cell window 30' (start -5.97): F1 0.0, 260 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 6.0, "kind": "task_start", "entities": ["T001", "M01"], "value": null, "fields": {"time": 6.0, "machine": "M01"}}, {"time": 43.0, "kind": "task_start", "entities": ["T002", "M02"], "value": null, "fields": {"time": 43.0, "machine": "M02"}}, {"time": 44.0, "kind": "task_start", "entities": ["T003", "M01"], "value": null, "fields": {"time": 44.0, "machine": "M01"}}, {"time": 45.0, "kind": "task_start", "entities": ["T004", "M03"], "value": null, "fields": {"time": 45.0, "machine": "M03"}}]; extra (produced but not hidden): []
+simulate attempt 5 (after 3 explore runs): simulate('Cell window 08', start=15.08) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpud38r_rt\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 381, in simulate
+KeyError: 'task'
+simulator conversation 3: best F1 0.0

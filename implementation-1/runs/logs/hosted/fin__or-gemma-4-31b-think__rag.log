@@ -1,0 +1,48 @@
+
+=== 2026-10-26T15:43:07 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run fin_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 4
+[rag] setup: 0 tokens, 24.4s {'chunks': 302, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 100 to go
+[rag] 10/100  correct=6  errors=0  262s
+[rag] 20/100  correct=14  errors=0  821s
+[rag] 30/100  correct=22  errors=0  1522s
+[rag] 40/100  correct=29  errors=0  1947s
+[rag] 50/100  correct=38  errors=0  2204s
+[rag] 60/100  correct=48  errors=0  2488s
+[rag] 70/100  correct=57  errors=0  2717s
+[rag] 80/100  correct=61  errors=0  3191s
+[rag] 90/100  correct=68  errors=0  3451s
+[rag] 100/100  correct=75  errors=0  3872s
+[rag] setup: 0 tokens, 13.2s {'chunks': 301, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 100 to go
+[rag] 10/100  correct=9  errors=0  233s
+[rag] 20/100  correct=16  errors=0  677s
+[rag] 30/100  correct=24  errors=0  863s
+[rag] 40/100  correct=31  errors=0  1331s
+[rag] 50/100  correct=39  errors=0  2001s
+[rag] 60/100  correct=47  errors=0  3198s
+[rag] 70/100  correct=54  errors=0  3868s
+[rag] 80/100  correct=63  errors=0  4291s
+[rag] 90/100  correct=71  errors=0  5465s
+[rag] error on fin-172-01: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Crusoe', 'is_byok': False, 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing'}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 100/100  correct=76  errors=1  6812s
+[rag] setup: 0 tokens, 12.6s {'chunks': 288, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 100 to go
+[rag] 10/100  correct=7  errors=0  335s
+[rag] 20/100  correct=14  errors=0  483s
+[rag] 30/100  correct=21  errors=0  798s
+[rag] 40/100  correct=29  errors=0  1378s
+[rag] 50/100  correct=35  errors=0  1769s
+[rag] 60/100  correct=42  errors=0  2146s
+[rag] 70/100  correct=48  errors=0  2273s
+[rag] 80/100  correct=55  errors=0  2456s
+[rag] 90/100  correct=61  errors=0  2746s
+[rag] 100/100  correct=67  errors=0  3033s
+
+=== 2026-10-26T19:32:37 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run fin_d[0-9]* --system rag --model or-gemma-4-31b-think --workers 4
+[rag] setup: 0 tokens, 0.0s {'chunks': 302, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 100 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 301, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 99 already answered, 1 to go
+[rag] 1/1  correct=1  errors=0  48s
+[rag] setup: 0 tokens, 0.0s {'chunks': 288, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 100 already answered, 0 to go

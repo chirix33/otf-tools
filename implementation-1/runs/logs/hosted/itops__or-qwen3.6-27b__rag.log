@@ -1,0 +1,64 @@
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 45.8s {'chunks': 110, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=3  errors=0  252s
+[rag] 20/60  correct=6  errors=0  356s
+[rag] 30/60  correct=7  errors=0  501s
+[rag] 40/60  correct=8  errors=0  602s
+[rag] 50/60  correct=12  errors=0  720s
+[rag] 60/60  correct=14  errors=0  1977s
+[rag] setup: 0 tokens, 10.1s {'chunks': 124, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] error on itops-w10-02: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on itops-w10-07: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 10/60  correct=1  errors=2  349s
+
+=== 2026-10-26T11:17:40 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 110, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 124, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 15 already answered, 45 to go
+[rag] 10/45  correct=3  errors=0  98s
+[rag] 20/45  correct=7  errors=0  166s
+[rag] 30/45  correct=8  errors=0  264s
+[rag] 40/45  correct=12  errors=0  337s
+[rag] 45/45  correct=12  errors=0  496s
+[rag] setup: 0 tokens, 7.4s {'chunks': 109, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=1  errors=0  143s
+[rag] 20/60  correct=1  errors=0  228s
+[rag] 30/60  correct=5  errors=0  341s
+[rag] 40/60  correct=6  errors=0  423s
+[rag] 50/60  correct=10  errors=0  526s
+[rag] error on itops-w29-01: JSONDecodeError: Expecting value: line 63 column 1 (char 341)
+[rag] 60/60  correct=14  errors=1  606s
+[rag] setup: 0 tokens, 5.6s {'chunks': 104, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=3  errors=0  115s
+[rag] 20/60  correct=5  errors=0  222s
+[rag] 30/60  correct=7  errors=0  343s
+[rag] 40/60  correct=9  errors=0  419s
+[rag] 50/60  correct=11  errors=0  500s
+[rag] 60/60  correct=14  errors=0  607s
+[rag] setup: 0 tokens, 5.3s {'chunks': 105, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=4  errors=0  157s
+[rag] 20/60  correct=7  errors=0  255s
+[rag] 30/60  correct=11  errors=0  324s
+[rag] 40/60  correct=16  errors=0  423s
+[rag] 50/60  correct=19  errors=0  493s
+[rag] 60/60  correct=22  errors=0  588s
+
+=== 2026-10-26T11:56:18 pass 2: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 110, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 124, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 109, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 59 already answered, 1 to go
+[rag] 1/1  correct=0  errors=0  75s
+[rag] setup: 0 tokens, 0.0s {'chunks': 104, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 105, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go

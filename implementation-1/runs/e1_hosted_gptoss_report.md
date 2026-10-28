@@ -1,0 +1,110 @@
+# CLEVRER document-QA benchmark: e1 (15 documents)
+
+- Videos: 300 (validation split, seed 1), questions: 2166
+- Document: `e1_d01 .. e1_d15` (798 pages), rendered from ground-truth annotations (observed 128 frames only; motion log every 8 frames + event frames)
+- Descriptive: exact match. Multiple-choice: per-option accuracy, and per-question accuracy (all options of the question correct). Overall question accuracy counts each question once.
+
+## Overall
+
+| System | Model | Answered | Errors | Question acc. (%) | Option acc. (%) | Parse err. |
+|---|---|---|---|---|---|---|
+| otf | or-gpt-oss-20b | 2166/2166 | 0 | 67.77 | 79.41 | 0 |
+| full_context_text | or-gpt-oss-20b | 2166/2166 | 0 | 61.17 | 75.15 | 16 |
+| rag | or-gpt-oss-20b | 2166/2166 | 0 | 49.08 | 68.19 | 7 |
+| pageindex | or-gpt-oss-20b | 2166/2166 | 0 | 53.19 | 68.85 | 16 |
+| otf_oracle | or-gpt-oss-20b | 2166/2166 | 0 | 73.87 | 83.86 | 1 |
+| otf_reading_only | or-gpt-oss-20b | 2166/2166 | 0 | 67.08 | 79.54 | 1 |
+| otf_no_replay | or-gpt-oss-20b | 2166/2166 | 0 | 66.99 | 79.27 | 4 |
+| otf_no_library | or-gpt-oss-20b | 2166/2166 | 0 | 66.07 | 78.40 | 0 |
+
+## Accuracy by question type
+
+Descriptive: accuracy. Others: per-option / per-question.
+
+| System | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|
+| otf | 96.60 (n=882) | 76.96 / 48.54 (n=513) | 72.35 / 57.60 (n=217) | 75.61 / 43.68 (n=554) |
+| full_context_text | 95.35 (n=882) | 73.72 / 37.04 (n=513) | 55.99 / 26.73 (n=217) | 71.70 / 42.60 (n=554) |
+| rag | 68.14 (n=882) | 73.45 / 40.16 (n=513) | 56.45 / 30.41 (n=217) | 65.88 / 34.30 (n=554) |
+| pageindex | 89.34 (n=882) | 68.38 / 33.14 (n=513) | 49.77 / 12.44 (n=217) | 64.38 / 30.14 (n=554) |
+| otf_oracle | 97.62 (n=882) | 81.00 / 54.39 (n=513) | 93.78 / 88.02 (n=217) | 78.27 / 48.56 (n=554) |
+| otf_reading_only | 96.94 (n=882) | 76.90 / 47.95 (n=513) | 67.51 / 47.93 (n=217) | 76.92 / 44.77 (n=554) |
+| otf_no_replay | 97.28 (n=882) | 77.33 / 48.73 (n=513) | 74.19 / 55.30 (n=217) | 74.21 / 40.25 (n=554) |
+| otf_no_library | 97.39 (n=882) | 76.69 / 46.20 (n=513) | 70.51 / 48.39 (n=217) | 73.31 / 41.52 (n=554) |
+
+### Question accuracy (%) with 95% bootstrap CI
+
+| System | Model | overall | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|---|---|
+| otf | or-gpt-oss-20b | 67.8 [65.7, 69.8] | 96.6 [95.3, 97.7] | 48.5 [44.2, 53.0] | 57.6 [51.1, 64.1] | 43.7 [39.7, 48.0] |
+| full_context_text | or-gpt-oss-20b | 61.2 [59.1, 63.2] | 95.3 [93.9, 96.7] | 37.0 [32.9, 41.1] | 26.7 [20.7, 32.7] | 42.6 [38.5, 46.6] |
+| rag | or-gpt-oss-20b | 49.1 [47.0, 51.1] | 68.1 [65.1, 71.2] | 40.2 [36.3, 44.4] | 30.4 [24.4, 36.9] | 34.3 [30.3, 38.5] |
+| pageindex | or-gpt-oss-20b | 53.2 [51.0, 55.3] | 89.3 [87.3, 91.3] | 33.1 [29.2, 37.2] | 12.4 [8.3, 17.1] | 30.1 [26.5, 34.1] |
+| otf_oracle | or-gpt-oss-20b | 73.9 [72.2, 75.7] | 97.6 [96.6, 98.5] | 54.4 [50.1, 58.5] | 88.0 [83.4, 92.2] | 48.6 [44.2, 52.7] |
+| otf_reading_only | or-gpt-oss-20b | 67.1 [65.0, 69.0] | 96.9 [95.8, 98.0] | 48.0 [43.5, 52.2] | 47.9 [41.0, 54.4] | 44.8 [40.6, 48.7] |
+| otf_no_replay | or-gpt-oss-20b | 67.0 [65.0, 69.0] | 97.3 [96.2, 98.3] | 48.7 [44.2, 53.2] | 55.3 [48.4, 61.8] | 40.2 [36.3, 44.4] |
+| otf_no_library | or-gpt-oss-20b | 66.1 [64.1, 68.0] | 97.4 [96.3, 98.4] | 46.2 [41.9, 50.5] | 48.4 [41.5, 54.9] | 41.5 [37.5, 45.7] |
+
+### Paired differences: reference minus other (accuracy points, 95% paired-bootstrap CI, p = share of resamples <= 0)
+
+| Model | Reference vs other | overall | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|---|---|
+| or-gpt-oss-20b | otf vs full_context_text | +6.6 [+4.8, +8.4] p=0.000 | +1.2 [-0.3, +2.8] p=0.072 | +11.5 [+7.2, +15.8] p=0.000 | +30.9 [+22.6, +39.2] p=0.000 | +1.1 [-2.9, +4.9] p=0.306 |
+| or-gpt-oss-20b | otf vs rag | +18.7 [+16.5, +21.0] p=0.000 | +28.5 [+25.2, +31.6] p=0.000 | +8.4 [+4.3, +12.7] p=0.000 | +27.2 [+18.4, +35.5] p=0.000 | +9.4 [+5.6, +13.4] p=0.000 |
+| or-gpt-oss-20b | otf vs pageindex | +14.6 [+12.7, +16.3] p=0.000 | +7.3 [+5.2, +9.3] p=0.000 | +15.4 [+11.7, +19.7] p=0.000 | +45.2 [+36.9, +53.0] p=0.000 | +13.5 [+9.6, +17.3] p=0.000 |
+| or-gpt-oss-20b | otf vs otf_oracle | -6.1 [-7.9, -4.3] p=1.000 | -1.0 [-2.4, +0.2] p=0.951 | -5.8 [-10.3, -1.4] p=0.995 | -30.4 [-38.2, -22.1] p=1.000 | -4.9 [-8.7, -0.7] p=0.991 |
+| or-gpt-oss-20b | otf vs otf_reading_only | +0.7 [-1.0, +2.4] p=0.205 | -0.3 [-1.5, +0.8] p=0.744 | +0.6 [-3.7, +5.3] p=0.398 | +9.7 [+0.9, +18.9] p=0.022 | -1.1 [-4.3, +2.4] p=0.724 |
+| or-gpt-oss-20b | otf vs otf_no_replay | +0.8 [-1.0, +2.5] p=0.205 | -0.7 [-2.0, +0.7] p=0.859 | -0.2 [-4.5, +4.3] p=0.549 | +2.3 [-6.5, +11.5] p=0.328 | +3.4 [-0.2, +7.0] p=0.034 |
+| or-gpt-oss-20b | otf vs otf_no_library | +1.7 [+0.0, +3.4] p=0.026 | -0.8 [-2.3, +0.6] p=0.886 | +2.3 [-2.1, +7.0] p=0.165 | +9.2 [+1.4, +18.0] p=0.015 | +2.2 [-1.4, +5.8] p=0.137 |
+
+### Descriptive subtypes (accuracy %)
+
+| System | count | exist | query_color | query_material | query_shape |
+|---|---|---|---|---|---|
+| otf | 93.23 | 96.97 | 99.32 | 100.00 | 98.51 |
+| full_context_text | 93.23 | 95.15 | 98.64 | 97.30 | 95.52 |
+| rag | 60.92 | 70.91 | 71.43 | 70.27 | 76.87 |
+| pageindex | 80.31 | 91.52 | 96.60 | 97.30 | 94.03 |
+| otf_oracle | 96.62 | 97.58 | 100.00 | 98.20 | 97.01 |
+| otf_reading_only | 94.46 | 96.36 | 99.32 | 100.00 | 98.51 |
+| otf_no_replay | 95.08 | 96.97 | 100.00 | 98.20 | 99.25 |
+| otf_no_library | 95.38 | 98.18 | 100.00 | 98.20 | 97.76 |
+
+## Token consumption
+
+Query tokens are per question (mean). Cached input is a subset of input; reasoning is a subset of output. Setup = one-time cost (e.g. PageIndex tree build). Amortized = (setup + all query tokens) / questions answered.
+
+| System | Input | Cached input | Output | Reasoning | Total / q | Setup total | Amortized total / q | Sum (all q) | LLM calls / q | Tool calls / q | Latency / q (s) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| otf | 3,717.9 | 1,213.1 | 969.0 | 969.7 | 4,686.8 | 9,952,795 | 9,281.8 | 10,151,662 | 2.00 | 0.00 | 7.32 |
+| full_context_text | 56,357.6 | 47,346.6 | 2,359.7 | 2,252.9 | 58,717.4 | 0 | 58,717.4 | 127,181,850 | 1.00 | 0.00 | 25.68 |
+| rag | 1,271.5 | 346.4 | 736.0 | 811.8 | 2,007.6 | 0 | 2,007.6 | 4,348,401 | 1.00 | 0.00 | 12.07 |
+| pageindex | 13,918.9 | 3,834.0 | 861.9 | 906.0 | 14,780.8 | 1,537,892 | 15,490.8 | 32,015,219 | 0.00 | 0.00 | 27.38 |
+| otf_oracle | 4,236.5 | 1,052.8 | 1,339.5 | 1,409.3 | 5,576.0 | 0 | 5,576.0 | 12,077,615 | 2.46 | 0.00 | 12.13 |
+| otf_reading_only | 3,717.9 | 1,478.1 | 971.3 | 973.7 | 4,689.2 | 9,952,795 | 9,284.2 | 10,156,794 | 2.00 | 0.00 | 7.13 |
+| otf_no_replay | 3,717.9 | 1,463.1 | 977.5 | 980.2 | 4,695.4 | 9,952,795 | 9,290.4 | 10,170,193 | 2.00 | 0.00 | 7.77 |
+| otf_no_library | 3,805.6 | 1,567.8 | 1,034.3 | 1,045.9 | 4,839.9 | 7,643,450 | 8,368.7 | 10,483,231 | 2.06 | 0.00 | 9.65 |
+
+### Mean total tokens per question, by type
+
+| System | descriptive | explanatory | predictive | counterfactual |
+|---|---|---|---|---|
+| otf | 3,934.6 | 4,836.4 | 4,887.8 | 5,667.2 |
+| full_context_text | 56,966.9 | 58,273.1 | 59,093.6 | 61,768.3 |
+| rag | 1,629.3 | 2,150.9 | 1,999.1 | 2,480.4 |
+| pageindex | 16,002.4 | 12,663.8 | 13,385.4 | 15,342.9 |
+| otf_oracle | 3,932.7 | 7,783.6 | 4,277.0 | 6,656.8 |
+| otf_reading_only | 3,934.8 | 4,847.6 | 4,848.3 | 5,681.2 |
+| otf_no_replay | 3,934.6 | 4,829.1 | 4,786.5 | 5,747.1 |
+| otf_no_library | 3,936.5 | 5,286.3 | 4,791.0 | 5,884.0 |
+
+### Setup details
+
+- **otf**: 9,952,795 tokens (8,873,694 in / 1,079,101 out, 704 calls), 8746.0s, info: `{"documents": 15}`
+- **full_context_text**: 0 tokens (0 in / 0 out, 0 calls), 0.9s, info: `{"documents": 15}`
+- **rag**: 0 tokens (0 in / 0 out, 0 calls), 0.0s, info: `{"documents": 15}`
+- **pageindex**: 1,537,892 tokens (1,280,062 in / 257,830 out, 330 calls), 754.3s, info: `{"documents": 15}`
+- **otf_oracle**: 0 tokens (0 in / 0 out, 0 calls), 39.1s, info: `{"documents": 15}`
+- **otf_reading_only**: 9,952,795 tokens (8,873,694 in / 1,079,101 out, 704 calls), 8746.0s, info: `{"documents": 15}`
+- **otf_no_replay**: 9,952,795 tokens (8,873,694 in / 1,079,101 out, 704 calls), 8746.0s, info: `{"documents": 15}`
+- **otf_no_library**: 7,643,450 tokens (6,761,340 in / 882,110 out, 590 calls), 6125.2s, info: `{"documents": 15}`

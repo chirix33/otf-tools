@@ -1,0 +1,10 @@
+
+=== 2026-10-25T20:52:20 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run e1_d08 --system pageindex --model or-gpt-oss-20b --workers 1
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000012D3F7F6E40>
+Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000012D3F8DA120>, 36243.4511083)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000012D3F7F6900>
+[pageindex] setup: 109058 tokens, 49.8s {'doc_id': 'pi-de795163b8294497b0a31cfa11a6e311', 'cached_index': True, 'tree_nodes': 21}
+[pageindex] 159 already answered, 1 to go
+[pageindex] 1/1  correct=0  errors=0  16s

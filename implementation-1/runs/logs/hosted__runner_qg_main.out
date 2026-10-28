@@ -1,0 +1,33 @@
+{"time": "2026-10-25T22:33:42", "event": "hosted_start", "phases": ["dev", "main", "e2", "ablations"], "models": ["or-qwen3.6-27b", "or-gemma-4-31b-think"], "systems": null, "exclude": "pageindex", "limits": {"or-gpt-oss-20b": [6, 8], "or-qwen3.6-27b": [8, 6], "or-gemma-4-31b-think": [6, 4]}, "n_jobs": 48, "spend_usd": 186.1908, "pid": 26136}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "mfg_dev__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "itops_dev__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "fin_dev__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "pilot20__or-gemma-4-31b-think__otf_oracle", "pass_no": 1, "expected": 308, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "pilot20__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 308, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "mfg_dev__or-gemma-4-31b-think__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "itops_dev__or-gemma-4-31b-think__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "fin_dev__or-gemma-4-31b-think__otf_no_library", "pass_no": 1, "expected": 4, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "fin__or-qwen3.6-27b__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "itops__or-qwen3.6-27b__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "mfg__or-qwen3.6-27b__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "e1__or-qwen3.6-27b__otf", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "e1__or-qwen3.6-27b__full_context_text", "pass_no": 1, "expected": 2166, "answered": 713, "errors": 15}
+{"time": "2026-10-25T22:33:43", "event": "pass_start", "job": "e1__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 2166, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:34:29", "event": "pass_end", "job": "fin_dev__or-gemma-4-31b-think__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.01, "spend_usd": 186.2454, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:34:38", "event": "pass_end", "job": "fin_dev__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.02, "spend_usd": 186.3845, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:34:40", "event": "job_done", "job": "fin_dev__or-qwen3.6-27b__otf_no_library", "spend_usd": 186.3845, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:34:45", "event": "job_done", "job": "fin_dev__or-gemma-4-31b-think__otf_no_library", "spend_usd": 186.3845, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:34:47", "event": "pass_start", "job": "mfg__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:34:47", "event": "pass_start", "job": "e1__or-qwen3.6-27b__rag", "pass_no": 1, "expected": 2166, "answered": 553, "errors": 15}
+{"time": "2026-10-25T22:39:39", "event": "pass_end", "job": "mfg_dev__or-gemma-4-31b-think__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.1, "spend_usd": 190.2379, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:39:39", "event": "job_done", "job": "mfg_dev__or-gemma-4-31b-think__otf_no_library", "spend_usd": 190.2379, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:39:45", "event": "pass_start", "job": "itops__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}
+{"time": "2026-10-25T22:43:41", "event": "pass_end", "job": "mfg_dev__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.17, "spend_usd": 193.5931, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:43:41", "event": "job_done", "job": "mfg_dev__or-qwen3.6-27b__otf_no_library", "spend_usd": 193.5931, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:44:02", "event": "pass_start", "job": "mfg__or-qwen3.6-27b__full_context_text", "pass_no": 1, "expected": 300, "answered": 229, "errors": 28}
+{"time": "2026-10-25T22:48:12", "event": "pass_end", "job": "itops_dev__or-qwen3.6-27b__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.24, "spend_usd": 197.7381, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:48:12", "event": "job_done", "job": "itops_dev__or-qwen3.6-27b__otf_no_library", "spend_usd": 197.7381, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T22:48:19", "event": "pass_start", "job": "mfg__or-qwen3.6-27b__rag", "pass_no": 1, "expected": 300, "answered": 167, "errors": 13}
+{"time": "2026-10-25T23:02:03", "event": "pass_end", "job": "itops_dev__or-gemma-4-31b-think__otf_no_library", "pass_no": 1, "rc": 0, "hours": 0.47, "spend_usd": 212.6885, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T23:02:03", "event": "job_done", "job": "itops_dev__or-gemma-4-31b-think__otf_no_library", "spend_usd": 212.6885, "expected": 4, "answered": 4, "errors": 0}
+{"time": "2026-10-25T23:02:19", "event": "pass_start", "job": "fin__or-gemma-4-31b-think__otf", "pass_no": 1, "expected": 300, "answered": 0, "errors": 0}

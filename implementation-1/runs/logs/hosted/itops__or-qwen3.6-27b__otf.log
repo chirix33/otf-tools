@@ -1,0 +1,118 @@
+
+=== 2026-10-25T16:00:25 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 246777 tokens, 1308.3s {'nodes': 31, 'scopes': 6, 'model_passed': True, 'model_f1': 0.765, 'model_tries': 11, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  311s
+[otf] 20/60  correct=14  errors=0  482s
+[otf] 30/60  correct=20  errors=0  809s
+[otf] 40/60  correct=22  errors=0  1039s
+[otf] error on itops-w22-08: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] error on itops-w22-09: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] error on itops-w22-10: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[otf] 50/60  correct=25  errors=3  1197s
+[otf] 60/60  correct=33  errors=3  1372s
+
+=== 2026-10-25T22:33:43 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 115244 tokens, 804.9s {'nodes': 43, 'scopes': 6, 'model_passed': True, 'model_f1': 0.672, 'model_tries': 8, 'model_reused_from': None}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=5  errors=0  113s
+[otf] 20/60  correct=14  errors=0  230s
+[otf] 30/60  correct=20  errors=0  362s
+[otf] 40/60  correct=25  errors=0  505s
+[otf] 50/60  correct=27  errors=0  664s
+[otf] 60/60  correct=34  errors=0  837s
+
+=== 2026-10-26T11:10:08 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 115244 tokens, 804.9s {'nodes': 43, 'scopes': 6, 'model_passed': True, 'model_f1': 0.672, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 60 already answered, 0 to go
+[otf] setup: 0 tokens, 4.6s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.629, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 5 already answered, 55 to go
+[otf] 10/55  correct=3  errors=0  188s
+[otf] 20/55  correct=6  errors=0  352s
+[otf] 30/55  correct=9  errors=0  473s
+[otf] 40/55  correct=14  errors=0  617s
+[otf] 50/55  correct=15  errors=0  802s
+[otf] 55/55  correct=16  errors=0  1059s
+[otf] setup: 0 tokens, 6.0s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.627, 'model_tries': 0, 'model_reused_from': 'itops_d01'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=6  errors=0  168s
+[otf] 20/60  correct=10  errors=0  319s
+[otf] 30/60  correct=15  errors=0  447s
+[otf] 40/60  correct=18  errors=0  597s
+[otf] 50/60  correct=24  errors=0  701s
+[otf] 60/60  correct=26  errors=0  864s
+[otf] setup: 0 tokens, 6.9s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.695, 'model_tries': 0, 'model_reused_from': 'itops_d01'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=7  errors=0  103s
+[otf] 20/60  correct=15  errors=0  311s
+[otf] 30/60  correct=19  errors=0  485s
+[otf] 40/60  correct=27  errors=0  609s
+[otf] 50/60  correct=31  errors=0  777s
+[otf] 60/60  correct=37  errors=0  906s
+[otf] setup: 0 tokens, 4.2s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.743, 'model_tries': 0, 'model_reused_from': 'itops_d01'}
+[otf] 0 already answered, 60 to go
+[otf] 10/60  correct=9  errors=0  95s
+[otf] 20/60  correct=12  errors=0  259s
+[otf] 30/60  correct=18  errors=0  404s
+[otf] 40/60  correct=22  errors=0  519s
+[otf] 50/60  correct=26  errors=0  610s
+[otf] 60/60  correct=30  errors=0  1366s
+
+=== 2026-10-26T13:37:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 115244 tokens, 804.9s {'nodes': 43, 'scopes': 6, 'model_passed': True, 'model_f1': 0.672, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 17 already answered, 43 to go
+[otf] 10/43  correct=5  errors=0  188s
+[otf] 20/43  correct=11  errors=0  397s
+[otf] 30/43  correct=14  errors=0  605s
+[otf] 40/43  correct=16  errors=0  801s
+[otf] 43/43  correct=18  errors=0  861s
+[otf] setup: 0 tokens, 4.6s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.629, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 18 already answered, 42 to go
+[otf] 10/42  correct=0  errors=0  223s
+[otf] 20/42  correct=1  errors=0  466s
+[otf] 30/42  correct=7  errors=0  647s
+[otf] 40/42  correct=10  errors=0  872s
+[otf] 42/42  correct=11  errors=0  935s
+[otf] setup: 0 tokens, 6.0s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.627, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 15 already answered, 45 to go
+[otf] 10/45  correct=4  errors=0  218s
+[otf] 20/45  correct=7  errors=0  373s
+[otf] 30/45  correct=9  errors=0  577s
+[otf] 40/45  correct=12  errors=0  801s
+[otf] 45/45  correct=14  errors=0  894s
+[otf] setup: 0 tokens, 6.9s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.695, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 15 already answered, 45 to go
+[otf] 10/45  correct=5  errors=0  233s
+[otf] 20/45  correct=9  errors=0  437s
+[otf] 30/45  correct=14  errors=0  616s
+[otf] 40/45  correct=17  errors=0  789s
+[otf] 45/45  correct=20  errors=0  895s
+[otf] setup: 0 tokens, 4.2s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.743, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 16 already answered, 44 to go
+[otf] 10/44  correct=7  errors=0  245s
+[otf] 20/44  correct=10  errors=0  385s
+[otf] 30/44  correct=15  errors=0  553s
+[otf] 40/44  correct=17  errors=0  746s
+[otf] 44/44  correct=20  errors=0  789s
+
+=== 2026-10-26T15:43:07 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run itops_d[0-9]* --system otf --model or-qwen3.6-27b --workers 6
+[otf] setup: 115244 tokens, 804.9s {'nodes': 43, 'scopes': 6, 'model_passed': True, 'model_f1': 0.672, 'model_tries': 8, 'model_reused_from': None, 'cached_model': True}
+[otf] 45 already answered, 15 to go
+[otf] 10/15  correct=2  errors=0  331s
+[otf] 15/15  correct=4  errors=0  483s
+[otf] setup: 0 tokens, 4.6s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.629, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 45 already answered, 15 to go
+[otf] 10/15  correct=1  errors=0  380s
+[otf] 15/15  correct=2  errors=0  560s
+[otf] setup: 0 tokens, 6.0s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.627, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 45 already answered, 15 to go
+[otf] 10/15  correct=3  errors=0  330s
+[otf] 15/15  correct=5  errors=0  481s
+[otf] setup: 0 tokens, 6.9s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.695, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 45 already answered, 15 to go
+[otf] 10/15  correct=4  errors=0  356s
+[otf] 15/15  correct=7  errors=0  469s
+[otf] setup: 0 tokens, 4.2s {'nodes': 36, 'scopes': 5, 'model_passed': True, 'model_f1': 0.743, 'model_tries': 0, 'model_reused_from': 'itops_d01', 'cached_model': True}
+[otf] 45 already answered, 15 to go
+[otf] 10/15  correct=2  errors=0  344s
+[otf] 15/15  correct=5  errors=0  510s

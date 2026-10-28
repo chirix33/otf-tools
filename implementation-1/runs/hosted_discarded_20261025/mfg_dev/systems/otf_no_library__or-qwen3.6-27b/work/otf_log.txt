@@ -1,0 +1,10 @@
+parsers attempt 1: 'Plant 1912, Period 01': with the outcomes hidden, outcomes() still finds them (F1 0.38): the copy still shows them, so some outcome data is being read from cells marked as inputs, or outcomes are read from cells not listed in their src; outcomes('Plant 2103, Period 01') uses entities ['POP001L12P'] that are not ids from entities() (ids are ['POP001L12P-A', 'POP001L12P-B', 'POP002L09P', 'POP005L04P', 'POP500M24P', 'POPF01L12P', 'POV001L24P', 'POV002L09P', 'POV005L04P', 'POV500M24P', 'SOS001L12P', 'SOS002L09P']); record: {"time": 9.0, "kind": "event", "entities": ["POP001L12P"], "value": null, "src": [["n0014", 26]]}
+WHAT YOUR FUNCTIONS RETURNED on scope 'Plant 1912, Period 01': 3 entities (first: [{"id": "ATN02K12P", "description": "ATN02K12P (A ATN)"}]), recorded_end = 14.0, 47 inputs (first: [{"id": "opening_ATN02K12P", "time": 0.0, "kind": "opening_stock", "entities": ["ATN02K12P"], "fields": {"opening_stock": 2950.0}}]), 156 outcomes (first: [{"time": 1.0, "kind": "daily_outcome", "entities": ["ATN02K12P"], "value": 873.0}]), params = {"dispatch_capacity": 34500.0}
+parsers attempt 2: passed
+explore 1: ok, 171 chars
+explore 2: ok, 599 chars
+explore 3: ok, 221 chars
+explore 4: ok, 1600 chars
+explore 5: ok, 312 chars
+explore 6: ok, 538 chars
+explore 7: ok, 1786 chars

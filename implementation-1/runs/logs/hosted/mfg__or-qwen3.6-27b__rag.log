@@ -1,0 +1,71 @@
+
+=== 2026-10-25T15:05:56 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system rag --model or-qwen3.6-27b --workers 8
+[rag] setup: 0 tokens, 81.1s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=2  errors=0  85s
+[rag] 20/60  correct=4  errors=0  142s
+[rag] 30/60  correct=6  errors=0  181s
+[rag] 40/60  correct=10  errors=0  241s
+[rag] 50/60  correct=14  errors=0  288s
+[rag] 60/60  correct=16  errors=0  355s
+
+=== 2026-10-25T16:05:15 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 179, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 6 already answered, 54 to go
+[rag] 10/54  correct=4  errors=0  318s
+[rag] 20/54  correct=8  errors=0  447s
+[rag] 30/54  correct=9  errors=0  588s
+[rag] 40/54  correct=12  errors=0  726s
+[rag] 50/54  correct=14  errors=0  850s
+[rag] 54/54  correct=15  errors=0  1847s
+[rag] setup: 0 tokens, 8.8s {'chunks': 130, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=2  errors=0  172s
+[rag] 20/60  correct=3  errors=0  259s
+[rag] error on mfg-1914-07-01: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on mfg-1914-07-02: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] error on mfg-1914-07-03: APIStatusError: Error code: 402 - {'error': {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budget', 'remedy_hint': 'Retry after your in-flight requests settle (see the Retry-After header). Adding credits at https://openrouter.ai/settings/credits raises your in-flight budget, up to a capped ceiling.', 'headers': {'Retry-After': '120'}, 'provider_name': None}}, 'user_id': 'user_3LA1JCiUY54gimOqQ4AWIyraIhr'}
+[rag] 30/60  correct=4  errors=7  287s
+[rag] 40/60  correct=5  errors=13  340s
+[rag] 50/60  correct=8  errors=13  446s
+[rag] 60/60  correct=10  errors=13  642s
+
+=== 2026-10-25T22:48:19 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 179, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 130, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 47 already answered, 13 to go
+[rag] 10/13  correct=2  errors=0  93s
+[rag] 13/13  correct=4  errors=0  132s
+[rag] setup: 0 tokens, 0.0s {'chunks': 135, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=2  errors=0  82s
+[rag] 20/60  correct=6  errors=0  160s
+[rag] 30/60  correct=8  errors=0  231s
+[rag] 40/60  correct=12  errors=0  313s
+[rag] 50/60  correct=15  errors=0  392s
+[rag] 60/60  correct=17  errors=0  552s
+[rag] setup: 0 tokens, 6.5s {'chunks': 125, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 0 already answered, 60 to go
+[rag] 10/60  correct=3  errors=0  99s
+
+=== 2026-10-26T11:10:08 pass 1: C:\Users\aashraf\AppData\Local\Python\pythoncore-3.14-64\python.exe C:\Users\aashraf\Desktop\Work\2026\MLSystem 2027\implementation-1\run.py run --run mfg_d[0-9]* --system rag --model or-qwen3.6-27b --workers 6
+[rag] setup: 0 tokens, 0.0s {'chunks': 183, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 179, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 130, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 135, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 60 already answered, 0 to go
+[rag] setup: 0 tokens, 0.0s {'chunks': 125, 'embed_model': 'BAAI/bge-small-en-v1.5', 'top_k': 5}
+[rag] 16 already answered, 44 to go
+[rag] 10/44  correct=1  errors=0  112s
+[rag] 20/44  correct=5  errors=0  186s
+[rag] 30/44  correct=8  errors=0  242s
+[rag] 40/44  correct=11  errors=0  320s
+[rag] 44/44  correct=13  errors=0  432s

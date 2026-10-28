@@ -66,9 +66,18 @@ def _agg(rows: list[dict]) -> dict:
     }
 
 
-def system_report(sys_dir: Path | list[Path], uids: set[str]) -> dict:
+def _as_wrong(r: dict, n_options: int) -> dict:
+    """A question the system still fails on after every retry (e.g. its agent aborts): scored as a wrong answer
+    with no usage, like a truncated answer (SPEC sec. 2), so a failing system is not scored on its easier questions."""
+    return {**r, "parsed": {"parse_error": f"system error: {r['error'][:200]}"},
+            "score": {"question_correct": False, "options_correct": 0, "options_total": n_options},
+            "usage": {f: 0 for f in TOKEN_FIELDS} | {"llm_calls": 0}, "latency_s": 0.0, "trace": {}}
+
+
+def system_report(sys_dir: Path | list[Path], uids: set[str], n_options: dict | None = None) -> dict:
     """One system over one document, or over several (a split): predictions are pooled and the
-    one-time setup cost is summed over the documents."""
+    one-time setup cost is summed over the documents. With `n_options` (uid -> number of options) questions
+    that still end in an error count as wrong (2026-10-26); unanswered questions stay out (coverage)."""
     sys_dirs = sys_dir if isinstance(sys_dir, list) else [sys_dir]
     setups = [json.loads((d / "setup.json").read_text()) for d in sys_dirs]
     setup = dict(setups[0])
@@ -84,6 +93,8 @@ def system_report(sys_dir: Path | list[Path], uids: set[str]) -> dict:
                 rows[r["uid"]] = r          # last write wins
     ok_rows = [r for r in rows.values() if "error" not in r]
     errors = [r for r in rows.values() if "error" in r]
+    if n_options is not None:
+        ok_rows += [_as_wrong(r, n_options.get(r["uid"], 1)) for r in errors]
     by_type = defaultdict(list)
     by_sub = defaultdict(list)
     for r in ok_rows:
@@ -96,7 +107,8 @@ def system_report(sys_dir: Path | list[Path], uids: set[str]) -> dict:
     amort = {f: round((su[f] + overall["tokens_sum"][f]) / n, 1) if n else None for f in TOKEN_FIELDS}
     return {
         "system": setup["system"], "model": setup["model"], "reasoning_effort": setup["reasoning_effort"],
-        "coverage": {"answered": n, "errors": len(errors), "expected": len(uids)},
+        "coverage": {"answered": n, "errors": len(errors), "expected": len(uids),
+                     "errors_counted_wrong": n_options is not None},
         "overall": overall,
         "by_type": {t: _agg(by_type[t]) for t in QUESTION_TYPES if by_type[t]},
         "descriptive_subtypes": {s: _agg(v) for s, v in sorted(by_sub.items())},
@@ -220,6 +232,10 @@ def to_markdown(rep: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+def _n_options(items) -> dict:
+    return {it.uid: max(len(it.choices or []), 1) for it in items}
+
+
 def make_report(run_dir: Path, systems: list[str] | None = None) -> dict:
     items = load_items(run_dir / "items.jsonl")
     uids = {it.uid for it in items}
@@ -229,15 +245,15 @@ def make_report(run_dir: Path, systems: list[str] | None = None) -> dict:
     rep = {"run": run_dir.name, "pdf": str(run_dir / "document.pdf"),
            "pages": manifest["videos"][-1]["end_page"],
            "build_config": json.loads((run_dir / "build_config.json").read_text()),
-           "systems": [system_report(sys_root / n, uids) for n in names]}
+           "systems": [system_report(sys_root / n, uids, _n_options(items)) for n in names]}
     add_paired(rep)
     (run_dir / "report.json").write_text(json.dumps(rep, indent=2))
     (run_dir / "report.md").write_text(to_markdown(rep), encoding="utf-8")
     return rep
 
 
-def make_split_report(runs_root: Path, name: str, systems: list[str] | None = None) -> dict:
-    """Pool every document of a split (runs/<name>_dNN) into runs/<name>_report.{json,md}.
+def make_split_report(runs_root: Path, name: str, systems: list[str] | None = None, out: str | None = None) -> dict:
+    """Pool every document of a split (runs/<name>_dNN) into runs/<out or name>_report.{json,md}.
     A system is reported only once it has a setup.json in every document."""
     docs = sorted(p for p in runs_root.glob(f"{name}_d[0-9]*") if p.is_dir())
     items = [it for d in docs for it in load_items(d / "items.jsonl")]
@@ -252,8 +268,8 @@ def make_split_report(runs_root: Path, name: str, systems: list[str] | None = No
            "build_config": {"n_videos": sum(c.get("n_videos", c.get("n_scopes", 0)) for c in cfgs),
                             "seed": cfgs[0].get("split_seed"), "n_questions": len(items),
                             "motion_stride": cfgs[0].get("motion_stride")},
-           "systems": [system_report([d / "systems" / n for d in docs], uids) for n in names]}
+           "systems": [system_report([d / "systems" / n for d in docs], uids, _n_options(items)) for n in names]}
     add_paired(rep)
-    (runs_root / f"{name}_report.json").write_text(json.dumps(rep, indent=2))
-    (runs_root / f"{name}_report.md").write_text(to_markdown(rep), encoding="utf-8")
+    (runs_root / f"{out or name}_report.json").write_text(json.dumps(rep, indent=2))
+    (runs_root / f"{out or name}_report.md").write_text(to_markdown(rep), encoding="utf-8")
     return rep

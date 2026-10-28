@@ -77,11 +77,15 @@ class OTFEngine:
         return res
 
     def _records(self, scope: str) -> dict:
+        """The scope's records; outcome kinds that only follow a fixed recording schedule are left out, as in
+        the check (records.schedule_kinds)."""
         def read():
             try:
-                return read_scope(self.model["code"], self.map_path, scope)
+                r = read_scope(self.model["code"], self.map_path, scope)
             except ReadError as e:
                 return e
+            r["outcomes"] = r["informative"]
+            return r
         r = self._cached(("read", scope), read)
         if isinstance(r, Exception):
             raise ToolError(str(r))
@@ -95,7 +99,7 @@ class OTFEngine:
             raise ToolError(f"simulate failed: {res}"[:500])
         for x in res:
             x["entities"] = [str(e) for e in x.get("entities") or []]
-        return res
+        return records.drop_kinds(res, self._records(scope)["schedule_kinds"])
 
     # ---------- helpers ----------
     def _scope_of(self, question: str) -> str | None:
@@ -144,6 +148,12 @@ class OTFEngine:
     def _tol(self, r: dict) -> float:
         return TIME_TOL_FRAC * r["period"]
 
+    def _value_tols(self, r: dict) -> tuple[dict, float]:
+        """(per-kind tolerance, relative tolerance) for comparing a what-if with the record. Paired what-ifs
+        (v3.4) leave recorded values untouched except where the change acts, so any difference is real: exact.
+        The unpaired no-replay ablation mixes in the model's own errors, so it keeps the record's tolerance."""
+        return (records.value_tols(r["outcomes"]), 0.05) if self.ablation == "no_replay" else ({}, 0.0)
+
     def _recorded(self, r: dict, focus_ids: set) -> str:
         names = self._names(r)
         ent_txt = "\n".join(f"id {e['id']}: {e['description']}" for e in r["entities"])
@@ -172,8 +182,12 @@ class OTFEngine:
             raise ToolError("; ".join(ap["errors"])[:500])
         if r["end"] is None:
             base = self._simulate(scope, r["inputs"], r["params"], None, None)
-            new = records.apply_overrides(self._simulate(scope, ap["inputs"], ap["params"], None, None), ap["overrides"])
-            return {"trace": new, "baseline": base, "t_star": None, "changed_inputs": ap, "timeless": True}
+            new = self._simulate(scope, ap["inputs"], ap["params"], None, None)
+            # paired: the record, with what the change alters between the two recomputations
+            trace = records.apply_delta(r["outcomes"], base, new, self._tol(r), records.value_tols(r["outcomes"]),
+                                        ap["overrides"], None, None)
+            return {"trace": trace, "baseline": r["outcomes"], "base_run": base, "t_star": None, "changed_inputs": ap,
+                    "timeless": True}
         end, eps = r["end"], 0.01 * r["period"]
         t_c = r["t0"] if ap["t_c"] is None else ap["t_c"]
         if self.ablation == "no_replay":
@@ -191,11 +205,20 @@ class OTFEngine:
             return {"trace": records.apply_overrides(r["outcomes"], ap["overrides"]), "baseline": r["outcomes"],
                     "t_star": None, "changed_inputs": ap, "timeless": False}
         s = t_star - eps
-        kept = [o for o in r["outcomes"] if records.rtime(o) is not None and records.rtime(o) <= s]
         run = [x for x in self._simulate(scope, ap["inputs"], ap["params"], s, end)
                if records.rtime(x) is None or records.rtime(x) > s]
-        return {"trace": records.apply_overrides(kept + run, ap["overrides"]) if ap["overrides"] else kept + run,
-                "baseline": r["outcomes"], "t_star": t_star, "changed_inputs": ap, "timeless": False}
+        if self.ablation == "no_replay":         # the ablation keeps the unpaired run: the model alone from t0
+            kept = [o for o in r["outcomes"] if records.rtime(o) is not None and records.rtime(o) <= s]
+            return {"trace": records.apply_overrides(kept + run, ap["overrides"]) if ap["overrides"] else kept + run,
+                    "baseline": r["outcomes"], "t_star": t_star, "changed_inputs": ap, "timeless": False}
+        # paired (v3.4): the same model from the same point without the change; only the difference between the
+        # two runs is applied to the record, so the model's own errors cancel out
+        base = [x for x in self._simulate(scope, r["inputs"], r["params"], s, end)
+                if records.rtime(x) is None or records.rtime(x) > s]
+        trace = records.apply_delta(r["outcomes"], base, run, self._tol(r), records.value_tols(r["outcomes"]),
+                                    ap["overrides"], s, r["period"])
+        return {"trace": trace, "baseline": r["outcomes"], "base_run": base, "start": s, "t_star": t_star,
+                "changed_inputs": ap, "timeless": False}
 
     def _patches(self, r: dict, question: str) -> list[dict]:
         time = ("no time (the records are figures, not a process over time)" if r["end"] is None else
@@ -217,7 +240,11 @@ class OTFEngine:
         if qtype == "counterfactual":
             patches = self._patches(r, question)
             w = self._what_if(scope, r, patches)
-            d = records.diff(w["baseline"], w["trace"], self._tol(r), records.value_tols(r["outcomes"]))
+            d = records.diff(w["baseline"], w["trace"], self._tol(r), *self._value_tols(r))
+            if (w["timeless"] or not r["outcomes"]) and not (d["gone"] or d["new"] or d["changed"]):
+                # nothing the model computes depends on the change (a timeless scope, or one where it reads no
+                # outcomes at all): the tool has nothing to add, so the question is read instead (v3.4.2)
+                raise ToolError("the change alters nothing the model of the document computes")
             change = json.dumps(patches)
             if w["timeless"]:
                 how = "the figures were recomputed by the model of the document with the changed inputs"
@@ -264,6 +291,20 @@ class OTFEngine:
                 + (f"\n\nCHOICE CHECKS (re-runs with that cause taken away):\n{checks}" if checks else "")), \
             {"entities": len(who), "choice_checks": bool(checks)}
 
+    def _unreproduced(self, target: dict, w: dict, r: dict, tol: float) -> bool:
+        """v3.4.4: does the model's own re-run without any change (from the same point as the what-if) fail to
+        reproduce `target`, or get its value wrong? Then a re-run without a cause cannot say whether the outcome
+        would still happen, and the record decides. The no-replay ablation keeps the unpaired check."""
+        base, start = w.get("base_run"), w.get("start")
+        if base is None or self.ablation == "no_replay":
+            return False
+        if start is not None and records.rtime(target) is not None and records.rtime(target) <= start:
+            return False                                    # kept from the record, before the re-run starts
+        m = records.pairs([target], base, tol, None)[0]
+        if not m:
+            return True
+        return records.num(target.get("value")) is not None and             not records._value_close(target, m[0][1], records.value_tols(r["outcomes"]))
+
     def _choice_checks(self, scope, r, question, names, tol) -> str:
         """Per-choice but-for test: re-run without each candidate cause; does the target outcome still happen?"""
         if not re.search(r"^\s*\d+:\s", question, flags=re.M):        # no numbered candidates listed
@@ -287,11 +328,14 @@ class OTFEngine:
             except ToolError as e:
                 out.append(f"- choice {cid}: could not be checked ({str(e)[:120]})")
                 continue
+            if self._unreproduced(target, w, r, tol):
+                out.append(f"- choice {cid}: could not be checked (the model does not reproduce this outcome)")
+                continue
             same, _, _ = records.pairs([target], w["trace"], tol, None)
             if not same:
                 res = "the outcome no longer happens"
             elif records.num(target.get("value")) is not None and \
-                    not records._value_close(target, same[0][1], records.value_tols(r["outcomes"])):
+                    not records._value_close(target, same[0][1], *self._value_tols(r)):
                 res = f"the outcome changes: value {target.get('value')} becomes {same[0][1].get('value')}"
             else:
                 res = "the outcome still happens"
@@ -314,6 +358,13 @@ class OTFEngine:
         trace["used_tool"] = used_tool
         trace["fallback"] = qtype != "descriptive" and not used_tool
         guide = prompts.ANSWER[qtype] if used_tool or qtype == "descriptive" else prompts.ANSWER["descriptive"]
+        if used_tool and self.ablation != "tool_only":
+            # v3.4.3: the scope's own sections always come with the tool result, so the answer step sees at least
+            # what the reading fallback sees (unchanged figures, conditions a what-if cannot take away). pilot20:
+            # Qwen generated model explanatory 25 vs 20 of 36, gpt-oss oracle 20 vs 25; manufacturing (Qwen) needed it
+            guide = f"{prompts.RECORD_AND_TOOL}\n\n{guide}"
+            evidence = (f"THE DOCUMENT'S SECTIONS FOR THIS SCOPE:\n{self._scope_text(trace['scope'])}\n\n"
+                        f"TOOL RESULT:\n{evidence}")
         reply = self.llm([{"role": "system", "content": instructions},
                           {"role": "user", "content": f"{guide}\n\n{evidence}\n\n{question}"}])
         return reply, trace

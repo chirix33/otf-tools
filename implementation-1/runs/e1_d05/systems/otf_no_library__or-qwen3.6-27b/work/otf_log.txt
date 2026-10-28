@@ -1,0 +1,88 @@
+parsers attempt 1: passed
+explore 1: ok, 48 chars
+explore 2: ok, 145 chars
+explore 3: ok, 321 chars
+explore 4: ok, 320 chars
+explore 5: ok, 1269 chars
+explore 6: ok, 3000 chars
+explore 7: ok, 1533 chars
+explore 8: ok, 1112 chars
+simulate attempt 1 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): [{"time": 90.0, "kind": "exit", "entities": ["3"], "value": null}]
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 2 (after 8 explore runs): mean record-match F1 = 0.013 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.039, 2 hidden outcomes, model produced 49; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): [{"time": 90.0, "kind": "exit", "entities": ["3"], "value": null}, {"time": 91.0, "kind": "exit", "entities": ["3"], "value": null}, {"time": 92.0, "kind": "exit", "entities": ["3"], "value": null}, {"time": 93.0, "kind": "exit", "entities": ["3"], "value": null}]
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 3 (after 8 explore runs): the code does not run: rejected: syntax error: unterminated string literal (detected at line 151) (<unknown>, line 151)
+simulate attempt 4 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 5 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): [{"time": 102.0, "kind": "exit", "entities": ["3"], "value": null}]
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.013
+explore 1: ok, 48 chars
+explore 2: ok, 25 chars
+explore 3: ok, 258 chars
+explore 4: ok, 48 chars
+explore 5: ok, 1581 chars
+explore 6: ok, 98 chars
+explore 7: ok, 1505 chars
+explore 8: ok, 1404 chars
+simulate attempt 1 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 2 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 3 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 4 (after 8 explore runs): mean record-match F1 = 0.0 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.0, 2 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}, {"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 5 (after 8 explore runs): simulate('Video 11399', start=89.73) failed: Traceback (most recent call last):
+  File "C:\Users\aashraf\AppData\Local\Temp\tmpzioyd5tn\runner.py", line 35, in <module>
+    out = ns[spec["func"]](doc, *spec["args"], **spec["kwargs"])
+  File "<string>", line 181, in simulate
+  File "<string>", line 326, in _simulation_step
+TypeError: argument of type 'NoneType' is not a container or iterable
+simulator conversation 2: best F1 0.0
+explore 1: ok, 20 chars
+explore 2: ok, 48 chars
+explore 3: ok, 435 chars
+explore 4: ok, 32 chars
+explore 5: ok, 3000 chars
+explore 6: ok, 2307 chars
+explore 7: ok, 257 chars
+explore 8: ok, 437 chars
+simulate attempt 1 (after 8 explore runs): mean record-match F1 = 0.009 (need 0.4)
+simulate ignores its `inputs` argument: changing the inputs did not change its output on any checked scope. Read the given inputs only from the `inputs` argument.
+- scope 'Video 11399' (start 89.73): F1 0.026, 2 hidden outcomes, model produced 76; missed (hidden but not produced): [{"time": 91.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): [{"kind": "exit", "time": 90.0, "entities": ["2"], "value": null}, {"kind": "exit", "time": 90.0, "entities": ["3"], "value": null}, {"kind": "exit", "time": 91.0, "entities": ["2"], "value": null}, {"kind": "exit", "time": 91.0, "entities": ["3"], "value": null}]
+- scope 'Video 11638' (start 122.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 124.0, "kind": "exit", "entities": ["0"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 12825' (start 124.73): F1 0.0, 1 hidden outcomes, model produced 0; missed (hidden but not produced): [{"time": 126.0, "kind": "exit", "entities": ["1"], "value": null}]; extra (produced but not hidden): []
+simulate attempt 2 (after 8 explore runs): mean record-match F1 = 0.395 (need 0.4)
+- scope 'Video 11399' (start 89.73): F1 0.286, 2 hidden outcomes, model produced 5; missed (hidden but not produced): [{"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): [{"kind": "exit", "time": 90.0, "entities": ["3"], "value": null}, {"kind": "exit", "time": 91.0, "entities": ["2"], "value": null}, {"kind": "collision", "time": 91.0, "entities": ["0", "4"], "value": null}, {"kind": "exit", "time": 94.0, "entities": ["4"], "value": null}]
+- scope 'Video 11638' (start 122.73): F1 0.4, 1 hidden outcomes, model produced 4; missed (hidden but not produced): []; extra (produced but not hidden): [{"kind": "exit", "time": 123.0, "entities": ["2"], "value": null}, {"kind": "exit", "time": 124.0, "entities": ["3"], "value": null}, {"kind": "exit", "time": 126.0, "entities": ["1"], "value": null}]
+- scope 'Video 12825' (start 124.73): F1 0.5, 1 hidden outcomes, model produced 3; missed (hidden but not produced): []; extra (produced but not hidden): [{"kind": "exit", "time": 125.0, "entities": ["0"], "value": null}, {"kind": "exit", "time": 125.0, "entities": ["3"], "value": null}]
+simulate attempt 3 (after 8 explore runs): mean record-match F1 = 0.429 (need 0.4)
+- scope 'Video 11399' (start 89.73): F1 0.286, 2 hidden outcomes, model produced 5; missed (hidden but not produced): [{"time": 110.0, "kind": "exit", "entities": ["3"], "value": null}]; extra (produced but not hidden): [{"kind": "collision", "time": 91.0, "entities": ["0", "4"], "value": null}, {"kind": "exit", "time": 92.0, "entities": ["2"], "value": null}, {"kind": "exit", "time": 92.0, "entities": ["3"], "value": null}, {"kind": "exit", "time": 96.0, "entities": ["4"], "value": null}]
+- scope 'Video 11638' (start 122.73): F1 0.5, 1 hidden outcomes, model produced 3; missed (hidden but not produced): []; extra (produced but not hidden): [{"kind": "exit", "time": 124.0, "entities": ["2"], "value": null}, {"kind": "exit", "time": 125.0, "entities": ["3"], "value": null}]
+- scope 'Video 12825' (start 124.73): F1 0.5, 1 hidden outcomes, model produced 3; missed (hidden but not produced): []; extra (produced but not hidden): [{"kind": "exit", "time": 125.0, "entities": ["0"], "value": null}, {"kind": "exit", "time": 125.0, "entities": ["3"], "value": null}]
+simulator conversation 3: best F1 0.429

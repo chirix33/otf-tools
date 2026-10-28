@@ -17,7 +17,7 @@ from openai import OpenAI
 from otf.engine import OTFEngine
 
 from ..data import QAItem
-from ..llm import chat_sampling, chat_usage, endpoint_key
+from ..llm import chat_sampling, chat_usage, endpoint_key, request_timeout, with_backoff
 from .base import Document, Prediction, QASystem, SetupResult, Usage
 
 
@@ -35,11 +35,14 @@ class OTFSystem(QASystem):
         self.ablation = ablation or None
         if self.ablation:
             self.name = f"otf_{self.ablation}"
+        # library off writes to its own folder (otf_no_library, ...) so it never mixes with the main run's answers
+        if not self.use_library:
+            self.name = f"{self.name}_no_library"
         # model_code: path to a hand-written process model used instead of generating one (oracle upper bound)
         self.model_code = model_code
         if model_code:
-            self.name = "otf_oracle"
-        self.client = (OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=1800)
+            self.name = "otf_oracle" + (f"_{self.ablation}" if self.ablation else "")
+        self.client = (OpenAI(base_url=self.spec.base_url, api_key=endpoint_key(self.spec), max_retries=6, timeout=request_timeout(self.spec))
                        if self.spec.is_local else OpenAI(max_retries=6, timeout=600))
         self._tl = threading.local()
 
@@ -47,7 +50,7 @@ class OTFSystem(QASystem):
         """One chat call. A reply with no content (gpt-oss sometimes ends its turn after reasoning) is retried
         up to `empty_retries` times; every call's tokens are counted."""
         for _ in range(empty_retries + 1):
-            resp = self.client.chat.completions.create(model=self.spec.served_name, messages=messages,
+            resp = with_backoff(self.client.chat.completions.create, model=self.spec.served_name, messages=messages,
                                                        **chat_sampling(self.spec, self.reasoning_effort))
             self._tl.usage = getattr(self._tl, "usage", Usage()) + chat_usage(resp.usage)
             self._tl.finish = resp.choices[0].finish_reason

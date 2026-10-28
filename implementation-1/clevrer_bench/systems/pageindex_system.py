@@ -39,13 +39,15 @@ class _LiteLLMUsageMeter:
         self._orig = (litellm.completion, litellm.acompletion)
         orig_c, orig_a = self._orig
 
+        from ..llm import awith_backoff, with_backoff
+
         def completion(*a, **k):
-            r = orig_c(*a, **k)
+            r = with_backoff(orig_c, *a, **k)
             self._record(r)
             return r
 
         async def acompletion(*a, **k):
-            r = await orig_a(*a, **k)
+            r = await awith_backoff(orig_a, *a, **k)
             self._record(r)
             return r
 
@@ -118,6 +120,19 @@ class PageIndexSystem(QASystem):
         return SetupResult(u, latency, {"doc_id": self.doc_id, "cached_index": False, "tree_nodes": n_nodes})
 
     def answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
+        global _in_flight
+        with _in_flight_lock:
+            _in_flight += 1
+        try:
+            return self._answer(item, instructions, prompt)
+        finally:
+            with _in_flight_lock:
+                _in_flight -= 1
+                idle = _in_flight == 0
+            if idle:                # clearing while another thread is mid-request hung the process (2026-10-25)
+                _release_connections()
+
+    def _answer(self, item: QAItem, instructions: str, prompt: str) -> Prediction:
         t = time.time()
         kwargs = {}
         if self.reasoning_effort:
@@ -138,7 +153,8 @@ class PageIndexSystem(QASystem):
             kwargs["extra_body"] = body
         if self.protocol == "chat_completions":
             return self._answer_chat(instructions, prompt, kwargs, t)
-        env = self.client.chat(prompt, doc_id=self.doc_id, protocol="responses",
+        from ..llm import with_backoff
+        env = with_backoff(self.client.chat, prompt, doc_id=self.doc_id, protocol="responses",
                                instructions=instructions, **kwargs)
         items = env.get("items") or env.get("output") or []
         # A model turn = one batch of (possibly parallel) function_calls; +1 for the final answer turn.
@@ -160,7 +176,9 @@ class PageIndexSystem(QASystem):
         return Prediction(text, usage, time.time() - t, trace={"tool_calls": tool_calls})
 
     def _answer_chat(self, instructions: str, prompt: str, kwargs: dict, t: float) -> Prediction:
-        env =self.client.chat([{"role": "system", "content": instructions}, {"role": "user", "content": prompt}],
+        from ..llm import with_backoff
+        env = with_backoff(self.client.chat, [{"role": "system", "content": instructions},
+                                              {"role": "user", "content": prompt}],
                                doc_id=self.doc_id, protocol="chat_completions", **kwargs)
         choice = env["choices"][0]
         u = env.get("usage") or {}
@@ -170,6 +188,22 @@ class PageIndexSystem(QASystem):
                       (u.get("completion_tokens_details") or {}).get("reasoning_tokens", 0), 0)
         return Prediction(choice["message"]["content"] or "", usage, time.time() - t,
                           trace={"finish_reason": choice.get("finish_reason")})
+
+
+_in_flight, _in_flight_lock = 0, threading.Lock()
+
+
+def _release_connections() -> None:
+    """PageIndex runs each question's agent in a fresh event loop, and LiteLLM caches one HTTP client per loop for
+    up to an hour, so every question left an open connection behind; thousands of them choked this PC's network
+    (2026-10-25). Dropping the cache and collecting the clients closes them. Requests and answers are unchanged."""
+    import gc
+    try:
+        import litellm
+        litellm.in_memory_llm_clients_cache.flush_cache()
+    except Exception:
+        pass
+    gc.collect()
 
 
 def _count_nodes(tree) -> int:
