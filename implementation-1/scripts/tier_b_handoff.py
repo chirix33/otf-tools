@@ -509,8 +509,8 @@ def findings(done, sysrep, costs, pairs, runs: Path = None) -> list[str]:
     gaps = []
     for m, s in done:
         fz = jload(runs / "tier_b" / "freeze" / f"{s}__{m}.json") if runs else None
-        if fz:
-            dev = next(c["accuracy"] for c in fz["candidates"] if c["slot"] == fz["selected_slot"])
+        dev = next((c["accuracy"] for c in (fz or {}).get("candidates", []) if c["slot"] == fz["selected_slot"]), None)
+        if dev is not None:                        # reused freezes have no pilot20 run
             gaps.append((dev - acc[(m, s)], s, m))
     if gaps:
         lo, hi = min(gaps), max(gaps)
