@@ -1,0 +1,16 @@
+parsers attempt 1: passed
+explore 1: ok, 874 chars
+explore 2: ok, 3000 chars
+explore 3: ok, 2622 chars
+explore 4: ok, 1784 chars
+explore 5: ok, 375 chars
+explore 6: ok, 140 chars
+explore 7: ok, 283 chars
+simulate attempt 1 (after 7 explore runs): mean record-match F1 = 0.556 (need 0.4)
+- scope 'Video 10140' (start 20.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 10306' (start 40.73): F1 1.0, 2 hidden outcomes, model produced 2; missed (hidden but not produced): []; extra (produced but not hidden): []
+- scope 'Video 10813' (start 39.73): F1 0.0, 3 hidden outcomes, model produced 2; missed (hidden but not produced): [{"time": 41.0, "kind": "collision", "entities": ["0", "1"], "value": null}, {"time": 57.0, "kind": "collision", "entities": ["1", "2"], "value": null}, {"time": 110.0, "kind": "collision", "entities": ["0", "3"], "value": null}]; extra (produced but not hidden): [{"time": 48.7, "kind": "collision", "entities": ["1", "0"], "value": null}, {"time": 73.7, "kind": "collision", "entities": ["1", "2"], "value": null}]
+- scope 'Video 10857' (start 39.73): F1 0.0, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 41.0, "kind": "collision", "entities": ["0", "1"], "value": null}, {"time": 117.0, "kind": "collision", "entities": ["0", "2"], "value": null}]; extra (produced but not hidden): [{"time": 49.7, "kind": "collision", "entities": ["1", "0"], "value": null}]
+- scope 'Video 11594' (start 26.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 108.0, "kind": "collision", "entities": ["0", "2"], "value": null}]; extra (produced but not hidden): []
+- scope 'Video 11645' (start 19.73): F1 0.667, 2 hidden outcomes, model produced 1; missed (hidden but not produced): [{"time": 79.0, "kind": "collision", "entities": ["1", "3"], "value": null}]; extra (produced but not hidden): []
+simulator conversation 1: best F1 0.556
