@@ -38,6 +38,7 @@ COMMUNITY_LEVEL = 2                      # GraphRAG CLI default for local search
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 EMBED_DIM = 384                          # bge-small-en-v1.5
 SERVER_MAX_SEQS = 8                      # scripts/serve.sh --max-num-seqs for Qwen and Gemma
+HOSTED_CONCURRENCY = {"google/gemma-4-31b-it": 16}   # Crusoe: slow per request; 429s are retried by the meter
 TUNED_FILES = {"extract_graph": "extract_graph.txt", "summarize_descriptions": "summarize_descriptions.txt",
                "community_report_graph": "community_report_graph.txt"}
 
@@ -178,7 +179,7 @@ def _settings(spec, embed_url: str, prompts_dir: Path, local_prompt: Path) -> di
         "embedding_models": {"default_embedding_model": {
             "model_provider": "openai", "model": EMBED_MODEL, "api_base": embed_url, "api_key": "EMPTY",
             "retry": {"type": "exponential_backoff"}}},
-        "concurrent_requests": SERVER_MAX_SEQS,       # throughput only: match vLLM's --max-num-seqs (serve.sh)
+        "concurrent_requests": HOSTED_CONCURRENCY.get(spec.served_name, SERVER_MAX_SEQS),   # throughput only
         "input": {"type": "text"},
         "input_storage": {"type": "file", "base_dir": "input"},
         "output_storage": {"type": "file", "base_dir": "output"},

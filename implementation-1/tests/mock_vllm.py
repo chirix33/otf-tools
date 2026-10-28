@@ -186,6 +186,8 @@ class H(BaseHTTPRequestHandler):
         if os.environ.get("MOCK_CREDITS"):
             return self._send(402, {"error": {"code": 402, "message": "This request would exceed your available "
                                               "credits given your current in-flight requests. Add credits."}})
+        if n <= int(os.environ.get("MOCK_RATE_LIMIT_FIRST", "0")):
+            return self._send(429, {"error": {"code": 429, "message": "temporarily rate-limited upstream"}})
         if n <= int(os.environ.get("MOCK_FAIL_FIRST", "0")):
             return self._send(500, {"error": {"message": "mock failure"}})
         if not self.path.rstrip("/").endswith("/chat/completions"):

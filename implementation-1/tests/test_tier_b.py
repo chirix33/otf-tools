@@ -228,6 +228,12 @@ def test_infra_retries_are_ledgered(runs, env):
     assert [r["status"] for r in rows[-len(p.trace["steps"]) - 2:][:3]] == ["failed", "failed", "ok"]
     assert all(st["finish_reason"] != "error" for st in p.trace["steps"]) and p.trace["outcome"] == "finish"
     env.delenv("MOCK_PROVIDER_ERROR_FIRST")
+    mock_vllm.STATE["requests"] = 0
+    env.setenv("MOCK_RATE_LIMIT_FIRST", "9")                     # 429s: waited out, more than INFRA_RETRIES of them
+    p, it = _ask(s, runs)
+    rows = [json.loads(l) for l in s.ledger.path.read_text().splitlines() if json.loads(l).get("uid") == it.uid]
+    assert sum(r.get("source") == "rate_limited" for r in rows) == 9 and p.trace["outcome"] == "finish"
+    env.delenv("MOCK_RATE_LIMIT_FIRST")
     env.setenv("MOCK_FAIL_FIRST", "1000000")
     with pytest.raises(metered.InfraError):
         _ask(s, runs)
@@ -460,6 +466,25 @@ def test_e1_requires_matching_freeze(runs):
     with pytest.raises(StageError, match="differs from its freeze manifest"):
         pipe.frozen_system("react_r", "qwen3.6-27b")
     p.unlink()
+
+
+def test_reused_freeze_skips_pilot20(runs, monkeypatch):
+    import tierb.pipeline as P
+    pipe = _pipe(runs)
+    src = _sys("react_r", runs)
+    sp = pipe.freeze_path("react_r", "qwen3.6-27b")
+    sp.parent.mkdir(parents=True, exist_ok=True)
+    sp.write_text(json.dumps({"system": "react_r", "model": "qwen3.6-27b", "kwargs": {"slot": 1}, "selected_slot": 1,
+                              "config_hash": src.config_hash(), "candidates": [], "selected_provenance": {}}))
+    monkeypatch.setattr(P, "REUSE_FREEZE", {"gemma-4-31b-think": {"react_r": "qwen3.6-27b"}})
+    pipe.dev("gemma-4-31b-think", "react_r", [])                   # no model call, no pilot20 run
+    fz = json.loads(pipe.freeze_path("react_r", "gemma-4-31b-think").read_text())
+    assert fz["candidates"] == [] and fz["dev_set"] is None and fz["selected_slot"] == 1
+    assert fz["reused_from"]["config_hash"] == src.config_hash() and fz["config_hash"] != src.config_hash()
+    pipe.frozen_system("react_r", "gemma-4-31b-think")              # E1 accepts it
+    assert not list((runs / "pilot20" / "systems").glob("*gemma*"))
+    sp.unlink()
+    pipe.freeze_path("react_r", "gemma-4-31b-think").unlink()
 
 
 def test_gemma_gated_on_complete_qwen(runs):

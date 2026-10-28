@@ -270,6 +270,12 @@ def analysis(runs: Path, found: dict) -> str:
         if not fz:
             continue
         e1 = sysrep.get((s, m), {}).get("overall", {}).get("question_accuracy") if (m, s) in done else None
+        if fz.get("reused_from"):                  # deviation: no pilot20 run, the source model's slot reused
+            r = fz["reused_from"]
+            rows.append([SYSTEM_NAMES.get(s, s), f"`{m}`", f"{fz['selected_slot']} (reused)", "not run", "-", "-",
+                         (fz["kwargs"].get("index_method") or "-"),
+                         f"slot and settings of `{r['model']}` (hash `{r['config_hash']}`); own hash "
+                         f"`{fz['config_hash']}`"])
         for c in fz["candidates"]:
             sel = c["slot"] == fz["selected_slot"]
             extra = c["kwargs"].get("index_method")
@@ -284,6 +290,25 @@ def analysis(runs: Path, found: dict) -> str:
             ex = dec.get("standard_extraction") or {}
             L += ["", f"GraphRAG indexing for `{m}`: **{dec.get('index_method')}** (rule: {dec.get('rule')}; standard "
                       f"extraction failed on {ex.get('failed_chunks')}/{ex.get('chunks')} pilot20 chunks)."]
+
+    ex_rows = []
+    for m, s in jobs:
+        if s != "graphrag":
+            continue
+        for d in E1_CORE:
+            info = (jload(runs / d / "systems" / f"graphrag__{m}" / "setup.json") or {}).get("info") or {}
+            ex = info.get("extraction") or {}
+            if ex.get("chunks"):
+                ex_rows.append((m, d, ex["chunks"], ex["failed_chunks"], ex.get("empty_but_completed_chunks", 0)))
+    if ex_rows:
+        L += ["", "GraphRAG entity extraction while indexing E1-core (a chunk fails when extraction raised, or it "
+                  "returned no entities and no completion marker):", ""]
+        rows = [[f"`{m}`", d, c, f, f"{100 * f / c:.1f}%", e] for m, d, c, f, e in ex_rows]
+        for m in dict.fromkeys(r[0] for r in ex_rows):
+            c = sum(r[2] for r in ex_rows if r[0] == m)
+            f = sum(r[3] for r in ex_rows if r[0] == m)
+            rows.append([f"`{m}`", "**all**", c, f, f"**{100 * f / c:.1f}%**", sum(r[4] for r in ex_rows if r[0] == m)])
+        L += table(["Model", "Document", "Chunks", "Failed", "Failure rate", "Empty but completed"], rows)
 
     # ------------------------------------------------------------------ 7. cost
     L += ["", "## 7. Cost and efficiency", "",
@@ -350,7 +375,16 @@ def analysis(runs: Path, found: dict) -> str:
                    "OpenRouter with one pinned provider per model. Same model weights family and sampling settings, "
                    "but different quantisation and serving stack, so compare systems within one serving where "
                    "possible. Latency is not comparable across servings.")
-    if not any("gemma" in m for m, _ in plan) or any("gemma" in m for m in found["not_run"]):
+    gem = [m for m, _ in plan if "gemma" in m and m in REUSED_MODELS(runs)]
+    if gem:
+        cav.append("Gemma (`" + "`, `".join(gem) + "`), added 2026-10-28, deviates from the protocol: there was no "
+                   "pilot20 development stage. Each system reused the slot and settings frozen for Qwen (ReAct-C from "
+                   "the local Qwen run, the others from the OpenRouter Qwen runs; GraphRAG with Qwen's auto-tuned "
+                   "prompts and standard indexing, without the pilot20 extraction check), and ran on E1-core only. "
+                   "Its freeze files record the reused slot and both config hashes. Crusoe, the only bf16 provider "
+                   "that accepts the prompt lengths, rate-limits Gemma: refused (429) requests were retried with "
+                   "backoff and are logged in `calls.jsonl` as failed attempts, never scored.")
+    elif not any("gemma" in m for m, _ in plan) or any("gemma" in m for m in found["not_run"]):
         cav.append("Gemma 4 31B was dropped from Tier B on 2026-10-26: its bf16 OpenRouter providers were "
                    "rate-limited and the remaining time did not fit a full run. gpt-oss-20b (the Tier A model) is the "
                    "second model instead.")
@@ -404,6 +438,12 @@ def analysis(runs: Path, found: dict) -> str:
           "`timing.json`: wall-clock time per stage.",
           "- `SHA256SUMS.txt`: checksums of every file here.", ""]
     return "\n".join(L)
+
+
+def REUSED_MODELS(runs: Path) -> set:
+    """Models whose freeze files were reused from another model (no pilot20 selection)."""
+    return {(jload(p) or {}).get("model") for p in (runs / "tier_b" / "freeze").glob("*.json")
+            if (jload(p) or {}).get("reused_from")}
 
 
 def ledger_spend(runs: Path, models: list[str]) -> dict:

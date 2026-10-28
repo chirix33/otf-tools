@@ -26,6 +26,7 @@ MAX_CALLS_PER_QUESTION = 12
 INFRA_RETRIES = 6            # extra attempts per call after a connection/timeout/429/5xx failure (~3 min of backoff)
 CREDIT_WAIT_S = 1800         # out of credits: keep retrying this long (an auto top-up or a manual one), then stop
 CREDIT_POLL_S = 60
+RATE_LIMIT_WAIT_S = 1800     # 429s (e.g. Crusoe for Gemma): retried with backoff for up to this long per call
 FROZEN_KEYS = ("model", "temperature", "top_p", "max_tokens", "reasoning_effort")
 USAGE_FIELDS = ("input_tokens", "cached_input_tokens", "output_tokens", "reasoning_tokens", "llm_calls")
 
@@ -65,32 +66,56 @@ def _note_credit_wait() -> None:
               f"{CREDIT_WAIT_S // 60} min (add credits or let auto top-up run)", flush=True)
 
 
+def is_rate_limited(err: BaseException) -> bool:
+    m = str(err).lower()
+    return getattr(err, "status_code", None) == 429 or "rate-limited" in m or "rate limit" in m or "too many requests" in m
+
+
+def _pause(err: BaseException, waited: dict) -> float | None:
+    """Seconds to wait before retrying `err`, or None to give up. Out of credits: poll for a top-up. Rate limited
+    (429): back off 5..60 s with jitter, and record the refused attempt in the ledger (it is not an answer)."""
+    import random
+    if is_out_of_credits(err):
+        if waited["credits"] >= CREDIT_WAIT_S:
+            return None
+        _note_credit_wait()
+        waited["credits"] += CREDIT_POLL_S
+        return CREDIT_POLL_S
+    if is_rate_limited(err):
+        if waited["rate"] >= RATE_LIMIT_WAIT_S:
+            return None
+        d = min(60.0, 5.0 * 2 ** waited["n"]) * random.uniform(0.7, 1.3)
+        waited["n"] += 1
+        waited["rate"] += d
+        record_failure(err, "rate_limited", waited["n"])
+        return d
+    return None
+
+
 def wait_for_credits(fn):
-    """Call fn(); while it fails with out-of-credits, wait and retry for up to CREDIT_WAIT_S."""
-    waited = 0
+    """Call fn(); retry while the provider is out of credits or rate-limits the request (bounded waits)."""
+    waited = {"credits": 0, "rate": 0.0, "n": 0}
     while True:
         try:
             return fn()
         except Exception as e:
-            if not is_out_of_credits(e) or waited >= CREDIT_WAIT_S:
+            d = _pause(e, waited)
+            if d is None:
                 raise
-            _note_credit_wait()
-            time.sleep(CREDIT_POLL_S)
-            waited += CREDIT_POLL_S
+            time.sleep(d)
 
 
 async def await_for_credits(fn):
     import asyncio
-    waited = 0
+    waited = {"credits": 0, "rate": 0.0, "n": 0}
     while True:
         try:
             return await fn()
         except Exception as e:
-            if not is_out_of_credits(e) or waited >= CREDIT_WAIT_S:
+            d = _pause(e, waited)
+            if d is None:
                 raise
-            _note_credit_wait()
-            await asyncio.sleep(CREDIT_POLL_S)
-            waited += CREDIT_POLL_S
+            await asyncio.sleep(d)
 
 
 class InfraError(RuntimeError):
