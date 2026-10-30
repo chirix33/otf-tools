@@ -462,12 +462,15 @@ class Pipeline:
 
     def write_spec(self) -> None:
         rows = ["", SPEC_BEGIN, "", "**Tier B frozen selections (written automatically before any E1 question; "
-                "selection on pilot20 only):**", "",
+                "selection on pilot20 only; rows marked *reused* had no pilot20 run):**", "",
                 "| System | Model | Slot | Config hash | Candidates (slot: pilot20 accuracy, total tokens) | "
                 "Indexing | Upstream |", "|---|---|---|---|---|---|---|"]
         for p in sorted((self.tb / "freeze").glob("*.json")):
             fz = json.loads(p.read_text(encoding="utf-8"))
             cands = "; ".join(f"{c['slot']}: {c['accuracy']:.1f}%, {c['total_tokens']:,}" for c in fz["candidates"])
+            if fz.get("reused_from"):          # deviation: no pilot20 run
+                r = fz["reused_from"]
+                cands = f"reused slot {r['selected_slot']} of {r['model']} (`{r['config_hash']}`); no pilot20 run"
             up = fz["selected_provenance"].get("upstream") or {}
             ups = (f"{up.get('package', up.get('repo', ''))} {up.get('version', '')} {str(up.get('commit', ''))[:12]}"
                    .strip() or "-")
