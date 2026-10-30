@@ -12,6 +12,11 @@ BUILTIN = {
     "pageindex": ("clevrer_bench.systems.pageindex_system:PageIndexSystem", {}),
     "rag": ("clevrer_bench.systems.rag:RAGSystem", {}),
     "otf": ("clevrer_bench.systems.otf_system:OTFSystem", {}),
+    # new baselines (docs/new_baselines_design.md; SPEC sec. 11)
+    "react_r": ("clevrer_bench.systems.react_system:ReActSystem", {"variant": "retrieve"}),
+    "react_c": ("clevrer_bench.systems.react_system:ReActSystem", {"variant": "code"}),
+    "recode": ("clevrer_bench.systems.recode_system:ReCodeSystem", {}),
+    "graphrag": ("clevrer_bench.systems.graphrag_system:GraphRAGSystem", {}),
     # upper bound: the same engine with the hand-written process model instead of a generated one
     "otf_oracle": ("clevrer_bench.systems.otf_system:OTFSystem",
                    {"model_code": str(Path(__file__).resolve().parents[2] / "oracle" / "oracle_model.py")}),

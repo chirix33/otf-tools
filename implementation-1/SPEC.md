@@ -628,6 +628,48 @@ E1/E2 question is answered.
 | Compute tiers | Tier A (must): gpt-oss-20b, all four baselines on full E1 and on E2 (~20-25 GPU-h). Tier B (if time): Gemma and Qwen on E1-core = `e1_d03, d06, d09, d12, d15` (~720 questions; ~10 GPU-h per model). Go/no-go on Oct 25 09:00: if fewer than 40 GPU-h remain before the Oct 27 evening freeze, Tier B runs for Qwen only (superseded by the 2026-10-22 priority rule: Qwen's full E1 comes first; Tier B, then E2, are cut first if time is short) | FROZEN |
 | Reporting | Same reports as the other systems (accuracy with bootstrap CIs, paired differences vs OTF, McNemar), plus: cost-accuracy frontier, break-even curve (setup amortization), E1 to E2 degradation, counterfactual error overlap (UpSet), code-reliability table | FROZEN |
 
+**As built, manufacturing / IT operations / finance (2026-10-25, Aniruddha; FROZEN before any test question of
+these domains).** Run on OpenRouter with the `or-*` aliases (sec. 2). Systems: `react_r`, `react_c`, `recode`,
+`graphrag` in `clevrer_bench/systems/`. No prompt or setting was chosen by accuracy: the dev documents
+(`mfg_dev`, `itops_dev`, `fin_dev`) were used only to find crashes, as rule 4 of `docs/domains/README.md` says. One
+variant per system.
+- **ReAct-R / ReAct-C** (`react_system.py`): native tool calling; tools `list_sections(scope)`, `read_section(title,
+  start)` (one node, or a whole chapter, in OTF's section layout; at most 20,000 characters per result, then paged),
+  `search(query, k<=10)` (RAG's chunks and embedder), `finish(answer)`; ReAct-C adds `python(code)` in
+  `otf/sandbox.py` with the Navigation Map `doc`, OTF's helpers and OTF's map description (`otf.prompts.DOC_CONTEXT`),
+  printed output cut at 4,000 characters. System prompt = tool list + the shared answer rules + front matter.
+  12 model calls; each tool result shows the calls left; the 12th call is told it is the last. A reply without a
+  tool call is the final answer. Fixes from the dev smoke test (crashes and format, not accuracy): tool names with
+  leaked gpt-oss channel tokens (`read_section<|channel|>commentary`, seen on CoreWeave, Parasail and AkashML) are
+  cut to their leading identifier; raw (non-JSON) arguments to `python` are the code (gpt-oss's built-in python
+  tool format) and to `finish` the answer; a `finish` without a JSON object gets one "call finish again" reply;
+  a response without choices is retried (not counted); HTTP 429 waits 15-240 s.
+- **ReCode** (`recode_system.py`): ReCode @ `6e7223f` vendored in `third_party/recode` (tree, EXPAND prompt, block
+  split/validation, variable display and executor unchanged except import paths); `ReCodeAgent.act/_handle_stub/
+  _expand` ported to sync with the same logic. `docqa` environment: `list_sections[...]`, `read_section[...]`,
+  `search[...]`, `python[...]` (same tools and caps as ReAct-C), `answer[<json>]`. Observation: question; front
+  matter + chapter list. Four one-turn few-shots from pilot20 Video 10331 (`third_party/recode/docqa/fewshots.txt`).
+  Max depth 6, max 5 rewrites, 12 model calls. Each block must pass `otf/sandbox.check` before it runs in ReCode's
+  in-process executor; blocks run one at a time across threads (the executor swaps `sys.stdout`). As in ReCode, a
+  block error ends the episode (for example a module imported in one block is not kept for the next).
+- **GraphRAG** (`graphrag_system.py`, `scripts/graphrag_worker.py`, `scripts/embed_server.py`): `graphrag==3.3.0`
+  in its own venv (`.venv-graphrag`; it pins pandas 3 / numpy 2.4). `graphrag init` defaults (chunks 1,200/100,
+  default entity types and prompts, `max_gleanings` 1, community reports), standard indexing, no prompt tuning.
+  Every LLM role uses the model under test with the sec. 2 sampling; embeddings are bge-small-en-v1.5 on CPU
+  through a local OpenAI-compatible endpoint (`vector_size` 384). Local search, community level 2; the query is the
+  question prompt alone (GraphRAG also embeds it), and the answer rules go in the `response_type` slot. LiteLLM
+  calls are metered (streamed answers ask for usage in the last chunk); indexing is setup cost, including failed
+  attempts (GraphRAG's reply cache would hide them otherwise). Extraction check: share of text units with no
+  entity is recorded in `setup.json` (`mfg_dev`, gpt-oss: 2 of 20).
+- Transport fixes during the test runs (2026-10-25; no change to prompts, tools, caps or scoring):
+  (1) ReAct-R/C: when a tool call's arguments are not JSON, the history sends them back as JSON (the parsed
+  arguments, else `{"raw_arguments": ...}`); Crusoe (Gemma) refused the whole request otherwise ("Assistant tool
+  call function.arguments must be valid JSON"). The gpt-oss runs finished before this fix; on CoreWeave the raw
+  form was accepted. (2) GraphRAG: a run over several documents now stops the serve workers of the previous
+  document. (3) Cost: in GraphRAG's streamed answers LiteLLM reports `output_tokens` without the reasoning
+  tokens (`reasoning_tokens` > `output_tokens` in every row); billed output for those rows = output + reasoning.
+  Indexing usage is not streamed and needs no change.
+
 
 ## 12. Additional domains: manufacturing, IT operations, finance (added 2026-10-23)
 
