@@ -1,0 +1,45 @@
+{
+  "system": "react_r",
+  "model": "or-gpt-oss-20b",
+  "reasoning_effort": "medium",
+  "model_spec": {
+    "alias": "or-gpt-oss-20b",
+    "served_name": "openai/gpt-oss-20b",
+    "base_url": "https://openrouter.ai/api/v1",
+    "reasoning_effort": "medium",
+    "temperature": null,
+    "top_p": null,
+    "max_tokens": 16384,
+    "context_len": 131072,
+    "extra_body": {
+      "provider": {
+        "order": [
+          "CoreWeave"
+        ],
+        "quantizations": [
+          "fp4"
+        ],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    },
+    "api_key_env": "OPENROUTER_API_KEY"
+  },
+  "usage": {
+    "input_tokens": 0,
+    "cached_input_tokens": 0,
+    "output_tokens": 0,
+    "reasoning_tokens": 0,
+    "llm_calls": 0,
+    "total_tokens": 0
+  },
+  "latency_s": 2.215137004852295,
+  "info": {
+    "nodes": 36,
+    "variant": "retrieve",
+    "max_calls": 12,
+    "chunks": 105,
+    "embed_model": "BAAI/bge-small-en-v1.5",
+    "top_k": 5
+  }
+}

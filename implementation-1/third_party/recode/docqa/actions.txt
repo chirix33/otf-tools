@@ -1,0 +1,7 @@
+- list_sections[<chapter title>]: the titles of the sections in one chapter. list_sections[] gives the titles of all chapters.
+- read_section[<title>]: the content of a section, or of all sections of a chapter if <title> is a chapter title. A long section comes in parts: read_section[<title> | <start line>] gives the part from that line; the result says where the next part starts.
+- search[<query>]: the 5 passages of the document that are most similar to the query.
+- python[<code>]: runs Python code on the document's data and returns what it prints (at most 4000 characters). The document is available to the code as `doc`, described below, with the helpers listed there. Allowed imports: math, json, re, itertools, collections, statistics, functools, heapq, bisect, dataclasses, typing, numpy, fractions, decimal, copy, operator. No file, network or process access. Each run starts fresh and has a 20 s time limit. Put multi-line code in a triple-quoted string: run('''python[
+...
+]''')
+- answer[<answer JSON>]: gives the final answer and ends the task. <answer JSON> is the JSON object that the answer rules below ask for.
